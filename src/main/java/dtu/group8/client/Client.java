@@ -7,15 +7,15 @@ import org.jspace.RemoteSpace;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.UnknownHostException;
 
 /**
  * Client
  * Responsibilities:
  * Must have:
  *      Receive questions
- *      Receive answer options
  *      Send answers
+ *      Receive correct answer
+ *      Show if answer was correct or wrong
  * Can have:
  *      See opponent points
  *      See timer
@@ -26,21 +26,20 @@ public class Client {
     // Port of server
     private final String port = "9002";
     // localhost
-    private final String serverIP = "127.0.0.1:" + port;
+    private final String localhost = "127.0.0.1:" + port;
     // DTUsecure server
-    private final String temp = "10.209.95.114:" + port;
+    private final String DTUsecure = "10.209.95.114:" + port;
     public void start() {
         try {
 
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
             // Set the URI of the chat space
-            // Default value
             System.out.print("Enter URI of the chat server or press enter for default: ");
             String uri = input.readLine();
             // Default value
             if (uri.isEmpty()) {
-                uri = "tcp://"+ temp + "/chat?keep";
+                uri = "tcp://"+ DTUsecure + "/chat?keep";
             }
 
             // Connect to the remote chat space
@@ -74,9 +73,29 @@ public class Client {
             } else {
                 System.out.println("Failed to start game");
             }
-            while (((Integer) t[1] == 1)){
+            while (!((Integer) t[1] == 0)){
                 System.out.println("playing game");
+                // Answer server ack
+                t = chat.query(new ActualField(gameID),new FormalField(Integer.class));
+                if ((Integer) t[1] == 3 ){
+                    chat.put(gameID,clientID,"ok");
+                }
+
+                //Questionable stuff starts now
+                //Get question from server and print to console
+                t = chat.query(new ActualField(gameID),new ActualField("Q"), new FormalField(String.class));
+                System.out.println("Question: " + t[2]);
+                //Get answer and send to server
+                chat.put(gameID,clientID,input.readLine());
+                //Get actual answer from server
+                t = chat.query(new ActualField(gameID),new ActualField("A"),new FormalField(String.class));
+                //Should check if client already supplied correct answer
+                System.out.println("Correct answer was " + t[3]);
+
+                //Sleep because nap time
                 Thread.sleep(2000);
+
+                //Questionable coding ends.... maybe
 
                 //Check game state
                 t = chat.query(new ActualField(gameID),new FormalField(Integer.class));
