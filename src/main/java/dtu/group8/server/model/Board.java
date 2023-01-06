@@ -18,7 +18,7 @@ public class Board {
     public void addPlayer(String playerId) {
         boolean isFound = false;
         for (Player currPlayer : players) {
-            if (Objects.equals(currPlayer.id, playerId)) {
+            if (Objects.equals(currPlayer.getId(), playerId)) {
                 isFound = true;
             }
         }
@@ -32,5 +32,15 @@ public class Board {
 
     public void removePlayer(String playerId) {
 
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void printOutPlayers() {
+        for (Player player : players) {
+            System.out.println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
+        }
     }
 }

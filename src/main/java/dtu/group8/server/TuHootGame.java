@@ -1,11 +1,14 @@
 package dtu.group8.server;
 
 import dtu.group8.server.model.Board;
+import dtu.group8.server.model.Player;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.Space;
 
 import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 class TuHootGame implements Runnable {
     Space space;
@@ -19,21 +22,25 @@ class TuHootGame implements Runnable {
 
     @Override
     public void run() {
-        initializePlayers();
 
         try {
 
-            //GAME START
+            sleep(30000);
+            initializePlayers();
+
+
+            // Game start
+            System.out.println("starting game " + game.id);
             updateGameState(space, game.id, GameState.START);
 
-            //GAME LOOP
+            game.board.printOutPlayers();
+            // Game loop
             while (true) {
-                // GAME ACK
-                //updateGameState(space, )
+                // Game AKN
 
                 break;
             }
-            Thread.sleep(10000);
+            sleep(10000);
             //GAME OVER
             updateGameState(space, game.id, GameState.STOP);
 
@@ -46,12 +53,10 @@ class TuHootGame implements Runnable {
         space.getp(new ActualField(gameId),new FormalField(Integer.class));
         space.put(gameId, state.value);
 
-        System.out.println(GameState.START.value);
     }
 
     void initializePlayers() {
         try {
-
             System.out.println("Space from the thread " +  space);
             //add, gameID, name, clientID
             List<Object[]> objs = space.queryAll(new ActualField("add"),new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));

@@ -36,7 +36,8 @@ public class Server {
             // Default value
             if (uri.isEmpty()) {
                 //uri = "tcp://127.0.0.1:9001/?keep";
-                uri = "tcp://10.209.95.114:9002/?keep";
+                //uri = "tcp://10.209.95.114:9002/?keep";
+                uri = "tcp://localhost:9002/?keep";
 
             }
 

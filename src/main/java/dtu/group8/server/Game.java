@@ -10,6 +10,7 @@ public class Game {
         if (board == null) {
             board = new Board();
         }
+        this.board = board;
         this.id = id;
     }
 
