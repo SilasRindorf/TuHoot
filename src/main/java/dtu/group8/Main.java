@@ -1,13 +1,11 @@
 package dtu.group8;
 
-import org.jspace.ActualField;
-import org.jspace.SequentialSpace;
-import org.jspace.Space;
+import dtu.group8.client.Client;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello world!");
-
+        Client client = new Client();
+        client.start();
     }
 }
