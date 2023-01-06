@@ -1,7 +1,5 @@
 package dtu.group8.server;
 
-
-import org.jspace.FormalField;
 import org.jspace.SequentialSpace;
 import org.jspace.SpaceRepository;
 
@@ -23,19 +21,13 @@ public class Server {
         try {
 
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-
             // Create a repository
             SpaceRepository repository = new SpaceRepository();
-
             // Create a local space for the chat messages
-            SequentialSpace chat = new SequentialSpace();
-
+            SequentialSpace space = new SequentialSpace();
 
             // Add the space to the repository
-            repository.add("chat", chat);
-
-
-            new Thread(new AddCompetitor(chat)).start();
+            repository.add("chat", space);
 
 
             // Set the URI of the chat space
@@ -44,32 +36,21 @@ public class Server {
             // Default value
             if (uri.isEmpty()) {
                 //uri = "tcp://127.0.0.1:9001/?keep";
-                uri = "tcp://10.209.95.114:9001/?keep";
+                uri = "tcp://10.209.95.114:9002/?keep";
 
             }
+
+            new Thread(new TuHootGame(space)).start();
+            System.out.println("Space from the main " +  space);
 
             // Open a gate
             URI myUri = new URI(uri);
-            String gateUri = "tcp://" + myUri.getHost() + ":" + myUri.getPort() +  "?keep" ;
+            String gateUri = "tcp://" + myUri.getHost() + ":" + myUri.getPort() + "?keep" ;
             System.out.println("Opening repository gate at " + gateUri + "...");
             repository.addGate(gateUri);
 
-            // Keep reading chat messages and printing them
-            while (true) {
-                Object[] t = chat.get(new FormalField(String.class), new FormalField(String.class));
-                System.out.println(t[0] + ": " + t[1]);
-                if (t[1].equals("quit")){
-                    return;
-                }
-            }
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
