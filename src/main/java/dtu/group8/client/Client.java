@@ -23,9 +23,12 @@ import java.net.UnknownHostException;
  *      Reconnect to game
  */
 public class Client {
-    private final String port = "9001";
-    private final String serverIP = "127.0.0.1:9001";
-    private String temp = "10.209.95.114:" + port;
+    // Port of server
+    private final String port = "9002";
+    // localhost
+    private final String serverIP = "127.0.0.1:" + port;
+    // DTUsecure server
+    private final String temp = "10.209.95.114:" + port;
     public void start() {
         try {
 
@@ -44,24 +47,41 @@ public class Client {
             System.out.println("Connecting to chat space " + uri + "...");
             RemoteSpace chat = new RemoteSpace(uri);
 
-            // Read user name from the console
+            // Read client name from the console
             System.out.print("Enter your name: ");
             String name = input.readLine();
 
             // Read game id from the console
             System.out.print("Enter game ID: ");
             String gameID = input.readLine();
+            // Generate random client ID
             String clientID = String.valueOf(Math.random());
+            // Connect to server
             chat.put("add",gameID,name,clientID);
-            chat.get(new ActualField(clientID),new FormalField(String.class));
-            System.out.println("Type start to begin");
-
-            // Keep sending whatever the user types
-            while (true) {
-                String message = input.readLine();
-                chat.put(name, message);
+            // Get ack from server
+            Object[] t = chat.get(new ActualField(clientID),new FormalField(String.class));
+            if (!t[1].equals("ok")){
+                System.out.println("Server did not ack... returning");
+                return;
             }
+            //Wait for server to start
+            System.out.println("Waiting for server to start");
+            //Get game state
+            t = chat.query(new ActualField(gameID),new FormalField(Integer.class));
+            if (((Integer) t[1] == 1)){
+                System.out.println("Starting game...");
 
+            } else {
+                System.out.println("Failed to start game");
+            }
+            while (((Integer) t[1] == 1)){
+                System.out.println("playing game");
+                Thread.sleep(2000);
+
+                //Check game state
+                t = chat.query(new ActualField(gameID),new FormalField(Integer.class));
+            }
+            System.out.println("Stopping game...");
 
         } catch (
                 IOException | InterruptedException e) {
