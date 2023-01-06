@@ -5,6 +5,8 @@ import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.Space;
 
+import java.util.List;
+
 class TuHootGame implements Runnable {
     Space space;
     Game game;
@@ -52,18 +54,11 @@ class TuHootGame implements Runnable {
 
             System.out.println("Space from the thread " +  space);
             //add, gameID, name, clientID
-            Object[] obj = space.get(new ActualField("add"),new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
+            List<Object[]> objs = space.queryAll(new ActualField("add"),new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
 
-            System.out.println(obj[3]);
-            String playerId = obj[3].toString();
-            if (game.id == null) {
-                game.id = obj[1].toString();
+            for (Object[] obj : objs) {
+                addPlayerToGame(obj);
             }
-            space.put(playerId, "ok");
-            game.board.addPlayer(playerId);
-            System.out.println("Player " + playerId + " is added");
-
-
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -71,6 +66,16 @@ class TuHootGame implements Runnable {
 
     }
 
+    void addPlayerToGame(Object[] obj) throws InterruptedException {
+        System.out.println(obj[3]);
+        String playerId = obj[3].toString();
+        if (game.id == null) {
+            game.id = obj[1].toString();
+        }
+        space.put(playerId, "ok");
+        game.board.addPlayer(playerId);
+        System.out.println("Player " + playerId + " is added");
+    }
 }
 
 enum GameState {
