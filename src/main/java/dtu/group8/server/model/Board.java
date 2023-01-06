@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Board {
-    ArrayList<Player> players;
-    Quiz quiz;
+    private ArrayList<Player> players;
+    private Quiz quizzes;
 
 
 
-    public Board() {
-        players = new ArrayList<Player>();
-        quiz = new Quiz();
+    public Board(ArrayList<Player> players, Quiz quizzes) {
+
+        this.players = players;
+        //players = new ArrayList<Player>();
+        if (quizzes == null) {
+            quizzes = new Quiz();
+            this.quizzes.addSomeRandomQuizzes();
+        }
     }
 
 
@@ -43,4 +48,6 @@ public class Board {
             System.out.println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
         }
     }
+
+
 }

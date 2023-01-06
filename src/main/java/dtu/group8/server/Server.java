@@ -41,7 +41,7 @@ public class Server {
 
             }
 
-            new Thread(new TuHootGame(space)).start();
+            new Thread(new ListenForNewGame(space)).start();
             System.out.println("Space from the main " +  space);
 
             // Open a gate
