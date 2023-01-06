@@ -1,34 +1,39 @@
 package dtu.group8.server;
 
+import dtu.group8.server.model.Board;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.Space;
 
 class TuHootGame implements Runnable {
     Space space;
+    Game game;
+
     public TuHootGame(Space space) {
         this.space = space;
+        game = new Game(new Board(), null);
     }
 
 
     @Override
     public void run() {
+        initializePlayers();
+
         try {
 
-            while (true) {
-                System.out.println("Space from the thread " +  space);
-                //add, gameID, name, clientID
-                Object[] obj = space.get(new ActualField("add"),new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
-                // TODO Add the player..
+            //GAME START
+            updateGameState(space, game.id, GameState.START);
 
-                System.out.println(obj[3]);
-                String clientID = obj[3].toString();
-                space.put(clientID, "ok");
-                System.out.println("Player " + clientID + " is added");
-                updateGameState(space, obj[1].toString(), GameState.START);
-                Thread.sleep(10000);
-                updateGameState(space, obj[1].toString(), GameState.STOP);
+            //GAME LOOP
+            while (true) {
+                // GAME ACK
+                //updateGameState(space, )
+
+                break;
             }
+            Thread.sleep(10000);
+            //GAME OVER
+            updateGameState(space, game.id, GameState.STOP);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -42,12 +47,37 @@ class TuHootGame implements Runnable {
         System.out.println(GameState.START.value);
     }
 
+    void initializePlayers() {
+        try {
+
+            System.out.println("Space from the thread " +  space);
+            //add, gameID, name, clientID
+            Object[] obj = space.get(new ActualField("add"),new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
+
+            System.out.println(obj[3]);
+            String playerId = obj[3].toString();
+            if (game.id == null) {
+                game.id = obj[1].toString();
+            }
+            space.put(playerId, "ok");
+            game.board.addPlayer(playerId);
+            System.out.println("Player " + playerId + " is added");
+
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
 
 enum GameState {
     STOP(0),
     START(1),
-    PAUSE(2);
+    PAUSE(2),
+    ACK(3);
     public final int value;
 
     GameState(int value) {
