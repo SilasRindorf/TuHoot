@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="569712fb-bb44-4056-94d1-ae458bbc0bbc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="569712fb-bb44-4056-94d1-ae458bbc0bbc" name="Changes" comment="Added jSpace dependency">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dtu/group8/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dtu/group8/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,11 +53,34 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1672993868635</updated>
-      <workItem from="1672993870425" duration="681000" />
+      <workItem from="1672993870425" duration="1808000" />
     </task>
+    <task id="LOCAL-00001" summary="Added jSpace dependency">
+      <created>1672994734174</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1672994734174</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added jSpace dependency" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added jSpace dependency" />
   </component>
 </project>
