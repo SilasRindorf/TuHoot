@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="569712fb-bb44-4056-94d1-ae458bbc0bbc" name="Changes" comment="Added server package, added client package">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dtu/group8/server/AddCompetitor.java" afterDir="false" />
+    <list default="true" id="569712fb-bb44-4056-94d1-ae458bbc0bbc" name="Changes" comment="Added a new class">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dtu/group8/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dtu/group8/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dtu/group8/server/AddCompetitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dtu/group8/server/AddCompetitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dtu/group8/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dtu/group8/server/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +53,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Application.Server">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dtu.group8.Main" />
       <module name="TuHoot" />
@@ -79,8 +82,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Server" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -108,7 +111,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672995941654</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added a new class">
+      <created>1672999487048</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1672999487048</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -128,6 +138,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added jSpace dependency" />
     <MESSAGE value="Added server package, added client package" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added server package, added client package" />
+    <MESSAGE value="Added a new class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a new class" />
   </component>
 </project>

@@ -1,6 +1,6 @@
 package dtu.group8.server;
 
-import dtu.group8.client.Client;
+
 import org.jspace.FormalField;
 import org.jspace.SequentialSpace;
 import org.jspace.SpaceRepository;
@@ -30,15 +30,22 @@ public class Server {
             // Create a local space for the chat messages
             SequentialSpace chat = new SequentialSpace();
 
+
             // Add the space to the repository
             repository.add("chat", chat);
+
+
+            new Thread(new AddCompetitor(chat)).start();
+
 
             // Set the URI of the chat space
             System.out.print("Enter URI of the chat server or press enter for default: ");
             String uri = input.readLine();
             // Default value
             if (uri.isEmpty()) {
-                uri = "tcp://127.0.0.1:9001/?keep";
+                //uri = "tcp://127.0.0.1:9001/?keep";
+                uri = "tcp://10.209.95.114:9001/?keep";
+
             }
 
             // Open a gate
