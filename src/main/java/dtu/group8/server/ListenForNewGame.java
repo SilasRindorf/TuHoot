@@ -23,7 +23,7 @@ class ListenForNewGame implements Runnable {
 
         try {
 
-            sleep(30000);
+            //sleep(30000);
 /*            initializePlayers();
 
             // Game start
@@ -61,7 +61,7 @@ class ListenForNewGame implements Runnable {
             List<Object[]> objs = space.queryAll(new ActualField("add"),new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
 
             for (Object[] obj : objs) {
-                addPlayerToGame(obj);
+                //addPlayerToGame(obj);
             }
 
         } catch (Exception e) {
