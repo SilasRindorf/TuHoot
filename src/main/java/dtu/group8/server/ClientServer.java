@@ -10,12 +10,7 @@ public class ClientServer implements Runnable{
 
     @Override
     public void run() {
-        try {
 
-            space.put("joinMe");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 }

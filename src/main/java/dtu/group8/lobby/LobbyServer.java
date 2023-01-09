@@ -13,10 +13,12 @@ import java.util.LinkedList;
 public class LobbyServer {
     static final String CREATE_BOARD = "create board";
     private static final String PORT = "9002";
-    //private static final String LOCALHOST = "localhost";
-    private static final String LOCALHOST = "10.209.95.114";
+    private static final String LOCALHOST = "localhost";
+    //private static final String LOCALHOST = "10.209.95.114";
 
     private static final String TYPE = "?keep";
+
+    private static final String LOCK_FOR_GAME_START = "lockForGameStart";
 
     Integer spaceCounter = 0;
 
@@ -52,7 +54,7 @@ public class LobbyServer {
                 spaceLobby.get(new ActualField(CREATE_BOARD));
                 System.out.println("Creating board...");
                 //Get all clients from lobby
-                LinkedList<Object[]> obj = spaceLobby.getAll(new ActualField("lobby"), new FormalField(String.class), new FormalField(String.class));
+                LinkedList<Object[]> allClients = spaceLobby.getAll(new ActualField("lobby"), new FormalField(String.class), new FormalField(String.class));
                 //id++
                 spaceCounter++;
                 SequentialSpace newSpace = new SequentialSpace();
@@ -60,12 +62,13 @@ public class LobbyServer {
                 repository.add(newSpaceId, newSpace);
 
                 //Not used yet
-                newSpace.put("lockForGameStart");
+                newSpace.put(LOCK_FOR_GAME_START);
+                newSpace.put("allMembers", allClients);
 
                 // Info print
                 System.out.println("\tboardId: " + spaceCounter);
                 System.out.println("\tClients");
-                for (Object[] client : obj) {
+                for (Object[] client : allClients) {
                     System.out.println("\t\tClient: " + client[2]);
 
                     //Send info to clients
@@ -83,7 +86,6 @@ public class LobbyServer {
         return  "tcp://" + LOCALHOST + ":" + PORT + "/" + parameter + TYPE;
     }
 }
-
 
 
 

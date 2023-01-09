@@ -29,8 +29,8 @@ public class Client {
     // Port of server
     private final String PORT = "9002";
     // localhost
-    //private final String LOCALHOST = "127.0.0.1";
-    private static final String LOCALHOST = "10.209.95.114";
+    private final String LOCALHOST = "localhost";
+    //private static final String LOCALHOST = "10.209.95.114";
 
     private static final String TYPE = "?keep";
     private String name = "";
@@ -39,7 +39,6 @@ public class Client {
     private boolean amIHost = false;
 
     public Space matchMake(){
-        boolean isBoardCreated = false;
         try {
 
             input = new BufferedReader(new InputStreamReader(System.in));
@@ -61,7 +60,7 @@ public class Client {
 
             String clientID = UUID.randomUUID().toString();
             remoteSpace.put("lobby", name, clientID);
-            ClientLoop looper = new ClientLoop(remoteSpace);
+            ThreadCreateGame looper = new ThreadCreateGame(remoteSpace);
             Thread thread = new Thread(looper);
             thread.start();
 
@@ -97,6 +96,9 @@ public class Client {
             }
 
             new Thread(new ThreadStartGame(server)).start();
+
+            server.get();
+
 
             server.getp(new ActualField("hello"));
             //System.out.println("hello received");
