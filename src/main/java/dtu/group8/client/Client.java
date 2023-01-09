@@ -73,7 +73,7 @@ public class Client {
             if (thread.isAlive()) {
                 looper.setAlive(false);
             }
-            System.out.println("Game starting soon...");
+            //System.out.println("Game starting soon...");
 
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
@@ -103,7 +103,7 @@ public class Client {
             new Thread(new ThreadStartGame(server)).start();
 
             server.getp(new ActualField("hello"));
-            System.out.println("hello received");
+            //System.out.println("hello received");
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
             // Connect to server
