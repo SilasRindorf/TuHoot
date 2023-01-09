@@ -41,16 +41,9 @@ public class ThreadStartGame implements Runnable {
 
                     if (obj[0].equals(LOCK_FOR_GAME_START)) {
 
-                        Object[] objs = space.getp(new ActualField("allMembers"), new FormalField(Object.class));
-                        //ArrayList<Player2> players = new ArrayList<>();
-                        Object[] t = (Object[]) objs[1];
+                        Object[] membersObj = space.get(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
 
-                        for (int i = 0; i < t.length; i++){
-                            //System.out.println("\tob: " + Arrays.toString(t.get(i)));
-                        }
-
-
-
+                        String[] pids = (String[]) membersObj[2];
 
 
                         space.put("joinMe");
