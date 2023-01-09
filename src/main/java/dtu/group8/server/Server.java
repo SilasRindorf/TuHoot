@@ -53,7 +53,7 @@ public class Server {
                 SequentialSpace newSpace = new SequentialSpace();
                 String newSpaceId = "boardId" + spaceCounter;
                 repository.add(newSpaceId, newSpace);
-                newSpace.put("Hello");
+                //newSpace.put("Hello");
 
                 for (Object[] client : obj) {
                     spaceLobby.put(client[2], newSpaceId);
