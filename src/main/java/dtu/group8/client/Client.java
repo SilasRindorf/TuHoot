@@ -62,19 +62,37 @@ public class Client {
 
             String userInput = "";
             while (true) {
+                System.out.println("Options: ");
+                System.out.println("\t1. create board");
+                System.out.println("\t2. join board");
+                System.out.println("\t3. exit");
+                System.out.print("Input command: ");
+
                 userInput = input.readLine();
-                if (userInput.equalsIgnoreCase("create board")){
+                if (userInput.equalsIgnoreCase("create board") ||
+                        userInput.equalsIgnoreCase("1")){
+                    remoteSpace.get(new ActualField("createBoardLock"));
+
+
                     remoteSpace.put("create board");
                     ClientServer server = new ClientServer();
-                    server.startServer();
+
+                    // TODO
+                    server.run();
+
+
+                    remoteSpace.put("createBoardLock");
                     break;
-                } else if (userInput.equalsIgnoreCase("join board")){
+                } else if (userInput.equalsIgnoreCase("join board") ||
+                        userInput.equalsIgnoreCase("2")){
                     break;
-                } else if (userInput.equalsIgnoreCase("exit")){
+                } else if (userInput.equalsIgnoreCase("exit") ||
+                        userInput.equalsIgnoreCase("3")){
+                    System.out.println("Exiting...");
                     return null;
                 }
             }
-            System.out.println("Loop exit");
+            System.out.println("Game starting soon...");
 
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
             String spaceId = obj[1].toString();
@@ -95,8 +113,6 @@ public class Client {
             if (input == null){
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
-
-
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
             // Connect to server

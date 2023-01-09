@@ -1,6 +1,15 @@
 package dtu.group8.server;
 
-public class ClientServer {
+import org.jspace.Space;
 
-    public void startServer(){}
+public class ClientServer implements Runnable{
+    private Space space;
+    public ClientServer(Space space){
+        this.space = space;
+    }
+
+    @Override
+    public void run() {
+
+    }
 }

@@ -43,27 +43,24 @@ public class LobbyServer {
             // Open a gate
             System.out.println("Opening repository gate at " + uri + "...");
             repository.addGate(uri);
-
+            spaceLobby.put("createBoardLock");
 
             while (true) {
                 spaceLobby.get(new ActualField(CREATE_BOARD));
+                System.out.println("Creating board...");
                 LinkedList<Object[]> obj = spaceLobby.getAll(new ActualField("lobby"), new FormalField(String.class), new FormalField(String.class));
-
                 spaceCounter++;
                 SequentialSpace newSpace = new SequentialSpace();
                 String newSpaceId = "boardId" + spaceCounter;
+                System.out.println("\tboardId: " + spaceCounter);
                 repository.add(newSpaceId, newSpace);
-                //newSpace.put("Hello");
-
+                newSpace.put("lockForGameStart");
+                System.out.println("\tClients");
                 for (Object[] client : obj) {
                     spaceLobby.put(client[2], newSpaceId);
-                    System.out.println(client[2]);
+                    System.out.println("\t\tClient: " + client[2]);
                 }
-
-
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
