@@ -16,10 +16,8 @@ public class Server {
     }
     public Server(){
     }
-
     public void start() {
         try {
-
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             // Create a repository
             SpaceRepository repository = new SpaceRepository();
@@ -35,8 +33,8 @@ public class Server {
             String uri = input.readLine();
             // Default value
             if (uri.isEmpty()) {
-                //uri = "tcp://127.0.0.1:9001/?keep";
-                uri = "tcp://10.209.95.114:9002/?keep";
+                uri = "tcp://127.0.0.1:9002/?keep";
+                //uri = "tcp://10.209.95.114:9002/?keep";
 
             }
 

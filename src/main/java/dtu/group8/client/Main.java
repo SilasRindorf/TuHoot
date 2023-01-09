@@ -1,6 +1,4 @@
-package dtu.group8;
-
-import dtu.group8.client.Client;
+package dtu.group8.client;
 
 public class Main {
 
