@@ -1,5 +1,7 @@
 package dtu.group8.client;
 
+import dtu.group8.lobby.LobbyServer;
+import dtu.group8.server.ClientServer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -62,6 +64,8 @@ public class Client {
                 userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("create board")){
                     remoteSpace.put("create board");
+                    ClientServer server = new ClientServer();
+                    server.startServer();
                     break;
                 } else if (userInput.equalsIgnoreCase("join board")){
                     break;

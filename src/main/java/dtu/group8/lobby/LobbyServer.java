@@ -1,4 +1,4 @@
-package dtu.group8.server;
+package dtu.group8.lobby;
 
 import org.jspace.ActualField;
 import org.jspace.FormalField;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-public class Server {
+public class LobbyServer {
     static final String CREATE_BOARD = "create board";
     private static final String PORT = "9002";
     private static final String LOCALHOST = "localhost";
@@ -20,8 +20,8 @@ public class Server {
 
     public static void main(String[] args) {
 
-        Server server = new Server();
-        server.startServer();
+        LobbyServer lobbyServer = new LobbyServer();
+        lobbyServer.startServer();
     }
 
     public void startServer() {
