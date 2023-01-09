@@ -29,8 +29,8 @@ public class Client {
     // Port of server
     private final String PORT = "9002";
     // localhost
-    private final String LOCALHOST = "localhost";
-    //private static final String LOCALHOST = "10.209.95.114";
+    //private final String IP = "localhost";
+    private static final String IP = "10.209.127.138";
 
     private static final String TYPE = "?keep";
     private String name = "";
@@ -71,7 +71,7 @@ public class Client {
             System.out.println("Game starting soon...");
 
             String spaceId = obj[1].toString();
-            String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
+            String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
 
             Space newSpace = new RemoteSpace(uri2);
             ClientServer server = new ClientServer(newSpace);
@@ -153,7 +153,7 @@ public class Client {
     }
 
     private String getUri(String parameter) {
-        return  "tcp://" + LOCALHOST + ":" + PORT + "/" + parameter + TYPE;
+        return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
 
 }
