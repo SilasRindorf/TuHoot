@@ -90,6 +90,9 @@ public class Client {
         return null;
 
     }
+
+
+
     public void start(Space server) {
         if (server == null){
             return;
@@ -111,30 +114,34 @@ public class Client {
             Object[] obj = server.query(new ActualField("host"), new FormalField(Object.class));
             String hostClientId = obj[1].toString();
             sThread.join();
+            // Checks if this client is the host
             if (!Objects.equals(hostClientId, clientID)) {
                 while (true) {
-                    System.out.println("\nYou are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
+                    System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
                     String userInput = input.readLine();
                     if (userInput.equalsIgnoreCase("ok")) {
                         server.put("ack", "ok", clientID);
+                        break;
 
                     } else if (userInput.equalsIgnoreCase("no")) {
                         server.put("ack", "no", clientID);
+                        break;
                     }
                 }
             } else  {
                 System.out.println("Waiting for player(s) to join...");
             }
 
-/*            Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, false));
-            checkAckThread.start();
+            if (Objects.equals(hostClientId, clientID)) {
+                Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, false));
+                checkAckThread.start();
+                //checkAckThread.join();
+                Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, true));
+                sleepThread.start();
+            }
 
-            Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, true));*/
-
-
-            server.get(new ActualField("game started"));
+            server.query(new ActualField("game started"));
             System.out.println("Game is starting...");
-
 
 
             server.getp(new ActualField("hello"));

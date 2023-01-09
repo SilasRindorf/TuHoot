@@ -42,7 +42,7 @@ public class ThreadStartGame implements Runnable {
 
                     if (obj[0].equals(LOCK_FOR_GAME_START)) {
 
-                        Client.allPlayers = space.get(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
+                        Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
                         String[] pids = (String[]) Client.allPlayers[2];
 
                         for (String pid : pids) {
@@ -59,6 +59,7 @@ public class ThreadStartGame implements Runnable {
                     }
 
                 } else if (userInput.equalsIgnoreCase("")) {
+                    Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
                     System.out.println("Waiting for a game to start...");
                     break;
                 }
@@ -74,6 +75,7 @@ class Thread_Acknowledgement_ToJoinGame implements Runnable {
     Space space;
     String[] pids;
     boolean sleepThread;
+    HashMap<String, String> receivedPids;
 
     public Thread_Acknowledgement_ToJoinGame(Space space, boolean sleepThread) {
         this.space = space;
@@ -85,14 +87,14 @@ class Thread_Acknowledgement_ToJoinGame implements Runnable {
 
         try {
             if (sleepThread) {
-                sleep(1000);
+                sleep(10000);
                 space.put("game started");
                 return;
             }
 
-            HashMap<String, String> receivedPids = new HashMap<>();
+            receivedPids = new HashMap<>();
             pids = (String[]) Client.allPlayers[2];
-            for (int i = 0; i < pids.length; i++) {
+            for (int i = 0; i < pids.length-1; i++) {
                 Object[] obj = space.get(new ActualField("ack"), new FormalField(Object.class), new FormalField(Object.class));
                 receivedPids.put(obj[1].toString(), obj[2].toString());
             }
