@@ -1,4 +1,4 @@
-package dtu.group8.server;
+package dtu.group8.client;
 
 import org.jspace.ActualField;
 import org.jspace.RemoteSpace;
@@ -10,16 +10,13 @@ import java.io.InputStreamReader;
 public class ClientLoop implements Runnable {
     private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\tor wait to get a board";
     private RemoteSpace remoteSpace;
-
     public void setAlive(boolean alive) {
         isAlive = alive;
     }
-
     private boolean isAlive = true;
     public ClientLoop(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
     }
-
     @Override
     public void run() {
         try {
