@@ -1,6 +1,7 @@
 package dtu.group8.client;
 
 import dtu.group8.server.ClientServer;
+import dtu.group8.server.model.Player;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -33,7 +34,9 @@ public class Client {
     //private static final String LOCALHOST = "10.209.95.114";
 
     private static final String TYPE = "?keep";
-    private String name = "";
+    private Player player;
+    private String clientName = "";
+    String clientID = "";
     private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
     private BufferedReader input;
     private boolean amIHost = false;
@@ -56,10 +59,9 @@ public class Client {
 
             // Read client name from the console
             System.out.print("Enter your name: ");
-            name = input.readLine();
-
-            String clientID = UUID.randomUUID().toString();
-            remoteSpace.put("lobby", name, clientID);
+            clientName = input.readLine();
+            clientID = UUID.randomUUID().toString();
+            remoteSpace.put("lobby", clientName, clientID);
             ThreadCreateGame looper = new ThreadCreateGame(remoteSpace);
             Thread thread = new Thread(looper);
             thread.start();
@@ -95,9 +97,30 @@ public class Client {
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
 
-            new Thread(new ThreadStartGame(server)).start();
+            player = new Player(clientID);
+            player.setName(clientName);
+            ThreadStartGame threadStartGame = new ThreadStartGame(server, player);
+            Thread sThread = new Thread(threadStartGame);
+            sThread.start();
 
-            server.get();
+            Object[] ackMsg = server.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
+            String invitedPlayerName = ackMsg[2].toString();
+            threadStartGame.setAlive(false);
+            if (!threadStartGame.isAmIHost()) {
+                sThread.interrupt();
+                while (true) {
+                    System.out.println("\nYou are invited to join " + invitedPlayerName + "'s game. Write <ok> to join, or <no> to refuse.");
+                    String userInput = input.readLine();
+                    if (userInput.equalsIgnoreCase("ok")) {
+                        server.put("ack", "ok", clientID);
+
+                    } else if (userInput.equalsIgnoreCase("no")) {
+                        server.put("ack", "no", clientID);
+                    }
+                }
+            } else  {
+                System.out.println("Waiting for player(s) to join...");
+            }
 
 
             server.getp(new ActualField("hello"));
@@ -105,7 +128,7 @@ public class Client {
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
             // Connect to server
-            server.put("add",name,clientID);
+            server.put("add", clientName,clientID);
             // Get ack from server
             Object[] t = server.get(new ActualField(clientID),new FormalField(String.class));
             if (!t[1].equals("ok")){

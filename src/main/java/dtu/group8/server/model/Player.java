@@ -1,11 +1,12 @@
 package dtu.group8.server.model;
 
 public class Player {
+    private String name;
     private String id;
     private int point = 0;
 
 
-    Player(String playerId){
+    public Player(String playerId){
         this.id = playerId;
     }
     void addPoint(int point) {
@@ -18,5 +19,13 @@ public class Player {
 
     public String getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
