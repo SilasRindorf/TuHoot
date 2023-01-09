@@ -3,6 +3,7 @@ package dtu.group8.client;
 import dtu.group8.lobby.LobbyServer;
 import dtu.group8.server.ClientLoop;
 import dtu.group8.server.ClientServer;
+import dtu.group8.server.model.ThreadStartGame;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -32,7 +33,9 @@ public class Client {
     // Port of server
     private final String PORT = "9002";
     // localhost
-    private final String LOCALHOST = "127.0.0.1";
+    //private final String LOCALHOST = "127.0.0.1";
+    private static final String LOCALHOST = "10.209.95.114";
+
     private static final String TYPE = "?keep";
     private String name = "";
     private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
@@ -62,36 +65,14 @@ public class Client {
 
             String clientID = UUID.randomUUID().toString();
             remoteSpace.put("lobby", name, clientID);
-
-            new Thread(new ClientLoop(remoteSpace)).start();
-
-            String userInput = "";
-           /* while (true) {
-                System.out.println(OPTIONS);
-                System.out.print("Input command: ");
-
-                userInput = input.readLine();
-                if (userInput.equalsIgnoreCase("create board") ||
-                        userInput.equalsIgnoreCase("1")){
-                    remoteSpace.get(new ActualField("createBoardLock"));
-
-                    remoteSpace.put("create board");
-                    isBoardCreated = true;
-
-                    remoteSpace.put("createBoardLock");
-                    break;
-                } else if (userInput.equalsIgnoreCase("join board") ||
-                        userInput.equalsIgnoreCase("2")){
-                    break;
-                } else if (userInput.equalsIgnoreCase("exit") ||
-                        userInput.equalsIgnoreCase("3")){
-                    System.out.println("Exiting...");
-                    return null;
-                }
-            }*/
-
+            ClientLoop looper = new ClientLoop(remoteSpace);
+            Thread thread = new Thread(looper);
+            thread.start();
 
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
+            if (thread.isAlive()) {
+                looper.setAlive(false);
+            }
             System.out.println("Game starting soon...");
 
             String spaceId = obj[1].toString();
@@ -118,6 +99,9 @@ public class Client {
             if (input == null){
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
+
+            new Thread(new ThreadStartGame(server)).start();
+
             server.getp(new ActualField("hello"));
             System.out.println("hello received");
             // Generate random client ID
