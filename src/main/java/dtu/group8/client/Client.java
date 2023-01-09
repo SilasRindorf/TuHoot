@@ -50,7 +50,7 @@ public class Client {
             }
             // Connect to the remote chat space
             System.out.println("Connecting to chat space " + uri + "...");
-            RemoteSpace chat = new RemoteSpace(uri);
+            RemoteSpace remoteSpace = new RemoteSpace(uri);
 
             // Read client name from the console
             System.out.print("Enter your name: ");
