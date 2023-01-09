@@ -36,7 +36,9 @@ public class Client {
     private static final String TYPE = "?keep";
     private String name = "";
     private BufferedReader input;
+    private boolean amIHost = false;
     public Space matchMake(){
+        boolean isBoardCreated = false;
         try {
 
             input = new BufferedReader(new InputStreamReader(System.in));
@@ -66,6 +68,8 @@ public class Client {
                 System.out.println("\t1. create board");
                 System.out.println("\t2. join board");
                 System.out.println("\t3. exit");
+                System.out.println("\t4. wait to get an invitation");
+
                 System.out.print("Input command: ");
 
                 userInput = input.readLine();
@@ -73,13 +77,8 @@ public class Client {
                         userInput.equalsIgnoreCase("1")){
                     remoteSpace.get(new ActualField("createBoardLock"));
 
-
                     remoteSpace.put("create board");
-                    ClientServer server = new ClientServer();
-
-                    // TODO
-                    server.run();
-
+                    isBoardCreated = true;
 
                     remoteSpace.put("createBoardLock");
                     break;
@@ -97,7 +96,13 @@ public class Client {
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
-            return new RemoteSpace(uri2);
+
+            Space newSpace = new RemoteSpace(uri2);
+            ClientServer server = new ClientServer(newSpace);
+            // TODO
+            server.run();
+
+            return newSpace;
         } catch (
                 IOException | InterruptedException e) {
             e.printStackTrace();
@@ -113,6 +118,8 @@ public class Client {
             if (input == null){
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
+            server.getp(new ActualField("hello"));
+            System.out.println("hello received");
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
             // Connect to server
