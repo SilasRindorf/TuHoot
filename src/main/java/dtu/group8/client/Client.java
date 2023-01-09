@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.UUID;
-import java.net.ConnectException;
 
 /**
  * Client
@@ -32,7 +31,7 @@ public class Client {
     // Port of server
     private final String PORT = "9002";
     // localhost
-    private final String LOCALHOST = "127.0.0.1";
+    private final String LOCALHOST = "10.209.95.114";
     private static final String TYPE = "?keep";
     private String name = "";
     private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
