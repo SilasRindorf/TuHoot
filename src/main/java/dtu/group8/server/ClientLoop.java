@@ -8,9 +8,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ClientLoop implements Runnable {
-    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
+    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\tor wait to get a board";
     private RemoteSpace remoteSpace;
 
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+
+    private boolean isAlive = true;
     public ClientLoop(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
     }
@@ -18,7 +23,7 @@ public class ClientLoop implements Runnable {
     @Override
     public void run() {
         try {
-            while (true) {
+            while (isAlive) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
                 BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
