@@ -71,19 +71,6 @@ public class Client {
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
             thread.join();
 
-/*            if (threadCreateBoard.amIBoardCreator()){
-                threadCreateBoard.setAlive(false);
-
-            } else {
-                //thread.interrupt();
-                thread.stop();
-                System.out.println();
-            }*/
-
-
-/*            if (thread.isAlive()) {
-                threadCreateGame.setAlive(false);
-            }*/
 
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
@@ -123,7 +110,7 @@ public class Client {
 
             Object[] obj = server.query(new ActualField("host"), new FormalField(Object.class));
             String hostClientId = obj[1].toString();
-
+            sThread.join();
             if (!Objects.equals(hostClientId, clientID)) {
                 while (true) {
                     System.out.println("\nYou are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");

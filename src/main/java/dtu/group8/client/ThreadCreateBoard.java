@@ -3,6 +3,9 @@ package dtu.group8.client;
 import org.jspace.ActualField;
 import org.jspace.RemoteSpace;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class ThreadCreateBoard implements Runnable {
@@ -19,12 +22,8 @@ public class ThreadCreateBoard implements Runnable {
             while (isAlive) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
-                //BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-                //String userInput = input.readLine();
-                Scanner scanner = new Scanner(System.in);
-                String userInput = scanner.nextLine();
-
-
+                BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+                String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("create board") ||
                         userInput.equalsIgnoreCase("1")){
                     remoteSpace.get(new ActualField("createBoardLock"));
@@ -39,7 +38,7 @@ public class ThreadCreateBoard implements Runnable {
                     break;
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
     }

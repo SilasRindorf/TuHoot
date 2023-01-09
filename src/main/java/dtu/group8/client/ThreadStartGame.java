@@ -17,11 +17,9 @@ import static java.lang.Thread.sleep;
 public class ThreadStartGame implements Runnable {
     private final String OPTIONS = "Options:\n\t1. start game\n\tor press enter to wait for an invitation";
     private Space space;
-    //private boolean isAlive = true;
-    //private boolean amIHost = false;
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private Player player;
-    //BufferedReader input;
+    BufferedReader input;
 
 
 
@@ -36,10 +34,9 @@ public class ThreadStartGame implements Runnable {
         try {
             while (true) {
                 System.out.println(OPTIONS);
-                System.out.print("Input command2: ");
-                //input = new BufferedReader(new InputStreamReader(System.in));
-                Scanner scanner = new Scanner(System.in);
-                String userInput = scanner.nextLine();
+                System.out.print("Input command: ");
+                input = new BufferedReader(new InputStreamReader(System.in));
+                String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     Object[] obj = space.getp(new ActualField(LOCK_FOR_GAME_START));
 
@@ -61,17 +58,15 @@ public class ThreadStartGame implements Runnable {
                         System.out.println("The game has already been started");
                     }
 
-                } else if (userInput.equalsIgnoreCase("")) break;
+                } else if (userInput.equalsIgnoreCase("")) {
+                    System.out.println("Waiting for a game to start...");
+                    break;
+                }
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
     }
-
-/*    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }*/
-
 
 }
 
