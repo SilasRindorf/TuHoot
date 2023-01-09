@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.UUID;
+import java.net.ConnectException;
 
 /**
  * Client
@@ -49,7 +50,7 @@ public class Client {
             }
             // Connect to the remote chat space
             System.out.println("Connecting to chat space " + uri + "...");
-            RemoteSpace remoteSpace = new RemoteSpace(uri);
+            RemoteSpace chat = new RemoteSpace(uri);
 
             // Read client name from the console
             System.out.print("Enter your name: ");
@@ -116,28 +117,27 @@ public class Client {
             } else {
                 System.out.println("Failed to start game");
             }
-            while (!((Integer) t[1] == 0)){
-                System.out.println("playing game");
+            System.out.println("playing game");
+            while (!((Integer) t[1] == 0)) {
                 // Answer server ack
                 t = server.query(new FormalField(Integer.class));
                 if ((Integer) t[1] == 3 ){
-                    server.put(clientID,"ok");
+                    server.put( clientID, "ok");
                 }
+                System.out.println("Question coming up");
 
                 //Questionable stuff starts now
                 //Get question from server and print to console
                 t = server.query(new ActualField("Q"), new FormalField(String.class));
                 System.out.println("Question: " + t[2]);
                 //Get answer and send to server
-                server.put(clientID,input.readLine());
+                server.put( clientID, input.readLine());
                 //Get actual answer from server
                 t = server.query(new ActualField("A"),new FormalField(String.class));
                 //Should check if client already supplied correct answer
                 System.out.println("Correct answer was " + t[3]);
-
                 //Sleep because nap time
                 Thread.sleep(2000);
-
                 //Questionable coding ends.... maybe
 
                 //Check game state
