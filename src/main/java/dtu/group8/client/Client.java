@@ -10,6 +10,7 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -39,6 +40,7 @@ public class Client {
     String clientID = "";
     private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
     private BufferedReader input;
+    public static Object[] allPlayers;
     //private boolean amIHost = false;
 
     public Space matchMake(){
@@ -62,19 +64,21 @@ public class Client {
             clientName = input.readLine();
             clientID = UUID.randomUUID().toString();
             remoteSpace.put("lobby", clientName, clientID);
-            ThreadCreateGame threadCreateGame = new ThreadCreateGame(remoteSpace);
-            Thread thread = new Thread(threadCreateGame);
+            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(remoteSpace);
+            Thread thread = new Thread(threadCreateBoard);
             thread.start();
 
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
+            thread.join();
 
-            if (threadCreateGame.amIBoardCreator()){
-                threadCreateGame.setAlive(false);
+/*            if (threadCreateBoard.amIBoardCreator()){
+                threadCreateBoard.setAlive(false);
 
             } else {
-                thread.interrupt();
+                //thread.interrupt();
+                thread.stop();
                 System.out.println();
-            }
+            }*/
 
 
 /*            if (thread.isAlive()) {
@@ -83,6 +87,8 @@ public class Client {
 
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
+            System.out.println("You are connected to board: " + spaceId);
+
 
             Space newSpace = new RemoteSpace(uri2);
             ClientServer server = new ClientServer(newSpace);
@@ -111,14 +117,16 @@ public class Client {
             ThreadStartGame threadStartGame = new ThreadStartGame(server, player);
             Thread sThread = new Thread(threadStartGame);
             sThread.start();
-
+            // Waiting for an invitation
             Object[] ackMsg = server.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
             String invitedPlayerName = ackMsg[2].toString();
-            threadStartGame.setAlive(false);
-            if (!threadStartGame.isAmIHost()) {
-                sThread.interrupt();
+
+            Object[] obj = server.query(new ActualField("host"), new FormalField(Object.class));
+            String hostClientId = obj[1].toString();
+
+            if (!Objects.equals(hostClientId, clientID)) {
                 while (true) {
-                    System.out.println("\nYou are invited to join " + invitedPlayerName + "'s game. Write <ok> to join, or <no> to refuse.");
+                    System.out.println("\nYou are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
                     String userInput = input.readLine();
                     if (userInput.equalsIgnoreCase("ok")) {
                         server.put("ack", "ok", clientID);
@@ -130,6 +138,16 @@ public class Client {
             } else  {
                 System.out.println("Waiting for player(s) to join...");
             }
+
+/*            Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, false));
+            checkAckThread.start();
+
+            Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, true));*/
+
+
+            server.get(new ActualField("game started"));
+            System.out.println("Game is starting...");
+
 
 
             server.getp(new ActualField("hello"));

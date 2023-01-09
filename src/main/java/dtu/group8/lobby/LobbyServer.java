@@ -63,6 +63,7 @@ public class LobbyServer {
                 String newSpaceId = "boardId" + spaceCounter;
                 repository.add(newSpaceId, newSpace);
 
+
                 //Not used yet
                 newSpace.put(LOCK_FOR_GAME_START);
 

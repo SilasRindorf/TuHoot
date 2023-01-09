@@ -3,17 +3,14 @@ package dtu.group8.client;
 import org.jspace.ActualField;
 import org.jspace.RemoteSpace;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 
-public class ThreadCreateGame implements Runnable {
-    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\tor wait to get a board";
+public class ThreadCreateBoard implements Runnable {
+    private final String OPTIONS = "Options:\n\t1. create board\n\tor press enter to wait for a board";
     private RemoteSpace remoteSpace;
     private boolean isAlive = true;
     private boolean amIBoardCreator = false;
-    public ThreadCreateGame(RemoteSpace remoteSpace) {
+    public ThreadCreateBoard(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
     }
     @Override
@@ -36,12 +33,10 @@ public class ThreadCreateGame implements Runnable {
                     amIBoardCreator = true;
                     remoteSpace.put("createBoardLock");
                     break;
-                } else if (userInput.equalsIgnoreCase("join board") ||
-                        userInput.equalsIgnoreCase("2")){
+
+                } else if (userInput.equalsIgnoreCase("")){
+                    System.out.println("Waiting for a board...");
                     break;
-                } else if (userInput.equalsIgnoreCase("exit") ||
-                        userInput.equalsIgnoreCase("3")){
-                    System.out.println("Exiting...");
                 }
             }
         } catch (InterruptedException e) {
@@ -49,9 +44,9 @@ public class ThreadCreateGame implements Runnable {
         }
     }
 
-    public void setAlive(boolean alive) {
+/*    public void setAlive(boolean alive) {
         isAlive = alive;
-    }
+    }*/
 
     public boolean amIBoardCreator() {
         return amIBoardCreator;
