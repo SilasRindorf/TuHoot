@@ -29,12 +29,11 @@ public class Client {
     // Port of server
     private final String PORT = "9002";
     // localhost
-    //private final String LOCALHOST = "127.0.0.1";
-    private static final String LOCALHOST = "10.209.95.114";
+    private final String LOCALHOST = "localhost";
+    //private static final String LOCALHOST = "10.209.95.114";
 
     private static final String TYPE = "?keep";
     private String name = "";
-    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
     private BufferedReader input;
     private boolean amIHost = false;
 
@@ -120,7 +119,7 @@ public class Client {
             } else {
                 System.out.println("Failed to start game");
             }
-            System.out.println("playing game");
+            System.out.println("playing game!");
             while (!((Integer) t[1] == 0)) {
                 // Answer server ack
                 t = server.query(new FormalField(Integer.class));
@@ -132,15 +131,13 @@ public class Client {
                 //Questionable stuff starts now
                 //Get question from server and print to console
                 t = server.query(new ActualField("Q"), new FormalField(String.class));
-                System.out.println("Question: " + t[2]);
+                System.out.println("Question: " + t[1]);
                 //Get answer and send to server
-                server.put( clientID, input.readLine());
+                server.put(clientID, input.readLine());
                 //Get actual answer from server
-                t = server.query(new ActualField("A"),new FormalField(String.class));
+                t = server.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
                 //Should check if client already supplied correct answer
-                System.out.println("Correct answer was " + t[3]);
-                //Sleep because nap time
-                Thread.sleep(2000);
+                System.out.println("Answer was " + t[2]);
                 //Questionable coding ends.... maybe
 
                 //Check game state

@@ -13,8 +13,8 @@ import java.util.LinkedList;
 public class LobbyServer {
     static final String CREATE_BOARD = "create board";
     private static final String PORT = "9002";
-    //private static final String LOCALHOST = "localhost";
-    private static final String LOCALHOST = "10.209.95.114";
+    private static final String LOCALHOST = "localhost";
+    //private static final String LOCALHOST = "10.209.127.138";
 
     private static final String TYPE = "?keep";
 

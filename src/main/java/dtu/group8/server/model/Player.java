@@ -3,7 +3,7 @@ package dtu.group8.server.model;
 public class Player {
     private String id;
     private int point = 0;
-    Player(String playerId){
+    public Player(String playerId){
         this.id = playerId;
     }
     void addPoint(int point) {
