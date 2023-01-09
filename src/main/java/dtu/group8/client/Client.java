@@ -32,9 +32,9 @@ public class Client {
     private final String PORT = "9002";
     // localhost
     private final String LOCALHOST = "127.0.0.1";
-
     private static final String TYPE = "?keep";
     private String name = "";
+    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit";
     private BufferedReader input;
     private boolean amIHost = false;
     public Space matchMake(){
@@ -64,12 +64,7 @@ public class Client {
 
             String userInput = "";
             while (true) {
-                System.out.println("Options: ");
-                System.out.println("\t1. create board");
-                System.out.println("\t2. join board");
-                System.out.println("\t3. exit");
-                System.out.println("\t4. wait to get an invitation");
-
+                System.out.println(OPTIONS);
                 System.out.print("Input command: ");
 
                 userInput = input.readLine();
