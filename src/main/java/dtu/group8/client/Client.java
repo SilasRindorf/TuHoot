@@ -1,6 +1,7 @@
 package dtu.group8.client;
 
 import dtu.group8.lobby.LobbyServer;
+import dtu.group8.server.ClientLoop;
 import dtu.group8.server.ClientServer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
@@ -34,9 +35,10 @@ public class Client {
     private final String LOCALHOST = "127.0.0.1";
     private static final String TYPE = "?keep";
     private String name = "";
-    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit";
+    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
     private BufferedReader input;
     private boolean amIHost = false;
+
     public Space matchMake(){
         boolean isBoardCreated = false;
         try {
@@ -61,9 +63,10 @@ public class Client {
             String clientID = UUID.randomUUID().toString();
             remoteSpace.put("lobby", name, clientID);
 
+            new Thread(new ClientLoop(remoteSpace)).start();
 
             String userInput = "";
-            while (true) {
+           /* while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
 
@@ -85,10 +88,12 @@ public class Client {
                     System.out.println("Exiting...");
                     return null;
                 }
-            }
-            System.out.println("Game starting soon...");
+            }*/
+
 
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
+            System.out.println("Game starting soon...");
+
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
 
