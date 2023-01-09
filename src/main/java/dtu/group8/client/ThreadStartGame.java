@@ -1,4 +1,4 @@
-package dtu.group8.server.model;
+package dtu.group8.client;
 
 
 import org.jspace.RemoteSpace;

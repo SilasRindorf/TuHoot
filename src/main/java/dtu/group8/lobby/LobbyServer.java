@@ -62,12 +62,14 @@ public class LobbyServer {
                 //Not used yet
                 newSpace.put("lockForGameStart");
 
-                // Info print + send client info
+                // Info print
                 System.out.println("\tboardId: " + spaceCounter);
                 System.out.println("\tClients");
                 for (Object[] client : obj) {
-                    spaceLobby.put(client[2], newSpaceId);
                     System.out.println("\t\tClient: " + client[2]);
+
+                    //Send info to clients
+                    spaceLobby.put(client[2], newSpaceId);
                 }
             }
         } catch (IOException e) {

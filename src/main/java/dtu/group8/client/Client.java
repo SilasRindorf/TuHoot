@@ -1,9 +1,6 @@
 package dtu.group8.client;
 
-import dtu.group8.lobby.LobbyServer;
-import dtu.group8.server.ClientLoop;
 import dtu.group8.server.ClientServer;
-import dtu.group8.server.model.ThreadStartGame;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -13,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.UUID;
-import java.net.ConnectException;
 
 /**
  * Client
