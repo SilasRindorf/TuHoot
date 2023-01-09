@@ -39,7 +39,7 @@ public class Client {
     String clientID = "";
     private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
     private BufferedReader input;
-    private boolean amIHost = false;
+    //private boolean amIHost = false;
 
     public Space matchMake(){
         try {
@@ -62,15 +62,24 @@ public class Client {
             clientName = input.readLine();
             clientID = UUID.randomUUID().toString();
             remoteSpace.put("lobby", clientName, clientID);
-            ThreadCreateGame looper = new ThreadCreateGame(remoteSpace);
-            Thread thread = new Thread(looper);
+            ThreadCreateGame threadCreateGame = new ThreadCreateGame(remoteSpace);
+            Thread thread = new Thread(threadCreateGame);
             thread.start();
 
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
-            if (thread.isAlive()) {
-                looper.setAlive(false);
+
+            if (threadCreateGame.amIBoardCreator()){
+                threadCreateGame.setAlive(false);
+
+            } else {
+                thread.interrupt();
+                System.out.println();
             }
-            //System.out.println("Game starting soon...");
+
+
+/*            if (thread.isAlive()) {
+                threadCreateGame.setAlive(false);
+            }*/
 
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;

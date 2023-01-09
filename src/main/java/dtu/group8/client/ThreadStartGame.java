@@ -37,9 +37,6 @@ public class ThreadStartGame implements Runnable {
                 System.out.print("Input command: ");
                 //input = new BufferedReader(new InputStreamReader(System.in));
                 Scanner scanner = new Scanner(System.in);
-
-
-
                 String userInput = scanner.nextLine();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     Object[] obj = space.getp(new ActualField(LOCK_FOR_GAME_START));
