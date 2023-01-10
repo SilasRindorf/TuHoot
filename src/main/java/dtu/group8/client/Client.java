@@ -81,10 +81,9 @@ public class Client {
 
 
             Space newSpace = new RemoteSpace(uri2);
-            ClientServer server = new ClientServer(newSpace);
+/*            ClientServer server = new ClientServer(newSpace);
             // TODO
-            server.run();
-
+            server.run();*/
             return newSpace;
         } catch (
                 IOException | InterruptedException e) {
@@ -96,8 +95,8 @@ public class Client {
 
 
 
-    public void start(Space server) {
-        if (server == null){
+    public void start(Space space) {
+        if (space == null){
             return;
         }
         try {
@@ -107,14 +106,14 @@ public class Client {
 
             player = new Player(clientID);
             player.setName(clientName);
-            ThreadStartGame threadStartGame = new ThreadStartGame(server, player);
+            ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
             Thread sThread = new Thread(threadStartGame);
             sThread.start();
             // Waiting for an invitation
-            Object[] ackMsg = server.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
+            Object[] ackMsg = space.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
             String invitedPlayerName = ackMsg[2].toString();
 
-            Object[] obj = server.query(new ActualField("host"), new FormalField(Object.class));
+            Object[] obj = space.query(new ActualField("host"), new FormalField(Object.class));
             String hostClientId = obj[1].toString();
             sThread.join();
             // Checks if this client is the host
@@ -123,11 +122,11 @@ public class Client {
                     System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
                     String userInput = input.readLine();
                     if (userInput.equalsIgnoreCase("ok")) {
-                        server.put("ack", "ok", clientID);
+                        space.put("ack", "ok", clientID);
                         break;
 
                     } else if (userInput.equalsIgnoreCase("no")) {
-                        server.put("ack", "no", clientID);
+                        space.put("ack", "no", clientID);
                         break;
                     }
                 }
@@ -136,33 +135,40 @@ public class Client {
             }
 
             if (Objects.equals(hostClientId, clientID)) {
-                Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, false));
+                Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, false));
                 checkAckThread.start();
                 //checkAckThread.join();
-                Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(server, true));
+                Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, true));
                 sleepThread.start();
             }
 
-            server.query(new ActualField("game started"));
+            space.query(new ActualField("game started"));
             System.out.println("Game is starting...");
 
+            ///// Game starts here.
 
-            server.getp(new ActualField("hello"));
+
+            ClientServer clientServer = new ClientServer(space);
+            clientServer.run();
+
+
+
+            space.getp(new ActualField("hello"));
             //System.out.println("hello received");
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
-            // Connect to server
-            server.put("add", clientName,clientID);
-            // Get ack from server
-            Object[] t = server.get(new ActualField(clientID),new FormalField(String.class));
+            // Connect to space
+            space.put("add", clientName,clientID);
+            // Get ack from space
+            Object[] t = space.get(new ActualField(clientID),new FormalField(String.class));
             if (!t[1].equals("ok")){
                 System.out.println("Server did not ack... returning");
                 return;
             }
-            //Wait for server to start
-            System.out.println("Waiting for server to start");
+            //Wait for space to start
+            System.out.println("Waiting for space to start");
             //Get game state
-            t = server.query(new FormalField(Integer.class));
+            t = space.query(new FormalField(Integer.class));
             if (((Integer) t[1] == 1)){
                 System.out.println("Starting game...");
 
@@ -171,27 +177,27 @@ public class Client {
             }
             System.out.println("playing game!");
             while (!((Integer) t[1] == 0)) {
-                // Answer server ack
-                t = server.query(new FormalField(Integer.class));
+                // Answer space ack
+                t = space.query(new FormalField(Integer.class));
                 if ((Integer) t[1] == 3 ){
-                    server.put( clientID, "ok");
+                    space.put( clientID, "ok");
                 }
                 System.out.println("Question coming up");
 
                 //Questionable stuff starts now
-                //Get question from server and print to console
-                t = server.query(new ActualField("Q"), new FormalField(String.class));
+                //Get question from space and print to console
+                t = space.query(new ActualField("Q"), new FormalField(String.class));
                 System.out.println("Question: " + t[1]);
-                //Get answer and send to server
-                server.put(clientID, input.readLine());
-                //Get actual answer from server
-                t = server.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+                //Get answer and send to space
+                space.put(clientID, input.readLine());
+                //Get actual answer from space
+                t = space.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
                 //Should check if client already supplied correct answer
                 System.out.println("Answer was " + t[2]);
                 //Questionable coding ends.... maybe
 
                 //Check game state
-                t = server.query(new FormalField(Integer.class));
+                t = space.query(new FormalField(Integer.class));
             }
             System.out.println("Stopping game...");
 
