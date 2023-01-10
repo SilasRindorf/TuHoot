@@ -1,33 +1,63 @@
 package dtu.group8.server;
 
-import dtu.group8.server.model.Board;
-import org.jspace.Space;
+import dtu.group8.server.model.Player;
+import dtu.group8.server.model.Quiz;
+import dtu.group8.server.model.QuizQuestion;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class Game {
-    Board board;
-    String id;
-    Space space;
-
-    public Game(Board board, String id, Space space) {
-/*        if (board == null) {
-            board = new Board();
-        }*/
-        this.board = board;
-        this.id = id;
-        this.space = space;
+    private ArrayList<Player> players;
+    private Quiz quiz;
+    public Game() {
+        quiz = new Quiz();
+        quiz.questions.add(new QuizQuestion("2+2","4"));
+        quiz.questions.add(new QuizQuestion("apples","bananas"));
+    }
+    public Game(Quiz quiz) {
+        this.quiz = quiz;
     }
 
 
 
-/*    void addPlayerToGame(Object[] obj) throws InterruptedException {
-        System.out.println(obj[3]);
-        String playerId = obj[3].toString();
-*//*        if (game.id == null) {
-            game.id = obj[1].toString();
-        }*//*
-        space.put(playerId, "ok");
-        this.board.addPlayer(playerId);
-        System.out.println("Player " + playerId + " is added");
-    }*/
+    public void addPlayer(String playerId) {
+        boolean isFound = false;
+        for (Player currPlayer : players) {
+            if (Objects.equals(currPlayer.getId(), playerId)) {
+                isFound = true;
+            }
+        }
+
+        if (!isFound) {
+            players.add(new Player(playerId));
+        }
+
+    }
+    public void removePlayer(String playerId) {
+
+    }
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void selectNewQuestion(){
+        quiz.selectRandomQuestion();
+    }
+    public String getCurrentQuestion() {
+        return quiz.getCurrentQuestion().getQuestion();
+    }
+
+    public boolean correctAnswer(String answer){
+        return quiz.getCurrentQuestion().checkAnswer(answer);
+    }
+
+    public void printOutPlayers() {
+        for (Player player : players) {
+            System.out.println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
+        }
+    }
+
+
 
 }

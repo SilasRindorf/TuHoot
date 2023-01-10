@@ -1,29 +1,23 @@
 package dtu.group8.server.model;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Quiz {
     public ArrayList<QuizQuestion> questions = new ArrayList<QuizQuestion>();
 
+    public QuizQuestion getCurrentQuestion() {
+        return currentQuestion;
+    }
 
-    public void addSomeRandomQuizzes() {
-        QuizQuestion q1 = new QuizQuestion("How many days is a leap year", "366");
-        this.questions.add(q1);
+    private QuizQuestion currentQuestion;
+
+    public void selectRandomQuestion(){
+        int randomNum = ThreadLocalRandom.current().nextInt(0, questions.size());
+        currentQuestion = questions.get(randomNum);
+        questions.remove(randomNum);
     }
 
 }
 
 
-class QuizQuestion{
-     String question;
-     String answer;
-
-    public QuizQuestion(String question, String answer) {
-        this.question = question;
-        this.answer = answer;
-    }
-
-    public boolean checkAnswer(String answer) {
-        return (this.answer.equals(answer.trim().toLowerCase()));
-    }
-}

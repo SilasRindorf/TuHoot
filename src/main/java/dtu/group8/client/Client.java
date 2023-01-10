@@ -33,6 +33,8 @@ public class Client {
     // localhost
     private final String LOCALHOST = "localhost";
     //private static final String LOCALHOST = "10.209.95.114";
+    //private final String IP = "localhost";
+    private static final String IP = "10.209.127.138";
 
     private static final String TYPE = "?keep";
     private Player player;
@@ -73,6 +75,7 @@ public class Client {
 
 
             String spaceId = obj[1].toString();
+            String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
             String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
             System.out.println("You are connected to board: " + spaceId);
 
@@ -166,7 +169,7 @@ public class Client {
             } else {
                 System.out.println("Failed to start game");
             }
-            System.out.println("playing game");
+            System.out.println("playing game!");
             while (!((Integer) t[1] == 0)) {
                 // Answer server ack
                 t = server.query(new FormalField(Integer.class));
@@ -178,15 +181,13 @@ public class Client {
                 //Questionable stuff starts now
                 //Get question from server and print to console
                 t = server.query(new ActualField("Q"), new FormalField(String.class));
-                System.out.println("Question: " + t[2]);
+                System.out.println("Question: " + t[1]);
                 //Get answer and send to server
-                server.put( clientID, input.readLine());
+                server.put(clientID, input.readLine());
                 //Get actual answer from server
-                t = server.query(new ActualField("A"),new FormalField(String.class));
+                t = server.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
                 //Should check if client already supplied correct answer
-                System.out.println("Correct answer was " + t[3]);
-                //Sleep because nap time
-                Thread.sleep(2000);
+                System.out.println("Answer was " + t[2]);
                 //Questionable coding ends.... maybe
 
                 //Check game state
@@ -202,7 +203,7 @@ public class Client {
     }
 
     private String getUri(String parameter) {
-        return  "tcp://" + LOCALHOST + ":" + PORT + "/" + parameter + TYPE;
+        return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
 
 }
