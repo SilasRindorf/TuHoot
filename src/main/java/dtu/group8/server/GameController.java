@@ -29,7 +29,6 @@ public class GameController {
         printer.setDefaultPrintColor(Printer.PrintColor.CYAN);
         printer.println("starting game...");
         printer.println("Adding players...");
-        Thread.sleep(2000);
         // Add players to game
         for (Object[] t : space.getAll(new ActualField("add"),new FormalField(String.class),new FormalField(String.class))){
             game.addPlayer(t[2].toString());
@@ -46,23 +45,24 @@ public class GameController {
 
             printer.println("Waiting for answers");
             long timeMillis = System.currentTimeMillis();
-            long end = timeMillis+30000;
+            long end = timeMillis+10000;
             while(System.currentTimeMillis() < end) {
                 // do something
+                Thread.sleep(2000);
                 Object[] t = space.getp(new ActualField("A"),new FormalField(String.class),new FormalField(String.class));
                 if (t != null) {
-                    printer.println("Checking answer=\"" + t[2].toString() + "\" for question=\"" + game.getCurrentQuestion() + "\"");
+                    printer.println("Checking submitted answer=\"" + t[2].toString() + "\" for question=\"" + game.getCurrentQuestion() + "\"");
                     game.checkAnswer(t[2].toString());
                     printer.println("Replying to answer");
-                    space.put("V", t[1], game.checkAnswer(t[2].toString()));
+                    space.put("V", t[1], game.checkAnswer(t[2].toString()) );
                 }
             }
             printer.println("No longer waiting for answers");
+            space.get(new ActualField("Q"), new FormalField(String.class));
             printer.println("Updating game state");
 
-            updateGameState(space,GameState.NEXT);
             printer.println("Sending correct answer");
-
+            space.getp(new ActualField("A"), new FormalField(String.class));
             space.put("A",game.getCurrentAnswer());
             printer.println("Selecting new question");
             game.selectNewQuestion();

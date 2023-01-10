@@ -171,7 +171,7 @@ public class Client {
             //Get game state
             t = space.query(new ActualField("gameState"), new FormalField(Integer.class));
             if (((Integer) t[1] == 1)){
-                System.out.println("Starting game...");
+                log.println("Starting game...");
 
             } else {
                 System.out.println("Failed to start game");
@@ -194,15 +194,13 @@ public class Client {
                 System.out.println("Question: " + t[1]);
                 //____________________________________ ANSWER ____________________________________
                 Object[] gameState = space.queryp(new ActualField("gameState"),new FormalField(Integer.class));
-                while ((int) gameState[1] == 4){
-                    space.queryp(new ActualField("gameState"),new FormalField(String.class));
-                }
+
                 log.println("Getting answer and sending it to space");
                 //Get answer and send to space
-                space.put(clientID, input.readLine());
+                space.put("A",clientID, input.readLine());
                 log.println("Waiting for verification of answer");
                 //Get verified answer from space
-                t = space.query(new ActualField("V"),new FormalField(String.class),new FormalField(String.class));
+                t = space.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
                 log.println("Received verification from Space");
                 if ((boolean) t[2]){
                     System.out.println("You got the answer correct!");
@@ -210,14 +208,16 @@ public class Client {
                     System.out.println("Wrong answer!");
                 }
                 //Should check if client already supplied correct answer
-                System.out.println("Answer was " + t[2]);
+                t = space.query(new ActualField("A"), new FormalField(String.class));
+                System.out.println("Answer was " + t[1]);
                 //Questionable coding ends.... maybe
 
                 //Check game state
                 t = space.query(new ActualField("gameState"), new FormalField(Integer.class));
+                log.println("Next question");
             }
             //____________________________________ GAME END ____________________________________
-            System.out.println("Stopping game...");
+            log.println("Stopping game...");
             //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
                 IOException | InterruptedException e) {
