@@ -15,6 +15,7 @@ public class Game {
         quiz = new Quiz();
         quiz.questions.add(new QuizQuestion("2+2","5"));
         quiz.questions.add(new QuizQuestion("apples","bananas"));
+        players = new ArrayList<>();
     }
     public Game(Quiz quiz) {
         this.quiz = quiz;

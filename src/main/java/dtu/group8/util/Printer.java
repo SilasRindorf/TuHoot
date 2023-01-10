@@ -3,7 +3,7 @@ package dtu.group8.util;
 public class Printer {
     private boolean log = true;
     private String defaultTAG = "";
-    private PrintColor defaultPrintColor = PrintColor.WHITE;
+    private PrintColor defaultPrintColor = PrintColor.ANSI_RESET;
     public Printer(){
 
     }

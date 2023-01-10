@@ -101,6 +101,7 @@ public class Client {
             if (input == null){
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
+            Printer printer = new Printer();
 
             player = new Player(clientID);
             player.setName(clientName);
@@ -144,20 +145,22 @@ public class Client {
             System.out.println("Game is starting...");
 
             ///// Game starts here.
+            printer.println("Adding client");
+            space.put("add", clientName,clientID);
 
             if (Objects.equals(hostClientId, clientID)) {
                 System.out.println("You are the host.");
                 ClientServer clientServer = new ClientServer(space);
                 clientServer.run();
+                printer.println("Thread started",Printer.PrintColor.YELLOW);
             }
 
-
-            // Generate random client ID
-            String clientID = String.valueOf(Math.random());
             // Connect to space
-            space.put("add", clientName,clientID);
             // Get ack from space
+            printer.println("Getting ack",Printer.PrintColor.YELLOW);
             Object[] t = space.get(new ActualField(clientID),new FormalField(String.class));
+            printer.println("Got ack response",Printer.PrintColor.YELLOW);
+
             if (!t[1].equals("ok")){
                 System.out.println("Server did not ack... returning");
                 return;
