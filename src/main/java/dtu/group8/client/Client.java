@@ -151,8 +151,8 @@ public class Client {
 
             if (Objects.equals(hostClientId, clientID)) {
                 System.out.println("You are the host.");
-                Thread threadies = new Thread(new ClientServer(space));
-                threadies.start();
+                Thread gameThread = new Thread(new ClientServer(space));
+                gameThread.start();
                 printer.println("Thread started",Printer.PrintColor.YELLOW);
             }
 
