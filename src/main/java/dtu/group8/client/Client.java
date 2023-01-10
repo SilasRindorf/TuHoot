@@ -33,8 +33,8 @@ public class Client {
     // localhost
     private final String LOCALHOST = "localhost";
     //private static final String LOCALHOST = "10.209.95.114";
-    //private final String IP = "localhost";
-    private static final String IP = "10.209.127.138";
+    private final String IP = "localhost";
+    //private static final String IP = "10.209.127.138";
 
     private static final String TYPE = "?keep";
     private Player player;
@@ -76,7 +76,7 @@ public class Client {
 
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
-            String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
+            //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
             System.out.println("You are connected to board: " + spaceId);
 
 
