@@ -150,8 +150,8 @@ public class Client {
 
             if (Objects.equals(hostClientId, clientID)) {
                 System.out.println("You are the host.");
-                ClientServer clientServer = new ClientServer(space);
-                clientServer.run();
+                Thread threadies = new Thread(new ClientServer(space));
+                threadies.start();
                 printer.println("Thread started",Printer.PrintColor.YELLOW);
             }
 
@@ -168,12 +168,13 @@ public class Client {
             //Wait for space to start
             System.out.println("Waiting for space to start");
             //Get game state
-            t = space.query(new FormalField(Integer.class));
+            t = space.query(new ActualField("gameState"), new FormalField(Integer.class));
             if (((Integer) t[1] == 1)){
                 System.out.println("Starting game...");
 
             } else {
                 System.out.println("Failed to start game");
+                return;
             }
             //____________________________________ STARTING GAME ____________________________________
             System.out.println("playing game!");
