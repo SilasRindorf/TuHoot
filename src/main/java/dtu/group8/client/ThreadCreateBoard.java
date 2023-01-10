@@ -11,15 +11,14 @@ import java.util.Scanner;
 public class ThreadCreateBoard implements Runnable {
     private final String OPTIONS = "Options:\n\t1. create board\n\tor press enter to wait for a board";
     private RemoteSpace remoteSpace;
-    private boolean isAlive = true;
-    private boolean amIBoardCreator = false;
+
     public ThreadCreateBoard(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
     }
     @Override
     public void run() {
         try {
-            while (isAlive) {
+            while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
                 BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -29,7 +28,6 @@ public class ThreadCreateBoard implements Runnable {
                     remoteSpace.get(new ActualField("createBoardLock"));
 
                     remoteSpace.put("create board");
-                    amIBoardCreator = true;
                     remoteSpace.put("createBoardLock");
                     break;
 
@@ -43,11 +41,5 @@ public class ThreadCreateBoard implements Runnable {
         }
     }
 
-/*    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }*/
 
-    public boolean amIBoardCreator() {
-        return amIBoardCreator;
-    }
 }

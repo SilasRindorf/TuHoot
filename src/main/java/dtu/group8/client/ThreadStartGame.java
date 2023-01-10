@@ -89,6 +89,7 @@ class Thread_Acknowledgement_ToJoinGame implements Runnable {
             if (sleepThread) {
                 sleep(10000);
                 space.put("game started");
+                // TODO Remove players that have not responded.
                 return;
             }
 
@@ -100,6 +101,8 @@ class Thread_Acknowledgement_ToJoinGame implements Runnable {
             }
 
             space.put("game started");
+
+            // TODO Remove players that replies "no"
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
