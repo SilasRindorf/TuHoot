@@ -4,7 +4,8 @@ public enum GameState {
     STOP(0),
     START(1),
     PAUSE(2),
-    ACK(3);
+    ACK(3),
+    NEXT(4);
     public final int value;
 
     GameState(int value) {

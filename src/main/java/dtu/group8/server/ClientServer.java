@@ -6,9 +6,7 @@ import org.jspace.Space;
 
 public class ClientServer implements Runnable{
     private GameController gameController;
-    private Space space;
     public ClientServer(Space space){
-        this.space = space;
         this.gameController = new GameController(space);
     }
 
@@ -19,7 +17,7 @@ public class ClientServer implements Runnable{
 
             //space.put("joinMe");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
     }

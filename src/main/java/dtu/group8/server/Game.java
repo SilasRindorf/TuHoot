@@ -3,6 +3,7 @@ package dtu.group8.server;
 import dtu.group8.server.model.Player;
 import dtu.group8.server.model.Quiz;
 import dtu.group8.server.model.QuizQuestion;
+import dtu.group8.util.Printer;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -47,14 +48,17 @@ public class Game {
     public String getCurrentQuestion() {
         return quiz.getCurrentQuestion().getQuestion();
     }
+    public String getCurrentAnswer(){
+        return quiz.getCurrentQuestion().getAnswer();
+    }
 
-    public boolean correctAnswer(String answer){
+    public boolean checkAnswer(String answer){
         return quiz.getCurrentQuestion().checkAnswer(answer);
     }
 
     public void printOutPlayers() {
         for (Player player : players) {
-            System.out.println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
+            Printer.getInstance().print("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint(), Printer.PrintColor.CYAN);
         }
     }
 

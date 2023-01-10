@@ -74,9 +74,6 @@ public class Client {
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
 
             Space newSpace = new RemoteSpace(uri2);
-            ClientServer server = new ClientServer(newSpace);
-            // TODO
-            server.run();
 
             return newSpace;
         } catch (
@@ -87,6 +84,7 @@ public class Client {
 
     }
     public void start(Space server) {
+        //____________________________________ SETUP ____________________________________
         if (server == null){
             return;
         }
@@ -97,8 +95,6 @@ public class Client {
 
             new Thread(new ThreadStartGame(server)).start();
 
-            server.getp(new ActualField("hello"));
-            System.out.println("hello received");
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
             // Connect to server
@@ -112,13 +108,14 @@ public class Client {
             //Wait for server to start
             System.out.println("Waiting for server to start");
             //Get game state
-            t = server.query(new FormalField(Integer.class));
+            t = server.query(new ActualField("gameState"), new FormalField(Integer.class));
             if (((Integer) t[1] == 1)){
                 System.out.println("Starting game...");
 
             } else {
                 System.out.println("Failed to start game");
             }
+            //____________________________________ STARTING GAME ____________________________________
             System.out.println("playing game!");
             while (!((Integer) t[1] == 0)) {
                 // Answer server ack
@@ -126,25 +123,38 @@ public class Client {
                 if ((Integer) t[1] == 3 ){
                     server.put( clientID, "ok");
                 }
+                //____________________________________ RECEIVE QUESTION ____________________________________
                 System.out.println("Question coming up");
 
                 //Questionable stuff starts now
                 //Get question from server and print to console
                 t = server.query(new ActualField("Q"), new FormalField(String.class));
                 System.out.println("Question: " + t[1]);
+                //____________________________________ ANSWER ____________________________________
+                Object[] gameState = server.queryp(new ActualField("gameState"),new FormalField(Integer.class));
+                while ((int) gameState[1] == 4){
+                    server.queryp(new ActualField("gameState"),new FormalField(String.class));
+                }
                 //Get answer and send to server
                 server.put(clientID, input.readLine());
                 //Get actual answer from server
                 t = server.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+                if ((boolean) t[2]){
+                    System.out.println("You got the answer correct!");
+                } else {
+                    System.out.println("Wrong answer!");
+                }
+
                 //Should check if client already supplied correct answer
                 System.out.println("Answer was " + t[2]);
                 //Questionable coding ends.... maybe
 
                 //Check game state
-                t = server.query(new FormalField(Integer.class));
+                t = server.query(new ActualField("gameState"), new FormalField(Integer.class));
             }
+            //____________________________________ GAME END ____________________________________
             System.out.println("Stopping game...");
-
+            //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
                 IOException | InterruptedException e) {
             // TODO Auto-generated catch block
