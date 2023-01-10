@@ -147,9 +147,12 @@ public class Client {
 
             ///// Game starts here.
 
+            if (Objects.equals(hostClientId, clientID)) {
+                System.out.println("Your are the host.");
+                ClientServer clientServer = new ClientServer(space);
+                clientServer.run();
+            }
 
-            ClientServer clientServer = new ClientServer(space);
-            clientServer.run();
 
 
 
