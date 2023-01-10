@@ -6,15 +6,14 @@ import org.jspace.RemoteSpace;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
-public class ClientLoop implements Runnable {
-    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\tor wait to get a board";
+public class ThreadCreateBoard implements Runnable {
+    private final String OPTIONS = "Options:\n\t1. create board\n\tor press enter to wait for a board";
     private RemoteSpace remoteSpace;
-    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }
     private boolean isAlive = true;
-    public ClientLoop(RemoteSpace remoteSpace) {
+    private boolean amIBoardCreator = false;
+    public ThreadCreateBoard(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
     }
     @Override
@@ -24,27 +23,31 @@ public class ClientLoop implements Runnable {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
                 BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("create board") ||
                         userInput.equalsIgnoreCase("1")){
                     remoteSpace.get(new ActualField("createBoardLock"));
 
                     remoteSpace.put("create board");
-                    //isBoardCreated = true;
-
+                    amIBoardCreator = true;
                     remoteSpace.put("createBoardLock");
                     break;
-                } else if (userInput.equalsIgnoreCase("join board") ||
-                        userInput.equalsIgnoreCase("2")){
+
+                } else if (userInput.equalsIgnoreCase("")){
+                    System.out.println("Waiting for a board...");
                     break;
-                } else if (userInput.equalsIgnoreCase("exit") ||
-                        userInput.equalsIgnoreCase("3")){
-                    System.out.println("Exiting...");
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+/*    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }*/
+
+    public boolean amIBoardCreator() {
+        return amIBoardCreator;
     }
 }

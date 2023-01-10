@@ -1,6 +1,7 @@
 package dtu.group8.client;
 
 import dtu.group8.server.ClientServer;
+import dtu.group8.server.model.Player;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -9,6 +10,7 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -29,16 +31,19 @@ public class Client {
     // Port of server
     private final String PORT = "9002";
     // localhost
-    //private final String IP = "localhost";
-    private static final String IP = "10.209.127.138";
+    //private static final String LOCALHOST = "10.209.95.114";
+    private final String IP = "localhost";
 
     private static final String TYPE = "?keep";
-    private String name = "";
+    private Player player;
+    private String clientName = "";
+    String clientID = "";
+    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
     private BufferedReader input;
-    private boolean amIHost = false;
+    public static Object[] allPlayers;
+    //private boolean amIHost = false;
 
     public Space matchMake(){
-        boolean isBoardCreated = false;
         try {
 
             input = new BufferedReader(new InputStreamReader(System.in));
@@ -56,25 +61,27 @@ public class Client {
 
             // Read client name from the console
             System.out.print("Enter your name: ");
-            name = input.readLine();
-
-            String clientID = UUID.randomUUID().toString();
-            remoteSpace.put("lobby", name, clientID);
-            ClientLoop looper = new ClientLoop(remoteSpace);
-            Thread thread = new Thread(looper);
+            clientName = input.readLine();
+            clientID = UUID.randomUUID().toString();
+            remoteSpace.put("lobby", clientName, clientID);
+            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(remoteSpace);
+            Thread thread = new Thread(threadCreateBoard);
             thread.start();
 
             Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
-            if (thread.isAlive()) {
-                looper.setAlive(false);
-            }
-            System.out.println("Game starting soon...");
+            thread.join();
+
 
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
+            //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
+            System.out.println("You are connected to board: " + spaceId);
+
 
             Space newSpace = new RemoteSpace(uri2);
-
+/*            ClientServer server = new ClientServer(newSpace);
+            // TODO
+            server.run();*/
             return newSpace;
         } catch (
                 IOException | InterruptedException e) {
@@ -93,22 +100,74 @@ public class Client {
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
 
-            new Thread(new ThreadStartGame(server)).start();
+            player = new Player(clientID);
+            player.setName(clientName);
+            ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
+            Thread sThread = new Thread(threadStartGame);
+            sThread.start();
+            // Waiting for an invitation
+            Object[] ackMsg = space.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
+            String invitedPlayerName = ackMsg[2].toString();
 
+            Object[] obj = space.query(new ActualField("host"), new FormalField(Object.class));
+            String hostClientId = obj[1].toString();
+            sThread.join();
+            // Checks if this client is the host
+            if (!Objects.equals(hostClientId, clientID)) {
+                while (true) {
+                    System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
+                    String userInput = input.readLine();
+                    if (userInput.equalsIgnoreCase("ok")) {
+                        space.put("ack", "ok", clientID);
+                        break;
+
+                    } else if (userInput.equalsIgnoreCase("no")) {
+                        space.put("ack", "no", clientID);
+                        break;
+                    }
+                }
+            } else  {
+                System.out.println("Waiting for player(s) to join...");
+            }
+
+            if (Objects.equals(hostClientId, clientID)) {
+                Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, false));
+                checkAckThread.start();
+                //checkAckThread.join();
+                Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, true));
+                sleepThread.start();
+            }
+
+            space.query(new ActualField("game started"));
+            System.out.println("Game is starting...");
+
+            ///// Game starts here.
+
+            if (Objects.equals(hostClientId, clientID)) {
+                System.out.println("Your are the host.");
+                ClientServer clientServer = new ClientServer(space);
+                clientServer.run();
+            }
+
+
+
+
+            space.getp(new ActualField("hello"));
+            //System.out.println("hello received");
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
-            // Connect to server
-            server.put("add",name,clientID);
-            // Get ack from server
-            Object[] t = server.get(new ActualField(clientID),new FormalField(String.class));
+            // Connect to space
+            space.put("add", clientName,clientID);
+            // Get ack from space
+            Object[] t = space.get(new ActualField(clientID),new FormalField(String.class));
             if (!t[1].equals("ok")){
                 System.out.println("Server did not ack... returning");
                 return;
             }
-            //Wait for server to start
-            System.out.println("Waiting for server to start");
+            //Wait for space to start
+            System.out.println("Waiting for space to start");
             //Get game state
-            t = server.query(new ActualField("gameState"), new FormalField(Integer.class));
+            t = space.query(new FormalField(Integer.class));
             if (((Integer) t[1] == 1)){
                 System.out.println("Starting game...");
 
@@ -118,33 +177,32 @@ public class Client {
             //____________________________________ STARTING GAME ____________________________________
             System.out.println("playing game!");
             while (!((Integer) t[1] == 0)) {
-                // Answer server ack
-                t = server.query(new FormalField(Integer.class));
+                // Answer space ack
+                t = space.query(new FormalField(Integer.class));
                 if ((Integer) t[1] == 3 ){
-                    server.put( clientID, "ok");
+                    space.put( clientID, "ok");
                 }
                 //____________________________________ RECEIVE QUESTION ____________________________________
                 System.out.println("Question coming up");
 
                 //Questionable stuff starts now
-                //Get question from server and print to console
-                t = server.query(new ActualField("Q"), new FormalField(String.class));
+                //Get question from space and print to console
+                t = space.query(new ActualField("Q"), new FormalField(String.class));
                 System.out.println("Question: " + t[1]);
                 //____________________________________ ANSWER ____________________________________
                 Object[] gameState = server.queryp(new ActualField("gameState"),new FormalField(Integer.class));
                 while ((int) gameState[1] == 4){
                     server.queryp(new ActualField("gameState"),new FormalField(String.class));
                 }
-                //Get answer and send to server
-                server.put(clientID, input.readLine());
-                //Get actual answer from server
-                t = server.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+                //Get answer and send to space
+                space.put(clientID, input.readLine());
+                //Get actual answer from space
+                t = space.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
                 if ((boolean) t[2]){
                     System.out.println("You got the answer correct!");
                 } else {
                     System.out.println("Wrong answer!");
                 }
-
                 //Should check if client already supplied correct answer
                 System.out.println("Answer was " + t[2]);
                 //Questionable coding ends.... maybe
