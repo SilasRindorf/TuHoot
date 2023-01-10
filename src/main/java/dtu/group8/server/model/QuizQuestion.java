@@ -10,7 +10,7 @@ public class QuizQuestion {
     }
 
     public boolean checkAnswer(String answer) {
-        return (this.answer.equals(answer.trim().toLowerCase()));
+        return (this.answer.trim().toLowerCase().equals(answer.trim().toLowerCase()));
     }
 
     public String getQuestion() {

@@ -1,30 +1,66 @@
 package dtu.group8.util;
 
 public class Printer {
-    private static Printer instance;
-    public boolean log = true;
-    private Printer(){
+    private boolean log = true;
+    private String defaultTAG = "";
+    private PrintColor defaultPrintColor = PrintColor.WHITE;
+    public Printer(){
 
     }
-    public static Printer getInstance(){
-        if (instance == null){
-            instance = new Printer();
-        }
-        return instance;
+
+    public Printer(String defaultTAG, PrintColor defaultPrintColor){
+        this.defaultTAG = defaultTAG + " ";
+        this.defaultPrintColor = defaultPrintColor;
     }
 
 
     public void print(String TAG, String str, PrintColor color){
         if (log) {
-            System.out.println(color.value + TAG + ": " + str + PrintColor.ANSI_RESET.value);
+            System.out.print(color.value + TAG + str + PrintColor.ANSI_RESET.value);
         }
     }
     public void print(String str, PrintColor color){
-        print("",str,color);
+        print(defaultTAG,str,color);
     }
 
     public void print(String str){
-        print(str, PrintColor.WHITE);
+        print(str, defaultPrintColor);
+    }
+    public void println(String TAG, String str, PrintColor color){
+        if (log) {
+            System.out.println(color.value + TAG + str + PrintColor.ANSI_RESET.value);
+        }
+    }
+    public void println(String str, PrintColor color){
+        println(defaultTAG,str,color);
+    }
+
+    public void println(String str){
+        println(str, defaultPrintColor);
+    }
+
+    public boolean isLog() {
+        return log;
+    }
+
+    public void setLog(boolean log) {
+        this.log = log;
+    }
+
+    public String getDefaultTAG() {
+        return defaultTAG;
+    }
+
+    public void setDefaultTAG(String defaultTAG) {
+        this.defaultTAG = defaultTAG + " ";
+    }
+
+    public PrintColor getDefaultPrintColor() {
+        return defaultPrintColor;
+    }
+
+    public void setDefaultPrintColor(PrintColor defaultPrintColor) {
+        this.defaultPrintColor = defaultPrintColor;
     }
 
     public enum PrintColor {

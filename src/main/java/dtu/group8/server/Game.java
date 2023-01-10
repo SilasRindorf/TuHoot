@@ -13,7 +13,7 @@ public class Game {
     private Quiz quiz;
     public Game() {
         quiz = new Quiz();
-        quiz.questions.add(new QuizQuestion("2+2","4"));
+        quiz.questions.add(new QuizQuestion("2+2","5"));
         quiz.questions.add(new QuizQuestion("apples","bananas"));
     }
     public Game(Quiz quiz) {
@@ -58,7 +58,7 @@ public class Game {
 
     public void printOutPlayers() {
         for (Player player : players) {
-            Printer.getInstance().print("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint(), Printer.PrintColor.CYAN);
+            new Printer().println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
         }
     }
 

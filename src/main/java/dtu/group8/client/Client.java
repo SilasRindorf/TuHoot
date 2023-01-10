@@ -2,6 +2,7 @@ package dtu.group8.client;
 
 import dtu.group8.server.ClientServer;
 import dtu.group8.server.model.Player;
+import dtu.group8.util.Printer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -38,17 +39,17 @@ public class Client {
     private Player player;
     private String clientName = "";
     String clientID = "";
-    private final String OPTIONS = "Options:\n\t1. create board\n\t2. join board\n\t3. exit\n\t or wait to get an invitation";
     private BufferedReader input;
     public static Object[] allPlayers;
     //private boolean amIHost = false;
 
     public Space matchMake(){
         try {
+            Printer printer = new Printer("Client:matchMake",Printer.PrintColor.WHITE);
 
             input = new BufferedReader(new InputStreamReader(System.in));
             // Set the URI of the chat space
-            System.out.print("Enter URI of the chat server or press enter for default: ");
+            printer.print("Enter URI of the chat server or press enter for default: ");
             String uri = input.readLine();
             // Default value
             if (uri.isEmpty()) {
@@ -56,11 +57,13 @@ public class Client {
                 uri = getUri("lobby");
             }
             // Connect to the remote chat space
-            System.out.println("Connecting to chat space " + uri + "...");
+            printer.println("Connecting to chat space " + uri + "...");
+
             RemoteSpace remoteSpace = new RemoteSpace(uri);
 
             // Read client name from the console
-            System.out.print("Enter your name: ");
+            printer.print("","Enter your name: ", Printer.PrintColor.ANSI_RESET);
+
             clientName = input.readLine();
             clientID = UUID.randomUUID().toString();
             remoteSpace.put("lobby", clientName, clientID);
@@ -75,8 +78,7 @@ public class Client {
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
             //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
-            System.out.println("You are connected to board: " + spaceId);
-
+            printer.println("You are connected to board " + spaceId);
 
             Space newSpace = new RemoteSpace(uri2);
 /*            ClientServer server = new ClientServer(newSpace);
@@ -90,9 +92,9 @@ public class Client {
         return null;
 
     }
-    public void start(Space server) {
+    public void start(Space space) {
         //____________________________________ SETUP ____________________________________
-        if (server == null){
+        if (space == null){
             return;
         }
         try {
@@ -144,16 +146,12 @@ public class Client {
             ///// Game starts here.
 
             if (Objects.equals(hostClientId, clientID)) {
-                System.out.println("Your are the host.");
+                System.out.println("You are the host.");
                 ClientServer clientServer = new ClientServer(space);
                 clientServer.run();
             }
 
 
-
-
-            space.getp(new ActualField("hello"));
-            //System.out.println("hello received");
             // Generate random client ID
             String clientID = String.valueOf(Math.random());
             // Connect to space
@@ -190,9 +188,9 @@ public class Client {
                 t = space.query(new ActualField("Q"), new FormalField(String.class));
                 System.out.println("Question: " + t[1]);
                 //____________________________________ ANSWER ____________________________________
-                Object[] gameState = server.queryp(new ActualField("gameState"),new FormalField(Integer.class));
+                Object[] gameState = space.queryp(new ActualField("gameState"),new FormalField(Integer.class));
                 while ((int) gameState[1] == 4){
-                    server.queryp(new ActualField("gameState"),new FormalField(String.class));
+                    space.queryp(new ActualField("gameState"),new FormalField(String.class));
                 }
                 //Get answer and send to space
                 space.put(clientID, input.readLine());
@@ -208,7 +206,7 @@ public class Client {
                 //Questionable coding ends.... maybe
 
                 //Check game state
-                t = server.query(new ActualField("gameState"), new FormalField(Integer.class));
+                t = space.query(new ActualField("gameState"), new FormalField(Integer.class));
             }
             //____________________________________ GAME END ____________________________________
             System.out.println("Stopping game...");

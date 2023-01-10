@@ -24,26 +24,45 @@ public class GameController {
     }
 
     public void startGame() throws InterruptedException {
-        Printer.getInstance().print(TAG,"starting game...",Printer.PrintColor.CYAN);
-        Printer.getInstance().print(TAG,"Adding players...",Printer.PrintColor.CYAN);
+        Printer printer = new Printer();
+        printer.setDefaultTAG( TAG + ":startGame");
+        printer.setDefaultPrintColor(Printer.PrintColor.CYAN);
+        printer.println("starting game...");
+        printer.println("Adding players...");
 
         // Add players to game
         for (Object[] t : space.getAll(new ActualField("add"),new FormalField(String.class))){
             game.addPlayer(t[1].toString());
         }
+        printer.println("Done adding players");
+        printer.println("Selecting question");
+
         game.selectNewQuestion();
+        printer.println("Selected question");
         while (game.getCurrentQuestion() != null && isAlive){
             space.put("Q",game.getCurrentQuestion());
+
+            printer.println("Waiting for answers");
             long timeMillis = System.currentTimeMillis();
             long end = timeMillis+30000;
             while(System.currentTimeMillis() < end) {
                 // do something
-                Object[] t = space.get(new ActualField("A"),new FormalField(String.class),new FormalField(String.class));
-                game.checkAnswer(t[2].toString());
-                space.put("V",t[1], game.checkAnswer(t[2].toString()));
+                Object[] t = space.getp(new ActualField("A"),new FormalField(String.class),new FormalField(String.class));
+                if (t != null) {
+                    printer.println("Checking answer=\"" + t[2].toString() + "\" for question=\"" + game.getCurrentQuestion() + "\"");
+                    game.checkAnswer(t[2].toString());
+                    printer.println("Replying to answer");
+                    space.put("V", t[1], game.checkAnswer(t[2].toString()));
+                }
             }
+            printer.println("No longer waiting for answers");
+            printer.println("Updating game state");
+
             updateGameState(space,GameState.NEXT);
+            printer.println("Sending correct answer");
+
             space.put("A",game.getCurrentAnswer());
+            printer.println("Selecting new question");
             game.selectNewQuestion();
         }
     }

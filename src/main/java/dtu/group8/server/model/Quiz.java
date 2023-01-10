@@ -13,6 +13,9 @@ public class Quiz {
     private QuizQuestion currentQuestion;
 
     public void selectRandomQuestion(){
+        if (questions.size() == 0){
+            return;
+        }
         int randomNum = ThreadLocalRandom.current().nextInt(0, questions.size());
         currentQuestion = questions.get(randomNum);
         questions.remove(randomNum);
