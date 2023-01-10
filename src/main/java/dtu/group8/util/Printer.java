@@ -1,7 +1,7 @@
 package dtu.group8.util;
 
 public class Printer {
-    private static boolean log = true;
+    private boolean log = true;
     private String defaultTAG = "";
     private PrintColor defaultPrintColor = PrintColor.ANSI_RESET;
     public Printer(){

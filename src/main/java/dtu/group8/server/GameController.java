@@ -38,7 +38,7 @@ public class GameController {
         }
         printer.println("Done adding players");
         printer.println("Selecting question");
-
+        updateGameState(space,GameState.START);
         game.selectNewQuestion();
         printer.println("Selected question");
         while (game.getCurrentQuestion() != null && isAlive){

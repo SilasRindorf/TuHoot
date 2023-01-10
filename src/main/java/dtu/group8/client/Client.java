@@ -102,6 +102,7 @@ public class Client {
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
             Printer printer = new Printer();
+            Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
             player = new Player(clientID);
             player.setName(clientName);
@@ -157,16 +158,16 @@ public class Client {
 
             // Connect to space
             // Get ack from space
-            printer.println("Getting ack",Printer.PrintColor.YELLOW);
+            log.println("Getting ack");
             Object[] t = space.get(new ActualField(clientID),new FormalField(String.class));
-            printer.println("Got ack response",Printer.PrintColor.YELLOW);
+            log.println("Got ack response");
 
             if (!t[1].equals("ok")){
                 System.out.println("Server did not ack... returning");
                 return;
             }
             //Wait for space to start
-            System.out.println("Waiting for space to start");
+            log.println("Waiting for space to start");
             //Get game state
             t = space.query(new ActualField("gameState"), new FormalField(Integer.class));
             if (((Integer) t[1] == 1)){
@@ -177,10 +178,10 @@ public class Client {
                 return;
             }
             //____________________________________ STARTING GAME ____________________________________
-            System.out.println("playing game!");
+            log.println("playing game!");
             while (!((Integer) t[1] == 0)) {
                 // Answer space ack
-                t = space.query(new FormalField(Integer.class));
+                //t = space.query(new ActualField(clientID), new FormalField(Integer.class));
                 if ((Integer) t[1] == 3 ){
                     space.put( clientID, "ok");
                 }
@@ -196,10 +197,13 @@ public class Client {
                 while ((int) gameState[1] == 4){
                     space.queryp(new ActualField("gameState"),new FormalField(String.class));
                 }
+                log.println("Getting answer and sending it to space");
                 //Get answer and send to space
                 space.put(clientID, input.readLine());
-                //Get actual answer from space
-                t = space.query(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+                log.println("Waiting for verification of answer");
+                //Get verified answer from space
+                t = space.query(new ActualField("V"),new FormalField(String.class),new FormalField(String.class));
+                log.println("Received verification from Space");
                 if ((boolean) t[2]){
                     System.out.println("You got the answer correct!");
                 } else {
