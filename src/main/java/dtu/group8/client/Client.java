@@ -41,7 +41,10 @@ public class Client {
     String clientID = "";
     private BufferedReader input;
     public static Object[] allPlayers;
-    //private boolean amIHost = false;
+    private static final String JOIN_ME_REQ = "join_req";
+    private static final String JOIN_ME_RES = "join_res";
+
+
 
     public Space matchMake(){
         try {
@@ -122,11 +125,11 @@ public class Client {
                     System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
                     String userInput = input.readLine();
                     if (userInput.equalsIgnoreCase("ok")) {
-                        space.put("ack", "ok", clientID);
+                        space.put(JOIN_ME_RES, "ok", clientID);
                         break;
 
                     } else if (userInput.equalsIgnoreCase("no")) {
-                        space.put("ack", "no", clientID);
+                        space.put(JOIN_ME_RES, "no", clientID);
                         break;
                     }
                 }

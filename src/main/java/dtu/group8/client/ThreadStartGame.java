@@ -20,6 +20,8 @@ public class ThreadStartGame implements Runnable {
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private Player player;
     BufferedReader input;
+    private static final String JOIN_ME_REQ = "join_req";
+
 
 
 
@@ -46,7 +48,7 @@ public class ThreadStartGame implements Runnable {
                         String[] pids = (String[]) Client.allPlayers[2];
 
                         for (String pid : pids) {
-                            space.put(pid, "join me", player.getName());
+                            space.put(pid, JOIN_ME_REQ, player.getName());
                         }
                         space.put(LOCK_FOR_GAME_START);
 
@@ -76,6 +78,8 @@ class Thread_Acknowledgement_ToJoinGame implements Runnable {
     String[] pids;
     boolean sleepThread;
     HashMap<String, String> receivedPids;
+    private static final String JOIN_ME_RES = "join_res";
+
 
     public Thread_Acknowledgement_ToJoinGame(Space space, boolean sleepThread) {
         this.space = space;
@@ -96,7 +100,7 @@ class Thread_Acknowledgement_ToJoinGame implements Runnable {
             receivedPids = new HashMap<>();
             pids = (String[]) Client.allPlayers[2];
             for (int i = 0; i < pids.length-1; i++) {
-                Object[] obj = space.get(new ActualField("ack"), new FormalField(Object.class), new FormalField(Object.class));
+                Object[] obj = space.get(new ActualField(JOIN_ME_RES), new FormalField(Object.class), new FormalField(Object.class));
                 receivedPids.put(obj[1].toString(), obj[2].toString());
             }
 
