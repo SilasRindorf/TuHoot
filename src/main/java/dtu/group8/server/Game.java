@@ -7,9 +7,6 @@ import dtu.group8.util.Printer;
 import org.jspace.RemoteSpace;
 import org.jspace.Space;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -17,7 +14,7 @@ public class Game {
     private String id;
     private String name;
     private String host;
-    private Player player;
+    private Player me;
     private ArrayList<Player> players;
     private RemoteSpace remoteSpace;
     private Space space;
@@ -34,12 +31,12 @@ public class Game {
         this.quiz = quiz;
     }
 
-    public Game(String id, String name, String host, Player player,
+    public Game(String id, String name, String host, Player me,
                 ArrayList<Player> players, RemoteSpace remoteSpace, Space space) {
         this.id = id;
         this.name = name;
         this.host = host;
-        this.player = player;
+        this.me = me;
         this.players = players;
         this.remoteSpace = remoteSpace;
         this.space = space;
@@ -147,4 +144,19 @@ public class Game {
         this.quiz = quiz;
     }
 
+    public Space getSpace() {
+        return space;
+    }
+
+    public void setSpace(Space space) {
+        this.space = space;
+    }
+
+    public Player getMe() {
+        return me;
+    }
+
+    public void setMe(Player me) {
+        this.me = me;
+    }
 }

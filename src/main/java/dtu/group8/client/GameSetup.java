@@ -2,6 +2,7 @@ package dtu.group8.client;
 
 import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
+import dtu.group8.util.Printer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -10,25 +11,24 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.Objects;
 
-public class InitializeGame {
+import static dtu.group8.client.Client.*;
+
+public class GameSetup {
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private static final String JOIN_ME_REQ = "join_req";
 
     private RemoteSpace remoteSpace;
-    private Player player;
-    private Game game;
 
-
-    public InitializeGame(Game game, Player player, RemoteSpace remoteSpace) {
-        this.game = game;
-        this.player = player;
+    public GameSetup(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
 
     }
 
-    public void display_create_and_joint_game_options() {
+    public Game initializeGame(Player player) {
+        Game game = new Game();
+        game.setMe(player);
         final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
         try {
             while (true) {
@@ -45,21 +45,27 @@ public class InitializeGame {
                     game.setName(gameName);
                     game.setHost(player.getId());
                     remoteSpace.put("create game",gameName, player.getId(), player.getName());
+                    getSpace(game);
                     break;
 
-                } else if (userInput.equalsIgnoreCase("")){
+                } else if (userInput.equalsIgnoreCase("2") || userInput.equalsIgnoreCase("join game")){
+
                     System.out.println("Waiting for a board...");
                     break;
                 }
             }
+
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
+
+        return game;
     }
 
 
-    public void display_start_game_option (Space space) {
-      /*  try {
+    public void display_start_game_option (Game game) {
+       /* Space space = game.getSpace();
+        try {
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             final String OPTIONS = "Options:\n\t1. start game\n\tor press enter to wait for an invitation";
 
@@ -100,6 +106,26 @@ public class InitializeGame {
 
     void getAllPlayersFromSpace(Game game, Space space) throws InterruptedException {
         Object[] obj = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
+
+    }
+
+    void getSpace(Game game) throws InterruptedException, IOException {
+        Printer printer = new Printer("GameSetup: getSpace", Printer.PrintColor.WHITE);
+
+        Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
+        game.setName(obj[3].toString());
+
+        if (Objects.equals(game.getHost(), game.getMe().getId()))
+            printer.println("Game " + game.getName() +" created");
+
+        game.setId(obj[2].toString()); // spaceId/gameId
+        String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
+        printer.println("You are connected to game " + game.getName());
+        game.setSpace(new RemoteSpace(uri2));
+    }
+
+
+    void joinGame() {
 
     }
 }

@@ -57,12 +57,6 @@ public class Game {
         players.add(player);
     }
 
-    /*    public void setHostId(String hostId) {
-        if (!playerIds.contains(hostId)) {
-            playerIds.add(hostId)
-        }
-        this.hostId = hostId;
-    }*/
 }
 
 
