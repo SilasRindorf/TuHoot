@@ -52,7 +52,14 @@ public class Game {
         return quiz.getAnswer(index);
     }
 
-    public boolean checkAnswer(int index, String answer){
+    public boolean checkAnswer(int index, String answer, String id){
+        // Adds point if players answers correctly
+        Player player = new Player(id);
+        for (Player player1: players) {
+            if(player1.getId().equals(player.getId()) && quiz.checkAnswer(index,answer)){
+                player1.setPoint(500);
+            }
+        }
         return quiz.checkAnswer(index,answer);
     }
     public ArrayList<Player> getPlayers() {
