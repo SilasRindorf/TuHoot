@@ -19,13 +19,8 @@ public class ThreadStartGame implements Runnable {
     private Space space;
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private Player player;
-    BufferedReader input;
+    private BufferedReader input;
     private static final String JOIN_ME_REQ = "join_req";
-
-
-
-
-
     public ThreadStartGame(Space space, Player player) {
         this.space = space;
         this.player = player;
@@ -40,8 +35,7 @@ public class ThreadStartGame implements Runnable {
                 input = new BufferedReader(new InputStreamReader(System.in));
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
-                    Object[] obj = space.getp(new ActualField(LOCK_FOR_GAME_START));
-
+                    Object[] obj = space.get(new ActualField(LOCK_FOR_GAME_START));
                     if (obj[0].equals(LOCK_FOR_GAME_START)) {
 
                         Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
@@ -50,7 +44,6 @@ public class ThreadStartGame implements Runnable {
                         for (String pid : pids) {
                             space.put(pid, JOIN_ME_REQ, player.getName());
                         }
-                        space.put(LOCK_FOR_GAME_START);
 
                         // TODO The host must be removed from the tuple when the game is over
                         space.put("host", player.getId());
@@ -59,6 +52,7 @@ public class ThreadStartGame implements Runnable {
                     } else {
                         System.out.println("The game has already been started");
                     }
+                    space.put(LOCK_FOR_GAME_START);
 
                 } else if (userInput.equalsIgnoreCase("")) {
                     Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));

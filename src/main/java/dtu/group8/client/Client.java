@@ -38,15 +38,17 @@ public class Client {
     private static final String TYPE = "?keep";
     private Player player;
     private String clientName = "";
-    String clientID = "";
+    private String clientID = "";
     private BufferedReader input;
     public static Object[] allPlayers;
     private static final String JOIN_ME_REQ = "join_req";
     private static final String JOIN_ME_RES = "join_res";
 
+    private RemoteSpace lobby;
 
 
-    public Space matchMake(){
+
+    public Space setup(){
         try {
             Printer printer = new Printer("Client:matchMake",Printer.PrintColor.WHITE);
 
@@ -62,19 +64,23 @@ public class Client {
             // Connect to the remote chat space
             printer.println("Connecting to chat space " + uri + "...");
 
-            RemoteSpace remoteSpace = new RemoteSpace(uri);
+            RemoteSpace lobby = new RemoteSpace(uri);
 
             // Read client name from the console
             printer.print("","Enter your name: ", Printer.PrintColor.ANSI_RESET);
 
             clientName = input.readLine();
             clientID = UUID.randomUUID().toString();
-            remoteSpace.put("lobby", clientName, clientID);
-            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(remoteSpace);
+            player = new Player(clientID);
+            player.setName(clientName);
+            lobby.put("lobby", clientName, clientID);
+
+
+            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(lobby);
             Thread thread = new Thread(threadCreateBoard);
             thread.start();
 
-            Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
+            Object[] obj = lobby.get(new ActualField(clientID), new FormalField(String.class));
             thread.join();
 
 
@@ -83,11 +89,9 @@ public class Client {
             //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
             printer.println("You are connected to board " + spaceId);
 
-            Space newSpace = new RemoteSpace(uri2);
-/*            ClientServer server = new ClientServer(newSpace);
-            // TODO
-            server.run();*/
-            return newSpace;
+            Space gameSpace = new RemoteSpace(uri2);
+            matchMake(gameSpace);
+            return gameSpace;
         } catch (
                 IOException | InterruptedException e) {
             e.printStackTrace();
@@ -95,7 +99,7 @@ public class Client {
         return null;
 
     }
-    public Space setup(Space space) {
+    public Space matchMake(Space space) {
         //____________________________________ SETUP ____________________________________
         if (space == null) {
             return null;
@@ -107,8 +111,6 @@ public class Client {
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
-            player = new Player(clientID);
-            player.setName(clientName);
             ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
             Thread sThread = new Thread(threadStartGame);
             sThread.start();
@@ -187,11 +189,146 @@ public class Client {
         }
         return space;
     }
+    /*public Space matchMake(){
+        try {
+            Printer printer = new Printer("Client:matchMake",Printer.PrintColor.WHITE);
+            lobby.put("lobby", clientName, clientID);
+            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(lobby);
+            Thread thread = new Thread(threadCreateBoard);
+            thread.start();
+
+            Object[] obj = lobby.get(new ActualField(clientID), new FormalField(String.class));
+            thread.join();
+
+
+            String spaceId = obj[1].toString();
+            String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
+            //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
+            printer.println("You are connected to board " + spaceId);
+
+            Space newSpace = new RemoteSpace(uri2);
+            return newSpace;
+        } catch (
+                IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+    public Space setup() {
+        //____________________________________ SETUP ____________________________________
+
+        try {
+            if (input == null) {
+                input = new BufferedReader(new InputStreamReader(System.in));
+            }
+
+            Printer printer = new Printer();
+            Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+
+            if (lobby == null){
+                // Set the URI of the chat space
+                printer.print("Enter URI of the chat server or press enter for default: ", Printer.PrintColor.WHITE);
+                String uri = input.readLine();
+                // Default value
+                if (uri.isEmpty()) {
+                    //uri = "tcp://" + LOCALHOST + ":" + PORT + "/lobby" + TYPE;
+                    uri = getUri("lobby");
+                }
+                // Connect to the remote chat space
+                printer.println("Connecting to chat space " + uri + "...", Printer.PrintColor.WHITE);
+
+                lobby = new RemoteSpace(uri);
+
+                // Read client name from the console
+                printer.print("","Enter your name: ", Printer.PrintColor.ANSI_RESET);
+
+                clientName = input.readLine();
+                clientID = UUID.randomUUID().toString();
+                player = new Player(clientID);
+                player.setName(clientName);
+            }
+
+            ThreadStartGame threadStartGame = new ThreadStartGame(lobby, player);
+            Thread sThread = new Thread(threadStartGame);
+            sThread.start();
+            // Waiting for an invitation
+            Object[] ackMsg = lobby.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
+            String invitedPlayerName = ackMsg[2].toString();
+
+            Object[] obj = lobby.query(new ActualField("host"), new FormalField(Object.class));
+            String hostClientId = obj[1].toString();
+            sThread.join();
+            // Checks if this client is the host
+            if (!Objects.equals(hostClientId, clientID)) {
+                while (true) {
+                    System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
+                    String userInput = input.readLine();
+                    if (userInput.equalsIgnoreCase("ok")) {
+                        lobby.put(JOIN_ME_RES, "ok", clientID);
+                        break;
+
+                    } else if (userInput.equalsIgnoreCase("no")) {
+                        lobby.put(JOIN_ME_RES, "no", clientID);
+                        break;
+                    }
+                }
+            } else {
+                System.out.println("Waiting for player(s) to join...");
+            }
+
+            if (Objects.equals(hostClientId, clientID)) {
+                Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(lobby, false));
+                checkAckThread.start();
+                //checkAckThread.join();
+                Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(lobby, true));
+                sleepThread.start();
+            }
+
+            lobby.query(new ActualField("game started"));
+            printer.println("Game is starting...");
+
+            ///// Game starts here.
+            log.println("Adding client");
+            lobby.put("add", clientName, clientID);
+            if (Objects.equals(hostClientId, clientID)) {
+                System.out.println("You are the host.");
+                Thread gameThread = new Thread(new ClientServer(lobby));
+                gameThread.start();
+                log.println("Thread started", Printer.PrintColor.YELLOW);
+            }
+
+            // Connect to space
+            // Get ack from space
+            log.println("Getting ack");
+            Object[] t = lobby.get(new ActualField(clientID), new FormalField(String.class));
+            log.println("Got ack response");
+
+            if (!t[1].equals("ok")) {
+                log.println("Server did not ack... returning");
+                return null;
+            }
+            //Wait for space to start
+            log.println("Waiting for game state to be start");
+            //Get game state
+            t = lobby.query(new ActualField("gameState"), new FormalField(Integer.class));
+            if (((Integer) t[1] == 1)) {
+                log.println("Starting game...");
+
+            } else {
+                log.println("Failed to start game");
+                return null;
+            }
+        } catch (IOException | InterruptedException e) {
+
+            e.printStackTrace();
+        }
+        return lobby;
+    }*/
 
         public void start(Space space){
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
             Printer printer = new Printer();
-
             try{
             //____________________________________ STARTING GAME ____________________________________
             log.println("playing game!");
@@ -218,13 +355,30 @@ public class Client {
                 }
             }
             log.println("Stopping game...");
+            endGame();
+
             //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
                 IOException | InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
 
+    public void endGame(){
+        Printer printer = new Printer();
+        printer.print("Do you want join another lobby? y/n ");
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            String str =  input.readLine().trim();
+            if (str.equalsIgnoreCase("y")){
+                start(matchMake(null));
+            } else {
+
+            }
+        }  catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private String getUri(String parameter) {

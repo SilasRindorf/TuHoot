@@ -49,6 +49,7 @@ public class GameController {
                 space.put("Q"+ i, game.getQuestion(i));
                 space.put("CA" + i,game.getAnswer(i));
             }
+
             while (alive) {
                 answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
                 space.put("V",answer[1].toString(),game.checkAnswer((Integer) answer[3],answer[2].toString()));
