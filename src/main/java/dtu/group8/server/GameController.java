@@ -17,67 +17,54 @@ public class GameController {
     }
 
 
-    private boolean isAlive = true;
+    private boolean alive = true;
 
     public void setAlive(boolean alive) {
-        isAlive = alive;
+        this.alive = alive;
     }
 
-    public void startGame() throws InterruptedException {
+    public void startGame(){
         Printer printer = new Printer();
         printer.setDefaultTAG( TAG + ":startGame");
         printer.setDefaultPrintColor(Printer.PrintColor.CYAN);
         printer.println("starting game...");
         printer.println("Adding players...");
+        Object[] answer;
         // Add players to game
-        for (Object[] t : space.getAll(new ActualField("add"),new FormalField(String.class),new FormalField(String.class))){
-            game.addPlayer(t[2].toString());
-            printer.println("PLAYER ADD ",t[2].toString(), Printer.PrintColor.RED);
-            space.put(t[2],"ok");
+        try {
+            for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
+                game.addPlayer(t[2].toString());
+                printer.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.RED);
+                space.put(t[2], "ok");
+            }
+            printer.println("Done adding players");
+            updateGameState(GameState.START);
+        } catch (InterruptedException e ){
+            printer.println("Error adding players", Printer.PrintColor.RED);
+            e.printStackTrace();
         }
-        printer.println("Done adding players");
-        printer.println("Selecting question");
-        updateGameState(space,GameState.START);
-        printer.println("Selected question");
-        while (game.getSizeOfQuiz() > 0 && isAlive){
-            game.selectNewQuestion();
-            space.getp(new ActualField("Q"), new FormalField(String.class));
-            space.put("Q",game.getCurrentQuestion());
-
-            if(game.getGameState().value == 4){
-                updateGameState(space, GameState.START);
-
+        try {
+            space.put("QuizSize", game.quizSize());
+            for (int i = 0; i < game.quizSize(); i++){
+                space.put("Q"+ i, game.getQuestion(i));
+                space.put("CA" + i,game.getAnswer(i));
             }
-
-            printer.println("Waiting for answers");
-            long timeMillis = System.currentTimeMillis();
-            long end = timeMillis+10000;
-            while(System.currentTimeMillis() < end) {
-                // do something
-                Object[] t = space.getp(new ActualField("A"),new FormalField(String.class),new FormalField(String.class));
-                if (t != null) {
-                    printer.println("Checking submitted answer=\"" + t[2].toString() + "\" for question=\"" + game.getCurrentQuestion() + "\"");
-                    game.checkAnswer(t[2].toString());
-                    printer.println("Replying to answer");
-                    space.put("V", t[1], game.checkAnswer(t[2].toString()) );
-                }
+            while (alive) {
+                answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
+                space.put("V",answer[1].toString(),game.checkAnswer((Integer) answer[3],answer[2].toString()));
             }
-            printer.println("No longer waiting for answers");
-            space.get(new ActualField("Q"), new FormalField(String.class));
-            printer.println("Updating game state");
-            updateGameState(space, GameState.NEXT);
-            printer.println("Sending correct answer");
-            space.getp(new ActualField("A"), new FormalField(String.class));
-            space.put("A",game.getCurrentAnswer());
-            printer.println("Selecting new question");
+        } catch (InterruptedException e){
+            printer.println("Error in game loop", Printer.PrintColor.RED);
+            e.printStackTrace();
         }
     }
 
 
-    private void updateGameState(Space space, GameState state) throws InterruptedException{
+
+
+    private void updateGameState(GameState state) throws InterruptedException{
         space.getp(new ActualField("gameState"),new FormalField(Integer.class));
         space.put("gameState", state.value);
-        game.setGameState(state);
 
     }
 }

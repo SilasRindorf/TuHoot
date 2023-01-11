@@ -43,6 +43,22 @@ public class Game {
     public void removePlayer(String playerId) {
 
     }
+
+    public int quizSize(){
+        return quiz.quizSize();
+    }
+
+    public String getQuestion(int index){
+        return quiz.getQuestion(index);
+    }
+
+    public String getAnswer(int index){
+        return quiz.getAnswer(index);
+    }
+
+    public boolean checkAnswer(int index, String answer){
+        return quiz.checkAnswer(index,answer);
+    }
     public ArrayList<Player> getPlayers() {
         return players;
     }
