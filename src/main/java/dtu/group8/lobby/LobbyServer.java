@@ -41,6 +41,7 @@ public class LobbyServer {
         spaceLobby = new SequentialSpace();
         repository.add("lobby", spaceLobby);
 
+
         try {
 
             // Set the URI of the chat space
@@ -55,6 +56,9 @@ public class LobbyServer {
             // Open a gate
             System.out.println("Opening repository gate at " + uri + "...");
             repository.addGate(uri);
+            listenForAvailableGameListReq.start();
+
+
             //Lock for starting a game
             spaceLobby.put("createBoardLock");
 
@@ -72,9 +76,7 @@ public class LobbyServer {
                 this.games.add(newGame);
                 SequentialSpace newSpace = new SequentialSpace();
                 repository.add(gameId, newSpace);
-                newSpace.put("hello");
                 newSpace.put("allPlayers", newGame.getPlayerNames(), newGame.getPlayerIds());
-
                 spaceLobby.put("mySpaceId", hostId, gameId, gameName);
                 System.out.println("Game created");
                 System.out.println("\tGame name: " + gameName);
@@ -146,6 +148,28 @@ public class LobbyServer {
                 }
 
 
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    });
+
+    public Thread listenForAvailableGameListReq = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            System.out.println("run");
+            try {
+                while (true) {
+                    System.out.println("run2");
+                    Object[] obj = spaceLobby.get(new ActualField("showMeAvailableGames"), new FormalField(String.class));
+                    System.out.println("Request received from: " + obj[1]);
+
+                    ArrayList<String> tempGames = new ArrayList<>();
+                    for (Game game : games) {
+                        tempGames.add(game.getName() +"::" + game.getId());
+                    }
+                    spaceLobby.put(obj[1].toString(), tempGames);
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

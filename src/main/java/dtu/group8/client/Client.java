@@ -90,16 +90,11 @@ public class Client {
 
             if (game.getHost().equals(game.getMe().getId())) {
                 gameSetup.display_start_game_option(game);
-                // Waiting for an invitation
-                Object[] ackMsg = space.get(new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
-                String invitedPlayerName = ackMsg[2].toString();
-
-                Object[] obj = space.query(new ActualField("host"), new FormalField(Object.class));
-                String hostClientId = obj[1].toString();
-
             } else {
                 printer.println("Waiting for game to start...");
             }
+
+
 
 /*            // Checks if this client is the host
             if (!Objects.equals(hostClientId, clientID)) {

@@ -19,11 +19,13 @@ import static dtu.group8.client.Client.*;
 public class GameSetup {
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private static final String JOIN_ME_REQ = "join_req";
+    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
-    private RemoteSpace remoteSpace;
 
-    public GameSetup(RemoteSpace remoteSpace) {
-        this.remoteSpace = remoteSpace;
+    private RemoteSpace lobbySpace;
+
+    public GameSetup(RemoteSpace lobbySpace) {
+        this.lobbySpace = lobbySpace;
 
     }
 
@@ -35,7 +37,6 @@ public class GameSetup {
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
-                BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
@@ -45,13 +46,12 @@ public class GameSetup {
                     String gameName = input.readLine();
                     game.setName(gameName);
                     game.setHost(player.getId());
-                    remoteSpace.put("create game",gameName, player.getId(), player.getName());
+                    lobbySpace.put("create game",gameName, player.getId(), player.getName());
                     getSpace(game);
                     break;
 
                 } else if (userInput.equalsIgnoreCase("2") || userInput.equalsIgnoreCase("join game")){
-
-                    System.out.println("Waiting for a board...");
+                    joinGame(game);
                     break;
                 }
             }
@@ -67,26 +67,15 @@ public class GameSetup {
     public void display_start_game_option (Game game) {
         Space space = game.getSpace();
         try {
-            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-            final String OPTIONS = "Options:\n\t1. start game\n\tor press enter to wait for an invitation";
+            final String OPTIONS = "Options:\n\t1. start game\n\tor just wait for other to join";
 
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
-
                     getAllPlayersFromSpace(game);
-
-/*                    String[] pids = (String[]) Client.allPlayers[2];
-
-                    for (String pid : pids) {
-                        space.put(pid, JOIN_ME_REQ, player.getName());
-                    }
-                    space.put(LOCK_FOR_GAME_START);
-
-                    // TODO The host must be removed from the tuple when the game is over
-                    space.put("host", player.getId());*/
+                    space.put("gameStart");
                     break;
 
                 }
@@ -97,7 +86,6 @@ public class GameSetup {
     }
 
     void getAllPlayersFromSpace(Game game) throws InterruptedException {
-        game.getSpace().get(new ActualField("hello"));
         Object[] obj = game.getSpace().get(new ActualField("allPlayers"), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
         ArrayList<String> playerNames = (ArrayList<String>) obj[1];
         ArrayList<String> playerIds = (ArrayList<String>) obj[2];
@@ -113,7 +101,7 @@ public class GameSetup {
     void getSpace(Game game) throws InterruptedException, IOException {
         Printer printer = new Printer("GameSetup: getSpace", Printer.PrintColor.WHITE);
 
-        Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
+        Object[] obj = lobbySpace.get(new ActualField("mySpaceId"), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
         game.setName(obj[3].toString());
 
         if (Objects.equals(game.getHost(), game.getMe().getId()))
@@ -126,7 +114,24 @@ public class GameSetup {
     }
 
 
-    void joinGame() {
+    void joinGame(Game game) throws InterruptedException, IOException {
+        //Printer printer = new Printer("GameSetup:joinGame", Printer.PrintColor.WHITE);
+
+        String myId =  game.getMe().getId();
+        lobbySpace.put("showMeAvailableGames", myId);
+        Object[] obj = lobbySpace.get(new ActualField(myId), new FormalField(ArrayList.class));
+        ArrayList<String> arr = (ArrayList<String>) obj[1];
+
+        System.out.println("Available game(s):");
+
+        for (String s : arr) {
+            String[] currGame = s.split("::", 2);
+
+            System.out.println("\t" + currGame[0]);
+        }
+        System.out.println("Enter a game name to join: ");
+
+        String userInput = input.readLine();
 
     }
 }
