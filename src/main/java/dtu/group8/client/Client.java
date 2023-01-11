@@ -233,7 +233,7 @@ public class Client {
 
         }
 
-    private Boolean questionQuess(Space space, Printer log,  Printer printer, int i) throws IOException, InterruptedException {
+    private void questionQuess(Space space, Printer log,  Printer printer, int i) throws IOException, InterruptedException {
         Object[] answer;
 
         space.put("A",clientID, input.readLine(),i);
@@ -242,14 +242,13 @@ public class Client {
         log.println("Received verification from Space");
         if ((boolean) answer[2]){
             printer.println("You got the answer correct!");
-            return true;
+            return;
         } else{
             log.println("Getting correct answer");
             answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
             printer.println("You got the answer wrong! The correct answer was " + answer[1]);
             questionQuess(space, log, printer, i);
         }
-        return false;
     }
 
     private String getUri(String parameter) {
