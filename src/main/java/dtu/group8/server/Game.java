@@ -4,7 +4,12 @@ import dtu.group8.server.model.Player;
 import dtu.group8.server.model.Quiz;
 import dtu.group8.server.model.QuizQuestion;
 import dtu.group8.util.Printer;
+import org.jspace.RemoteSpace;
+import org.jspace.Space;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -12,7 +17,11 @@ public class Game {
     private String id;
     private String name;
     private String host;
+    private Player player;
     private ArrayList<Player> players;
+    private RemoteSpace remoteSpace;
+    private Space space;
+
     private Quiz quiz;
     public Game() {
         quiz = new Quiz();
@@ -25,14 +34,16 @@ public class Game {
         this.quiz = quiz;
     }
 
-    public Game(String id, String name, String host, ArrayList<Player> players) {
+    public Game(String id, String name, String host, Player player,
+                ArrayList<Player> players, RemoteSpace remoteSpace, Space space) {
         this.id = id;
         this.name = name;
         this.host = host;
+        this.player = player;
         this.players = players;
+        this.remoteSpace = remoteSpace;
+        this.space = space;
     }
-
-
 
     public void addPlayer(String playerId) {
         boolean isFound = false;
@@ -126,4 +137,5 @@ public class Game {
     public void setQuiz(Quiz quiz) {
         this.quiz = quiz;
     }
+
 }

@@ -44,6 +44,7 @@ public class Client {
     private static final String JOIN_ME_REQ = "join_req";
     private static final String JOIN_ME_RES = "join_res";
     private Game game;
+    InitializeGame initializeGame;
 
 
 
@@ -74,8 +75,8 @@ public class Client {
             // remoteSpace.put("lobby", clientName, clientID); // no need for this now
 
             if (game == null) game = new Game();
-            CreateBoard createBoard = new CreateBoard(game, player, remoteSpace);
-            createBoard.showOptions_andTakeInput();
+            initializeGame = new InitializeGame(game, player, remoteSpace);
+            initializeGame.display_create_and_joint_game_options();
 
             Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(player.getId()), new FormalField(Object.class), new FormalField(Object.class));
 
@@ -85,15 +86,10 @@ public class Client {
 
             game.setId(obj[2].toString()); // spaceId/gameId
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
-            printer.println("You are connected to board " + game.getName());
+            printer.println("You are connected to game " + game.getName());
+            return new RemoteSpace(uri2);
 
-            Space newSpace = new RemoteSpace(uri2);
-/*            ClientServer server = new ClientServer(newSpace);
-            // TODO
-            server.run();*/
-            return newSpace;
-        } catch (
-                IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return null;
@@ -112,16 +108,13 @@ public class Client {
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
             if (game.getHost().equals(player.getId())) {
-                ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
-                Thread sThread = new Thread(threadStartGame);
-                sThread.start();
+                initializeGame.display_start_game_option(space);
                 // Waiting for an invitation
                 Object[] ackMsg = space.get(new ActualField(player.getId()), new FormalField(Object.class), new FormalField(Object.class));
                 String invitedPlayerName = ackMsg[2].toString();
 
                 Object[] obj = space.query(new ActualField("host"), new FormalField(Object.class));
                 String hostClientId = obj[1].toString();
-                sThread.join();
 
             } else {
                 printer.println("Waiting for game to start...");

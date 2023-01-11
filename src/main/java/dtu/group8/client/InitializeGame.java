@@ -1,6 +1,6 @@
 package dtu.group8.client;
 
-
+import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
@@ -10,30 +10,58 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
 
-import static java.lang.Thread.sleep;
-
-public class ThreadStartGame implements Runnable {
-    private final String OPTIONS = "Options:\n\t1. start game\n\tor press enter to wait for an invitation";
-    private Space space;
+public class InitializeGame {
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
-    private Player player;
-    BufferedReader input;
     private static final String JOIN_ME_REQ = "join_req";
 
+    private RemoteSpace remoteSpace;
+    private Player player;
+    private Game game;
 
 
-
-
-    public ThreadStartGame(Space space, Player player) {
-        this.space = space;
+    public InitializeGame(Game game, Player player, RemoteSpace remoteSpace) {
+        this.game = game;
         this.player = player;
+        this.remoteSpace = remoteSpace;
+
     }
 
-    @Override
-    public void run() {
-/*        try {
+    public void display_create_and_joint_game_options() {
+        final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
+        try {
+            while (true) {
+                System.out.println(OPTIONS);
+                System.out.print("Input command: ");
+                BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+                String userInput = input.readLine();
+                if (userInput.equalsIgnoreCase("create game") ||
+                        userInput.equalsIgnoreCase("1")){
+
+                    //remoteSpace.get(new ActualField("createBoardLock"));
+                    System.out.print("Enter board name: ");
+                    String gameName = input.readLine();
+                    game.setName(gameName);
+                    game.setHost(player.getId());
+                    remoteSpace.put("create game",gameName, player.getId());
+                    break;
+
+                } else if (userInput.equalsIgnoreCase("")){
+                    System.out.println("Waiting for a board...");
+                    break;
+                }
+            }
+        } catch (InterruptedException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void display_start_game_option (Space space) {
+        try {
+            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+            final String OPTIONS = "Options:\n\t1. start game\n\tor press enter to wait for an invitation";
+
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
@@ -68,50 +96,6 @@ public class ThreadStartGame implements Runnable {
             }
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
-        }*/
-    }
-
-}
-
-class Thread_Acknowledgement_ToJoinGame implements Runnable {
-    Space space;
-    String[] pids;
-    boolean sleepThread;
-    HashMap<String, String> receivedPids;
-    private static final String JOIN_ME_RES = "join_res";
-
-
-    public Thread_Acknowledgement_ToJoinGame(Space space, boolean sleepThread) {
-        this.space = space;
-        this.sleepThread = sleepThread;
-    }
-
-    @Override
-    public void run() {
-
-        try {
-            if (sleepThread) {
-                sleep(10000);
-                space.put("game started");
-                // TODO Remove players that have not responded.
-                return;
-            }
-
-            receivedPids = new HashMap<>();
-            pids = (String[]) Client.allPlayers[2];
-            for (int i = 0; i < pids.length-1; i++) {
-                Object[] obj = space.get(new ActualField(JOIN_ME_RES), new FormalField(Object.class), new FormalField(Object.class));
-                receivedPids.put(obj[1].toString(), obj[2].toString());
-            }
-
-            space.put("game started");
-
-            // TODO Remove players that replies "no"
-
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
-
     }
-
 }
