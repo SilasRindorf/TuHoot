@@ -69,19 +69,19 @@ public class Client {
 
             clientName = input.readLine();
             clientID = UUID.randomUUID().toString();
-            remoteSpace.put("lobby", clientName, clientID);
+            // remoteSpace.put("lobby", clientName, clientID); // no need for this now
+
             ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(remoteSpace, clientID);
             Thread thread = new Thread(threadCreateBoard);
             thread.start();
+            thread.join(); // has no effect, at least for now (remoteSpace.get() blocks anyway).
+            Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
 
-            Object[] obj = remoteSpace.get(new ActualField(clientID), new FormalField(String.class));
-            thread.join();
-
-
-            String spaceId = obj[1].toString();
+            String boardName = obj[3].toString();
+            String spaceId = obj[2].toString();   // spaceId = boardId
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
             //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
-            printer.println("You are connected to board " + spaceId);
+            printer.println("You are connected to board " + boardName );
 
             Space newSpace = new RemoteSpace(uri2);
 /*            ClientServer server = new ClientServer(newSpace);

@@ -24,6 +24,9 @@ public class LobbyServer {
 
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private ArrayList<Board> boards = new ArrayList<>();
+    private SpaceRepository repository;
+    private SequentialSpace spaceLobby;
+    private BufferedReader input;
 
     Integer spaceCounter = 0;
 
@@ -35,11 +38,13 @@ public class LobbyServer {
 
     public void startServer() {
 
+        input = new BufferedReader(new InputStreamReader(System.in));
+        repository = new SpaceRepository();
+        spaceLobby = new SequentialSpace();
+        repository.add("lobby", spaceLobby);
+
         try {
-            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-            SpaceRepository repository = new SpaceRepository();
-            SequentialSpace spaceLobby = new SequentialSpace();
-            repository.add("lobby", spaceLobby);
+
             // Set the URI of the chat space
             System.out.print("Enter URI of the chat server or press enter for default: ");
             String uri = input.readLine();
@@ -48,7 +53,6 @@ public class LobbyServer {
                 //uri = "tcp://localhost:9002/?keep";
                 uri = getUri("");
             }
-
 
             // Open a gate
             System.out.println("Opening repository gate at " + uri + "...");
@@ -62,14 +66,16 @@ public class LobbyServer {
                 String boardName = createBoardObj[1].toString();
                 String hostId = createBoardObj[2].toString();
                 spaceCounter++;
-                String boardId = "boardId" + spaceCounter;
+                String boardId = "boardId" + spaceCounter;  // boardId/spaceId
                 ArrayList<String> clientIds = new ArrayList<>();
                 clientIds.add(hostId);
                 Board newBoard = new Board(boardName, boardId, hostId, clientIds);
                 this.boards.add(newBoard);
                 SequentialSpace newSpace = new SequentialSpace();
+                repository.add(boardId, newSpace);
                 newSpace.put("allPlayers", boardId, newBoard.getPlayerIds());
-                repository.add(hostId, newSpace);
+
+                spaceLobby.put("mySpaceId", hostId, boardId, boardName);
                 System.out.println("Board created");
                 System.out.println("\tBoard name: " + boardName);
 
@@ -126,6 +132,25 @@ public class LobbyServer {
     public String getUri(String parameter) {
         return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
+
+    Thread listenForAddPlayer = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    Object[] addMeObj = spaceLobby.get(new ActualField("addMe"), new FormalField(Object.class), new FormalField(Object.class));
+                    String playerId = addMeObj[1].toString();
+                    String boardId = addMeObj[2].toString();
+
+
+                }
+
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    });
 }
 
 
