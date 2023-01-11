@@ -1,10 +1,10 @@
 package dtu.group8.lobby.data_class;
 
-public class Player {
+public class PlayerLobby {
     private String name;
     private String id;
 
-    public Player(String name, String id) {
+    public PlayerLobby(String name, String id) {
         this.name = name;
         this.id = id;
     }

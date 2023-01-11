@@ -11,7 +11,6 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -88,7 +87,9 @@ public class Client {
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
-            if (game.getHost().equals(game.getMe().getId())) {
+            if (game.getHostId().equals(game.getMe().getId())) {
+                ThreadListenForAddReq listenForAddReq = new ThreadListenForAddReq(game);
+                new Thread(listenForAddReq).start();
                 gameSetup.display_start_game_option(game);
             } else {
                 printer.println("Waiting for game to start...");

@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static dtu.group8.client.Client.*;
@@ -32,6 +33,7 @@ public class GameSetup {
     public Game initializeGame(Player player) {
         Game game = new Game();
         game.setMe(player);
+        game.setRemoteSpace(lobbySpace);
         final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
         try {
             while (true) {
@@ -42,12 +44,13 @@ public class GameSetup {
                         userInput.equalsIgnoreCase("1")){
 
                     //remoteSpace.get(new ActualField("createBoardLock"));
-                    System.out.print("Enter board name: ");
+                    System.out.print("Enter game name: ");
                     String gameName = input.readLine();
                     game.setName(gameName);
-                    game.setHost(player.getId());
+                    game.setHostId(player.getId());
                     lobbySpace.put("create game",gameName, player.getId(), player.getName());
                     getSpace(game);
+                    // TODO Check if the given game-name already exists in the server.
                     break;
 
                 } else if (userInput.equalsIgnoreCase("2") || userInput.equalsIgnoreCase("join game")){
@@ -104,7 +107,7 @@ public class GameSetup {
         Object[] obj = lobbySpace.get(new ActualField("mySpaceId"), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
         game.setName(obj[3].toString());
 
-        if (Objects.equals(game.getHost(), game.getMe().getId()))
+        if (Objects.equals(game.getHostId(), game.getMe().getId()))
             printer.println("Game " + game.getName() +" created");
 
         game.setId(obj[2].toString()); // spaceId/gameId
@@ -122,16 +125,37 @@ public class GameSetup {
         Object[] obj = lobbySpace.get(new ActualField(myId), new FormalField(ArrayList.class));
         ArrayList<String> arr = (ArrayList<String>) obj[1];
 
-        System.out.println("Available game(s):");
+        System.out.println("Available game(s): " + arr.size());
+        if (arr.isEmpty()) {
+            // TODO Must go back to the initial state, so that user can create a game
+        }
+
+        HashMap<String, String> gameNames = new HashMap<>();
 
         for (String s : arr) {
             String[] currGame = s.split("::", 2);
-
+            String gameName = currGame[0];
+            String gameId = currGame[1];
+            gameNames.put(gameName,gameId);
             System.out.println("\t" + currGame[0]);
         }
         System.out.println("Enter a game name to join: ");
+        String userChosenGameId = "";
+        while (true) {
+            String userInput = input.readLine();
+            userChosenGameId = gameNames.get(userInput);
+            if (userChosenGameId != null) {
+                break;
+            } else {
+                System.out.println("There is no game with a name " + userInput);
+            }
 
-        String userInput = input.readLine();
+        }
+
+        lobbySpace.put("addMeToGame", game.getMe().getName(), game.getMe().getId(), userChosenGameId);
+        //lobbySpace.get()
+
 
     }
+
 }

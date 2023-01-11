@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Game {
     private String id;
     private String name;
-    private String host;
+    private String hostId;
     private Player me;
     private ArrayList<Player> players;
     private RemoteSpace remoteSpace;
@@ -31,11 +31,11 @@ public class Game {
         this.quiz = quiz;
     }
 
-    public Game(String id, String name, String host, Player me,
+    public Game(String id, String name, String hostId, Player me,
                 ArrayList<Player> players, RemoteSpace remoteSpace, Space space) {
         this.id = id;
         this.name = name;
-        this.host = host;
+        this.hostId = hostId;
         this.me = me;
         this.players = players;
         this.remoteSpace = remoteSpace;
@@ -124,12 +124,12 @@ public class Game {
         this.name = name;
     }
 
-    public String getHost() {
-        return host;
+    public String getHostId() {
+        return hostId;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setHostId(String hostId) {
+        this.hostId = hostId;
     }
 
     public void setPlayers(ArrayList<Player> players) {
@@ -158,5 +158,13 @@ public class Game {
 
     public void setMe(Player me) {
         this.me = me;
+    }
+
+    public RemoteSpace getRemoteSpace() {
+        return remoteSpace;
+    }
+
+    public void setRemoteSpace(RemoteSpace remoteSpace) {
+        this.remoteSpace = remoteSpace;
     }
 }
