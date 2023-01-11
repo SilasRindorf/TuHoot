@@ -29,21 +29,14 @@ import java.util.UUID;
  *      Reconnect to game
  */
 public class Client {
-    // Port of server
-    private final String PORT = "9002";
-    // localhost
+    private final String PORT = "9002", IP = "localhost";
+    private String clientName = "", clientID = "";
     //private static final String LOCALHOST = "10.209.95.114";
-    private final String IP = "localhost";
-
     private static final String TYPE = "?keep";
     private Player player;
-    private String clientName = "";
-    private String clientID = "";
     private BufferedReader input;
     public static Object[] allPlayers;
-    private static final String JOIN_ME_REQ = "join_req";
-    private static final String JOIN_ME_RES = "join_res";
-
+    private static final String JOIN_ME_REQ = "join_req", JOIN_ME_RES = "join_res";
     private RemoteSpace lobby;
 
 
@@ -51,9 +44,13 @@ public class Client {
     public Space matchMake(){
         try {
             Printer printer = new Printer("Client:matchMake",Printer.PrintColor.WHITE);
-            if (input == null)
+            if (input == null) {
                 input = new BufferedReader(new InputStreamReader(System.in));
+            }
             // ____________________________________ SETUP CONNECTION TO LOBBY ____________________________________
+            clientID = UUID.randomUUID().toString();
+            player = new Player(clientID);
+            player.setName(clientName);
             if (lobby == null) {
                 // Set the URI of the chat space
                 printer.print("Enter URI of the chat server or press enter for default: ");
@@ -72,10 +69,9 @@ public class Client {
                 printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
 
                 clientName = input.readLine();
-                clientID = UUID.randomUUID().toString();
-                player = new Player(clientID);
                 player.setName(clientName);
             }
+
             // ____________________________________ JOIN LOBBY ____________________________________
             lobby.put("lobby", clientName, clientID);
 
@@ -85,7 +81,6 @@ public class Client {
 
             Object[] obj = lobby.get(new ActualField(clientID), new FormalField(String.class));
             thread.join();
-
 
             String spaceId = obj[1].toString();
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
@@ -108,9 +103,7 @@ public class Client {
             return null;
         }
         try {
-            if (input == null) {
-                input = new BufferedReader(new InputStreamReader(System.in));
-            }
+
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
@@ -180,14 +173,11 @@ public class Client {
             t = space.query(new ActualField("gameState"), new FormalField(Integer.class));
             if (((Integer) t[1] == 1)) {
                 log.println("Starting game...");
-
             } else {
                 System.out.println("Failed to start game");
                 return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return space;
@@ -239,7 +229,8 @@ public class Client {
         try {
             String str =  input.readLine().trim();
             if (str.equalsIgnoreCase("y")){
-                start(startGame(matchMake()));
+
+                start(matchMake());
             } else {
 
             }

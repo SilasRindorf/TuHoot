@@ -25,8 +25,11 @@ public class Printer {
         print(str, defaultPrintColor);
     }
     public void println(String TAG, String str, PrintColor color){
+        println("", TAG, str, color);
+    }
+    public void println(String prefixes, String TAG, String str, PrintColor color){
         if (log) {
-            System.out.println(color.value + TAG + str + PrintColor.ANSI_RESET.value);
+            System.out.println(color.value + prefixes + TAG + str + PrintColor.ANSI_RESET.value);
         }
     }
     public void println(String str, PrintColor color){
@@ -35,6 +38,9 @@ public class Printer {
 
     public void println(String str){
         println(str, defaultPrintColor);
+    }
+    public void println(String prefixes, String str){
+        println(prefixes,defaultTAG,str, defaultPrintColor);
     }
 
     public boolean isLog() {
