@@ -1,7 +1,6 @@
 package dtu.group8.lobby;
 
-import dtu.group8.lobby.data_class.Board;
-import dtu.group8.util.Printer;
+import dtu.group8.lobby.data_class.Game;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.SequentialSpace;
@@ -11,11 +10,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.SimpleTimeZone;
 
 public class LobbyServer {
-    static final String CREATE_BOARD = "create board";
+    static final String CREATE_BOARD = "create game";
     private static final String PORT = "9002";
     //private static final String LOCALHOST = "10.209.95.114";
     private static final String IP = "localhost";
@@ -23,7 +20,7 @@ public class LobbyServer {
     private static final String TYPE = "?keep";
 
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
-    private ArrayList<Board> boards = new ArrayList<>();
+    private ArrayList<Game> games = new ArrayList<>();
     private SpaceRepository repository;
     private SequentialSpace spaceLobby;
     private BufferedReader input;
@@ -63,21 +60,21 @@ public class LobbyServer {
             while (true) {
                 Object[] createBoardObj = spaceLobby.get(new ActualField(CREATE_BOARD), new FormalField(Object.class), new FormalField(Object.class));
                 System.out.println("Creating board...");
-                String boardName = createBoardObj[1].toString();
+                String gameName = createBoardObj[1].toString();
                 String hostId = createBoardObj[2].toString();
                 spaceCounter++;
-                String boardId = "boardId" + spaceCounter;  // boardId/spaceId
+                String gameId = "gameId" + spaceCounter;  // gameId/boardId/spaceId
                 ArrayList<String> clientIds = new ArrayList<>();
                 clientIds.add(hostId);
-                Board newBoard = new Board(boardName, boardId, hostId, clientIds);
-                this.boards.add(newBoard);
+                Game newGame = new Game(gameName, gameId, hostId, clientIds);
+                this.games.add(newGame);
                 SequentialSpace newSpace = new SequentialSpace();
-                repository.add(boardId, newSpace);
-                newSpace.put("allPlayers", boardId, newBoard.getPlayerIds());
+                repository.add(gameId, newSpace);
+                newSpace.put("allPlayers", gameId, newGame.getPlayerIds());
 
-                spaceLobby.put("mySpaceId", hostId, boardId, boardName);
-                System.out.println("Board created");
-                System.out.println("\tBoard name: " + boardName);
+                spaceLobby.put("mySpaceId", hostId, gameId, gameName);
+                System.out.println("Game created");
+                System.out.println("\tGame name: " + gameName);
 
 
 

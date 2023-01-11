@@ -2,13 +2,13 @@ package dtu.group8.lobby.data_class;
 
 import java.util.ArrayList;
 
-public class Board {
+public class Game {
     private String name;
     private String id;
     private String hostId;
     private ArrayList<String> playerIds;
 
-    public Board(String name, String id, String hostId, ArrayList<String> playerIds) {
+    public Game(String name, String id, String hostId, ArrayList<String> playerIds) {
         this.name = name;
         this.id = id;
         this.hostId = hostId;

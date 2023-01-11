@@ -1,5 +1,7 @@
 package dtu.group8.client;
 
+import dtu.group8.server.Game;
+import dtu.group8.server.model.Player;
 import org.jspace.ActualField;
 import org.jspace.RemoteSpace;
 
@@ -8,13 +10,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ThreadCreateBoard implements Runnable {
-    private final String OPTIONS = "Options:\n\t1. create board\n\tor press enter to wait for a board";
+    private final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
     private RemoteSpace remoteSpace;
-    private String myId;
+    private Player player;
+    private Game game;
 
-    public ThreadCreateBoard(RemoteSpace remoteSpace, String myId) {
+    public ThreadCreateBoard(Game game,Player player, RemoteSpace remoteSpace) {
+        this.game = game;
+        this.player = player;
         this.remoteSpace = remoteSpace;
-        this.myId = myId;
+
     }
     @Override
     public void run() {
@@ -24,18 +29,15 @@ public class ThreadCreateBoard implements Runnable {
                 System.out.print("Input command: ");
                 BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
                 String userInput = input.readLine();
-                if (userInput.equalsIgnoreCase("create board") ||
+                if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
 
                     //remoteSpace.get(new ActualField("createBoardLock"));
                     System.out.print("Enter board name: ");
-                    String boardName = input.readLine();
-                    remoteSpace.put("create board",boardName, myId);
-
-                    //Object SremoteSpace.get(new ActualField(myId));
-
-
-                    //remoteSpace.put("createBoardLock");
+                    String gameName = input.readLine();
+                    game.setName(gameName);
+                    game.setHost(player.getId());
+                    remoteSpace.put("create game",gameName, player.getId());
                     break;
 
                 } else if (userInput.equalsIgnoreCase("")){

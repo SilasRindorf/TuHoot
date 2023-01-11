@@ -1,6 +1,7 @@
 package dtu.group8.client;
 
 import dtu.group8.server.ClientServer;
+import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
 import dtu.group8.util.Printer;
 import org.jspace.ActualField;
@@ -37,12 +38,13 @@ public class Client {
 
     private static final String TYPE = "?keep";
     private Player player;
-    private String clientName = "";
-    String clientID = "";
+/*    private String clientName = "";
+    String clientID = "";*/
     private BufferedReader input;
     public static Object[] allPlayers;
     private static final String JOIN_ME_REQ = "join_req";
     private static final String JOIN_ME_RES = "join_res";
+    private Game game;
 
 
 
@@ -67,21 +69,25 @@ public class Client {
             // Read client name from the console
             printer.print("","Enter your name: ", Printer.PrintColor.ANSI_RESET);
 
-            clientName = input.readLine();
-            clientID = UUID.randomUUID().toString();
+            String clientName = input.readLine();
+            String clientId = UUID.randomUUID().toString();
+            player = new Player(clientName, clientId, 0);
             // remoteSpace.put("lobby", clientName, clientID); // no need for this now
 
-            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(remoteSpace, clientID);
+            if (game == null) game = new Game();
+            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(game, player, remoteSpace);
             Thread thread = new Thread(threadCreateBoard);
             thread.start();
             thread.join(); // has no effect, at least for now (remoteSpace.get() blocks anyway).
-            Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
+            Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(player.getId()), new FormalField(Object.class), new FormalField(Object.class));
 
-            String boardName = obj[3].toString();
-            String spaceId = obj[2].toString();   // spaceId = boardId
-            String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
-            //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
-            printer.println("You are connected to board " + boardName );
+            if (Objects.equals(game.getHost(), player.getId()))
+                printer.println("Game " + game.getName() +" created");
+            else game.setName(obj[3].toString());
+
+            game.setId(obj[2].toString()); // spaceId/gameId
+            String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
+            printer.println("You are connected to board " + game.getName());
 
             Space newSpace = new RemoteSpace(uri2);
 /*            ClientServer server = new ClientServer(newSpace);
@@ -107,19 +113,23 @@ public class Client {
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
-            player = new Player(clientID);
-            player.setName(clientName);
-            ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
-            Thread sThread = new Thread(threadStartGame);
-            sThread.start();
-            // Waiting for an invitation
-            Object[] ackMsg = space.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
-            String invitedPlayerName = ackMsg[2].toString();
+            if (game.getHost().equals(player.getId())) {
+                ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
+                Thread sThread = new Thread(threadStartGame);
+                sThread.start();
+                // Waiting for an invitation
+                Object[] ackMsg = space.get(new ActualField(player.getId()), new FormalField(Object.class), new FormalField(Object.class));
+                String invitedPlayerName = ackMsg[2].toString();
 
-            Object[] obj = space.query(new ActualField("host"), new FormalField(Object.class));
-            String hostClientId = obj[1].toString();
-            sThread.join();
-            // Checks if this client is the host
+                Object[] obj = space.query(new ActualField("host"), new FormalField(Object.class));
+                String hostClientId = obj[1].toString();
+                sThread.join();
+
+            } else {
+                printer.println("Waiting for game to start...");
+            }
+
+/*            // Checks if this client is the host
             if (!Objects.equals(hostClientId, clientID)) {
                 while (true) {
                     System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
@@ -143,9 +153,9 @@ public class Client {
                 //checkAckThread.join();
                 Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, true));
                 sleepThread.start();
-            }
+            }*/
 
-            space.query(new ActualField("game started"));
+/*            space.query(new ActualField("game started"));
             System.out.println("Game is starting...");
 
             ///// Game starts here.
@@ -157,12 +167,12 @@ public class Client {
                 Thread gameThread = new Thread(new ClientServer(space));
                 gameThread.start();
                 printer.println("Thread started", Printer.PrintColor.YELLOW);
-            }
+            }*/
 
             // Connect to space
             // Get ack from space
             log.println("Getting ack");
-            Object[] t = space.get(new ActualField(clientID), new FormalField(String.class));
+            Object[] t = space.get(new ActualField(player.getId()), new FormalField(String.class));
             log.println("Got ack response");
 
             if (!t[1].equals("ok")) {
@@ -180,8 +190,6 @@ public class Client {
                 System.out.println("Failed to start game");
                 return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -205,7 +213,7 @@ public class Client {
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
                 printer.println("Question " + (i+1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
-                space.put("A",clientID, input.readLine(),i);
+                space.put("A",player.getId(), input.readLine(),i);
                 log.println("Waiting for verification of answer");
                 answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
                 log.println("Received verification from Space");

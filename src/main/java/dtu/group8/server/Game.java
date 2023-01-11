@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Game {
+    private String id;
+    private String name;
+    private String host;
     private ArrayList<Player> players;
     private Quiz quiz;
     public Game() {
@@ -17,11 +20,17 @@ public class Game {
         quiz.questions.add(new QuizQuestion("apples","bananas"));
         players = new ArrayList<>();
     }
+
     public Game(Quiz quiz) {
         this.quiz = quiz;
     }
 
-
+    public Game(String id, String name, String host, ArrayList<Player> players) {
+        this.id = id;
+        this.name = name;
+        this.host = host;
+        this.players = players;
+    }
 
     public void addPlayer(String playerId) {
         boolean isFound = false;
@@ -80,5 +89,39 @@ public class Game {
     }
 
 
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+    }
 }
