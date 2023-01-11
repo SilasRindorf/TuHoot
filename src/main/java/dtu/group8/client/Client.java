@@ -18,38 +18,31 @@ import java.util.UUID;
  * Client
  * Responsibilities:
  * Must have:
- *      Receive questions
- *      Send answers
- *      Receive correct answer
- *      Show if answer was correct or wrong
+ * Receive questions
+ * Send answers
+ * Receive correct answer
+ * Show if answer was correct or wrong
  * Can have:
- *      See opponent points
- *      See timer
- *      See amount of remaining questions
- *      Reconnect to game
+ * See opponent points
+ * See timer
+ * See amount of remaining questions
+ * Reconnect to game
  */
 public class Client {
     // Port of server
     static final String PORT = "9002";
     // localhost
-    //private static final String LOCALHOST = "10.209.95.114";
     static final String IP = "localhost";
     static final String TYPE = "?keep";
-    //private Player player;
-/*    private String clientName = "";
-    String clientID = "";*/
     private BufferedReader input;
-    //public static Object[] allPlayers;
     private static final String JOIN_ME_REQ = "join_req";
     private static final String JOIN_ME_RES = "join_res";
-    private Game game;
     GameSetup gameSetup;
 
 
-
-    public Game matchMake(){
+    public Game matchMake() {
         try {
-            Printer printer = new Printer("Client:matchMake",Printer.PrintColor.WHITE);
+            Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
 
             input = new BufferedReader(new InputStreamReader(System.in));
             // Set the URI of the chat space
@@ -66,26 +59,14 @@ public class Client {
             RemoteSpace remoteSpace = new RemoteSpace(uri);
 
             // Read client name from the console
-            printer.print("","Enter your name: ", Printer.PrintColor.ANSI_RESET);
+            printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
 
             String clientName = input.readLine();
             String clientId = UUID.randomUUID().toString();
             Player player = new Player(clientName, clientId, 0);
             // remoteSpace.put("lobby", clientName, clientID); // no need for this now
             gameSetup = new GameSetup(remoteSpace);
-            game = gameSetup.initializeGame(player);
-
-/*            Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
-            game.setName(obj[3].toString());
-
-            if (Objects.equals(game.getHost(), game.getMe().getId()))
-                printer.println("Game " + game.getName() +" created");
-
-            game.setId(obj[2].toString()); // spaceId/gameId
-            String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
-            printer.println("You are connected to game " + game.getName());
-            game.setSpace(new RemoteSpace(uri2));*/
-            return game;
+            return gameSetup.initializeGame(player);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,7 +74,8 @@ public class Client {
         return null;
 
     }
-    public Space setup(Game game) {
+
+    public Game setup(Game game) {
         //____________________________________ SETUP ____________________________________
         Space space = game.getSpace();
         if (space == null) {
@@ -183,33 +165,34 @@ public class Client {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return space;
+        return game;
     }
 
-        public void start(Space space){
-            Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
-            Printer printer = new Printer();
+    public void start(Game game) {
+        Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+        Printer printer = new Printer();
+        Space space = game.getSpace();
 
-            try{
+        try {
             //____________________________________ STARTING GAME ____________________________________
             log.println("playing game!");
             log.println("getting question size");
-            Object[] size = space.query(new ActualField("QuizSize"),new FormalField(Integer.class));
+            Object[] size = space.query(new ActualField("QuizSize"), new FormalField(Integer.class));
             log.println("starting game loop");
             Object[] question;
             Object[] answer;
-            for (int i = 0; i < (Integer) size[1]; i++){
+            for (int i = 0; i < (Integer) size[1]; i++) {
                 printer.println("Question coming up!");
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
-                printer.println("Question " + (i+1) + ":\n\t" + question[1].toString());
+                printer.println("Question " + (i + 1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
-                space.put("A",game.getMe().getId(), input.readLine(),i);
+                space.put("A", game.getMe().getId(), input.readLine(), i);
                 log.println("Waiting for verification of answer");
-                answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+                answer = space.get(new ActualField("V"), new FormalField(String.class), new FormalField(Boolean.class));
                 log.println("Received verification from Space");
-                if ((boolean) answer[2]){
+                if ((boolean) answer[2]) {
                     printer.println("You got the answer correct!");
-                } else{
+                } else {
                     log.println("Getting correct answer");
                     answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
                     printer.println("You got the answer wrong! The correct answer was " + answer[1]);
@@ -226,7 +209,7 @@ public class Client {
     }
 
     private String getUri(String parameter) {
-        return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
+        return "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
 
 }

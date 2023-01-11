@@ -64,7 +64,7 @@ public class GameSetup {
 
 
     public void display_start_game_option (Game game) {
-       /* Space space = game.getSpace();
+        Space space = game.getSpace();
         try {
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             final String OPTIONS = "Options:\n\t1. start game\n\tor press enter to wait for an invitation";
@@ -101,7 +101,7 @@ public class GameSetup {
             }
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }
     }
 
     void getAllPlayersFromSpace(Game game, Space space) throws InterruptedException {
