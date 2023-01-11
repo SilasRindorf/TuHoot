@@ -70,7 +70,7 @@ public class Client {
             clientName = input.readLine();
             clientID = UUID.randomUUID().toString();
             remoteSpace.put("lobby", clientName, clientID);
-            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(remoteSpace);
+            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(remoteSpace, clientID);
             Thread thread = new Thread(threadCreateBoard);
             thread.start();
 

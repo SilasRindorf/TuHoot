@@ -1,5 +1,6 @@
 package dtu.group8.lobby;
 
+import dtu.group8.lobby.data_class.Board;
 import dtu.group8.util.Printer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
@@ -22,6 +23,7 @@ public class LobbyServer {
     private static final String TYPE = "?keep";
 
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
+    private ArrayList<Board> boards = new ArrayList<>();
 
     Integer spaceCounter = 0;
 
@@ -55,15 +57,34 @@ public class LobbyServer {
             spaceLobby.put("createBoardLock");
 
             while (true) {
-                spaceLobby.get(new ActualField(CREATE_BOARD));
+                Object[] createBoardObj = spaceLobby.get(new ActualField(CREATE_BOARD), new FormalField(Object.class), new FormalField(Object.class));
+                System.out.println("Creating board...");
+                String boardName = createBoardObj[1].toString();
+                String hostId = createBoardObj[2].toString();
+                spaceCounter++;
+                String boardId = "boardId" + spaceCounter;
+                ArrayList<String> clientIds = new ArrayList<>();
+                clientIds.add(hostId);
+                Board newBoard = new Board(boardName, boardId, hostId, clientIds);
+                this.boards.add(newBoard);
+                SequentialSpace newSpace = new SequentialSpace();
+                newSpace.put("allPlayers", boardId, newBoard.getPlayerIds());
+                repository.add(hostId, newSpace);
+                System.out.println("Board created");
+                System.out.println("\tBoard name: " + boardName);
+
+
+
+
+
+
+/*
                 Printer log = new Printer();
                 System.out.println("Creating board...");
                 //Get all clients from lobby
                 LinkedList<Object[]> allClients = spaceLobby.getAll(new ActualField("lobby"), new FormalField(String.class), new FormalField(String.class));
                 //id++
-                spaceCounter++;
                 SequentialSpace newSpace = new SequentialSpace();
-                String newSpaceId = "boardId" + spaceCounter;
                 repository.add(newSpaceId, newSpace);
 
 
@@ -92,6 +113,7 @@ public class LobbyServer {
                 }
 
                 newSpace.put("allMembers", playerNames, playerIds);
+*/
 
             }
         } catch (IOException e) {

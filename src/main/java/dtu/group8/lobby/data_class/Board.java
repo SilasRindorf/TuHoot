@@ -5,11 +5,13 @@ import java.util.ArrayList;
 public class Board {
     private String name;
     private String id;
+    private String hostId;
     private ArrayList<String> playerIds;
 
-    public Board(String name, String id, ArrayList<String> playerIds) {
+    public Board(String name, String id, String hostId, ArrayList<String> playerIds) {
         this.name = name;
         this.id = id;
+        this.hostId = hostId;
         this.playerIds = playerIds;
     }
 
@@ -36,4 +38,15 @@ public class Board {
     public void setPlayerIds(ArrayList<String> playerIds) {
         this.playerIds = playerIds;
     }
+
+    public String getHostId() {
+        return hostId;
+    }
+
+/*    public void setHostId(String hostId) {
+        if (!playerIds.contains(hostId)) {
+            playerIds.add(hostId)
+        }
+        this.hostId = hostId;
+    }*/
 }
