@@ -40,7 +40,7 @@ public class Client {
 /*    private String clientName = "";
     String clientID = "";*/
     private BufferedReader input;
-    public static Object[] allPlayers;
+    //public static Object[] allPlayers;
     private static final String JOIN_ME_REQ = "join_req";
     private static final String JOIN_ME_RES = "join_res";
     private Game game;
@@ -79,10 +79,10 @@ public class Client {
             initializeGame.display_create_and_joint_game_options();
 
             Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(player.getId()), new FormalField(Object.class), new FormalField(Object.class));
+            game.setName(obj[3].toString());
 
             if (Objects.equals(game.getHost(), player.getId()))
                 printer.println("Game " + game.getName() +" created");
-            else game.setName(obj[3].toString());
 
             game.setId(obj[2].toString()); // spaceId/gameId
             String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;

@@ -10,6 +10,7 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class InitializeGame {
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
@@ -43,7 +44,7 @@ public class InitializeGame {
                     String gameName = input.readLine();
                     game.setName(gameName);
                     game.setHost(player.getId());
-                    remoteSpace.put("create game",gameName, player.getId());
+                    remoteSpace.put("create game",gameName, player.getId(), player.getName());
                     break;
 
                 } else if (userInput.equalsIgnoreCase("")){
@@ -58,21 +59,19 @@ public class InitializeGame {
 
 
     public void display_start_game_option (Space space) {
-        try {
+      /*  try {
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             final String OPTIONS = "Options:\n\t1. start game\n\tor press enter to wait for an invitation";
 
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
-                input = new BufferedReader(new InputStreamReader(System.in));
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
-                    Object[] obj = space.getp(new ActualField(LOCK_FOR_GAME_START));
+                    //Object[] obj = space.getp(new ActualField(LOCK_FOR_GAME_START));
 
                     if (obj[0].equals(LOCK_FOR_GAME_START)) {
 
-                        Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
                         String[] pids = (String[]) Client.allPlayers[2];
 
                         for (String pid : pids) {
@@ -96,6 +95,11 @@ public class InitializeGame {
             }
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
+    }
+
+    void getAllPlayersFromSpace(Game game, Space space) throws InterruptedException {
+        Object[] obj = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
+
     }
 }

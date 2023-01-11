@@ -73,7 +73,7 @@ public class ThreadStartGame implements Runnable {
 
 }
 
-class Thread_Acknowledgement_ToJoinGame implements Runnable {
+/*class Thread_Acknowledgement_ToJoinGame implements Runnable {
     Space space;
     String[] pids;
     boolean sleepThread;
@@ -114,4 +114,4 @@ class Thread_Acknowledgement_ToJoinGame implements Runnable {
 
     }
 
-}
+}*/

@@ -5,14 +5,15 @@ import java.util.ArrayList;
 public class Game {
     private String name;
     private String id;
-    private String hostId;
-    private ArrayList<String> playerIds;
+    private Player hostPlayer;
+    //private ArrayList<String> playerIds;
+    private ArrayList<Player> players;
 
-    public Game(String name, String id, String hostId, ArrayList<String> playerIds) {
+    public Game(String name, String id, Player hostPlayer, ArrayList<Player> players) {
         this.name = name;
         this.id = id;
-        this.hostId = hostId;
-        this.playerIds = playerIds;
+        this.hostPlayer = hostPlayer;
+        this.players = players;
     }
 
     public String getName() {
@@ -31,22 +32,37 @@ public class Game {
         this.id = id;
     }
 
-    public ArrayList<String> getPlayerIds() {
-        return playerIds;
+    public Player getHostPlayer() {
+        return hostPlayer;
     }
 
-    public void setPlayerIds(ArrayList<String> playerIds) {
-        this.playerIds = playerIds;
+    public void setHostPlayer(Player hostPlayer) {
+        this.hostPlayer = hostPlayer;
     }
 
-    public String getHostId() {
-        return hostId;
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
-/*    public void setHostId(String hostId) {
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public void addPlayer(Player player) {
+        for (Player currP : this.players) {
+            if (currP.getId().equals(player.getId())) {
+                return;
+            }
+        }
+        players.add(player);
+    }
+
+    /*    public void setHostId(String hostId) {
         if (!playerIds.contains(hostId)) {
             playerIds.add(hostId)
         }
         this.hostId = hostId;
     }*/
 }
+
+

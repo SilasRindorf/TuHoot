@@ -1,6 +1,7 @@
 package dtu.group8.lobby;
 
 import dtu.group8.lobby.data_class.Game;
+import dtu.group8.lobby.data_class.Player;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.SequentialSpace;
@@ -12,7 +13,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class LobbyServer {
-    static final String CREATE_BOARD = "create game";
+    static final String CREATE_GAME = "create game";
     private static final String PORT = "9002";
     //private static final String LOCALHOST = "10.209.95.114";
     private static final String IP = "localhost";
@@ -58,19 +59,21 @@ public class LobbyServer {
             spaceLobby.put("createBoardLock");
 
             while (true) {
-                Object[] createBoardObj = spaceLobby.get(new ActualField(CREATE_BOARD), new FormalField(Object.class), new FormalField(Object.class));
+                Object[] createBoardObj = spaceLobby.get(new ActualField(CREATE_GAME), new FormalField(Object.class), new FormalField(Object.class), new FormalField(Object.class));
                 System.out.println("Creating board...");
                 String gameName = createBoardObj[1].toString();
                 String hostId = createBoardObj[2].toString();
+                String hostName = createBoardObj[3].toString();
+
                 spaceCounter++;
                 String gameId = "gameId" + spaceCounter;  // gameId/boardId/spaceId
-                ArrayList<String> clientIds = new ArrayList<>();
-                clientIds.add(hostId);
-                Game newGame = new Game(gameName, gameId, hostId, clientIds);
+                ArrayList<Player> players = new ArrayList<>();
+                players.add(new Player(hostName, hostId));
+                Game newGame = new Game(gameName, gameId, new Player(hostName, hostId), players);
                 this.games.add(newGame);
                 SequentialSpace newSpace = new SequentialSpace();
                 repository.add(gameId, newSpace);
-                newSpace.put("allPlayers", gameId, newGame.getPlayerIds());
+                newSpace.put("allPlayers", gameId, newGame.getPlayers());
 
                 spaceLobby.put("mySpaceId", hostId, gameId, gameName);
                 System.out.println("Game created");

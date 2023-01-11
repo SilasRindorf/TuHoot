@@ -58,6 +58,15 @@ public class Game {
         }
 
     }
+
+    public void addPlayer(Player player) {
+        for (Player currP : this.players) {
+            if (currP.getId().equals(player.getId())) {
+                return;
+            }
+        }
+        players.add(player);
+    }
     public void removePlayer(String playerId) {
 
     }
