@@ -179,12 +179,14 @@ public class Client {
             }
             //____________________________________ STARTING GAME ____________________________________
             log.println("playing game!");
+
             while (!((Integer) t[1] == 0)) {
                 // Answer space ack
                 //t = space.query(new ActualField(clientID), new FormalField(Integer.class));
                 if ((Integer) t[1] == 3 ){
                     space.put( clientID, "ok");
                 }
+
                 //____________________________________ RECEIVE QUESTION ____________________________________
                 System.out.println("Question coming up");
 
@@ -193,8 +195,7 @@ public class Client {
                 t = space.query(new ActualField("Q"), new FormalField(String.class));
                 System.out.println("Question: " + t[1]);
                 //____________________________________ ANSWER ____________________________________
-                Object[] gameState = space.queryp(new ActualField("gameState"),new FormalField(Integer.class));
-
+                Object[] gameState = space.query(new ActualField("gameState"),new FormalField(Integer.class));
                 log.println("Getting answer and sending it to space");
                 //Get answer and send to space
                 space.put("A",clientID, input.readLine());
@@ -211,7 +212,6 @@ public class Client {
                 t = space.query(new ActualField("A"), new FormalField(String.class));
                 System.out.println("Answer was " + t[1]);
                 //Questionable coding ends.... maybe
-
                 //Check game state
                 t = space.query(new ActualField("gameState"), new FormalField(Integer.class));
                 log.println("Next question");

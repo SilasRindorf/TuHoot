@@ -38,17 +38,22 @@ public class GameController {
         printer.println("Done adding players");
         printer.println("Selecting question");
         updateGameState(space,GameState.START);
-        game.selectNewQuestion();
         printer.println("Selected question");
-        while (game.getCurrentQuestion() != null && isAlive){
+        while (game.getSizeOfQuiz() > 0 && isAlive){
+            game.selectNewQuestion();
+            space.getp(new ActualField("Q"), new FormalField(String.class));
             space.put("Q",game.getCurrentQuestion());
+
+            if(game.getGameState().value == 4){
+                updateGameState(space, GameState.START);
+
+            }
 
             printer.println("Waiting for answers");
             long timeMillis = System.currentTimeMillis();
             long end = timeMillis+10000;
             while(System.currentTimeMillis() < end) {
                 // do something
-                Thread.sleep(2000);
                 Object[] t = space.getp(new ActualField("A"),new FormalField(String.class),new FormalField(String.class));
                 if (t != null) {
                     printer.println("Checking submitted answer=\"" + t[2].toString() + "\" for question=\"" + game.getCurrentQuestion() + "\"");
@@ -60,12 +65,11 @@ public class GameController {
             printer.println("No longer waiting for answers");
             space.get(new ActualField("Q"), new FormalField(String.class));
             printer.println("Updating game state");
-
+            updateGameState(space, GameState.NEXT);
             printer.println("Sending correct answer");
             space.getp(new ActualField("A"), new FormalField(String.class));
             space.put("A",game.getCurrentAnswer());
             printer.println("Selecting new question");
-            game.selectNewQuestion();
         }
     }
 
@@ -73,6 +77,7 @@ public class GameController {
     private void updateGameState(Space space, GameState state) throws InterruptedException{
         space.getp(new ActualField("gameState"),new FormalField(Integer.class));
         space.put("gameState", state.value);
+        game.setGameState(state);
 
     }
 }

@@ -6,7 +6,7 @@ public class Player {
     private int point = 0;
 
 
-    public Player(String playerId){
+    public Player(/*Identifying string of a client*/String playerId){
         this.id = playerId;
     }
     void addPoint(int point) {

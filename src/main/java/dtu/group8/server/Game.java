@@ -1,5 +1,6 @@
 package dtu.group8.server;
 
+import dtu.group8.server.model.GameState;
 import dtu.group8.server.model.Player;
 import dtu.group8.server.model.Quiz;
 import dtu.group8.server.model.QuizQuestion;
@@ -11,6 +12,7 @@ import java.util.Objects;
 public class Game {
     private ArrayList<Player> players;
     private Quiz quiz;
+    private GameState gameState;
     public Game() {
         quiz = new Quiz();
         quiz.questions.add(new QuizQuestion("2+2","5"));
@@ -21,7 +23,9 @@ public class Game {
         this.quiz = quiz;
     }
 
-
+    public int getSizeOfQuiz(){
+        return quiz.questions.size();
+    }
 
     public void addPlayer(String playerId) {
         boolean isFound = false;
@@ -49,6 +53,15 @@ public class Game {
     public String getCurrentQuestion() {
         return quiz.getCurrentQuestion().getQuestion();
     }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
     public String getCurrentAnswer(){
         return quiz.getCurrentQuestion().getAnswer();
     }
