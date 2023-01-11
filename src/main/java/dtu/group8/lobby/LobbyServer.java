@@ -67,13 +67,13 @@ public class LobbyServer {
 
                 spaceCounter++;
                 String gameId = "gameId" + spaceCounter;  // gameId/boardId/spaceId
-                ArrayList<Player> players = new ArrayList<>();
-                players.add(new Player(hostName, hostId));
-                Game newGame = new Game(gameName, gameId, new Player(hostName, hostId), players);
+                Game newGame = new Game(gameName, gameId, new Player(hostName, hostId));
+                newGame.addPlayer(hostName, hostId);
                 this.games.add(newGame);
                 SequentialSpace newSpace = new SequentialSpace();
                 repository.add(gameId, newSpace);
-                newSpace.put("allPlayers", gameId, newGame.getPlayers());
+                newSpace.put("hello");
+                newSpace.put("allPlayers", newGame.getPlayerNames(), newGame.getPlayerIds());
 
                 spaceLobby.put("mySpaceId", hostId, gameId, gameName);
                 System.out.println("Game created");

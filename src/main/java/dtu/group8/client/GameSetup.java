@@ -11,6 +11,7 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static dtu.group8.client.Client.*;
@@ -74,29 +75,20 @@ public class GameSetup {
                 System.out.print("Input command: ");
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
-                    //Object[] obj = space.getp(new ActualField(LOCK_FOR_GAME_START));
 
-                    if (obj[0].equals(LOCK_FOR_GAME_START)) {
+                    getAllPlayersFromSpace(game);
 
-                        String[] pids = (String[]) Client.allPlayers[2];
+/*                    String[] pids = (String[]) Client.allPlayers[2];
 
-                        for (String pid : pids) {
-                            space.put(pid, JOIN_ME_REQ, player.getName());
-                        }
-                        space.put(LOCK_FOR_GAME_START);
-
-                        // TODO The host must be removed from the tuple when the game is over
-                        space.put("host", player.getId());
-                        break;
-
-                    } else {
-                        System.out.println("The game has already been started");
+                    for (String pid : pids) {
+                        space.put(pid, JOIN_ME_REQ, player.getName());
                     }
+                    space.put(LOCK_FOR_GAME_START);
 
-                } else if (userInput.equalsIgnoreCase("")) {
-                    Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
-                    System.out.println("Waiting for a game to start...");
+                    // TODO The host must be removed from the tuple when the game is over
+                    space.put("host", player.getId());*/
                     break;
+
                 }
             }
         } catch (InterruptedException | IOException e) {
@@ -104,8 +96,17 @@ public class GameSetup {
         }
     }
 
-    void getAllPlayersFromSpace(Game game, Space space) throws InterruptedException {
-        Object[] obj = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
+    void getAllPlayersFromSpace(Game game) throws InterruptedException {
+        game.getSpace().get(new ActualField("hello"));
+        Object[] obj = game.getSpace().get(new ActualField("allPlayers"), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
+        ArrayList<String> playerNames = (ArrayList<String>) obj[1];
+        ArrayList<String> playerIds = (ArrayList<String>) obj[2];
+        assert playerIds.size() != playerNames.size() : "players.size != playerIds.size";
+
+        for (int i = 0; i < playerNames.size(); i++) {
+            Player currPlayer = new Player(playerNames.get(i), playerIds.get(i), 0);
+            game.addPlayer(currPlayer);
+        }
 
     }
 

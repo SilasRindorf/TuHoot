@@ -6,14 +6,15 @@ public class Game {
     private String name;
     private String id;
     private Player hostPlayer;
-    //private ArrayList<String> playerIds;
-    private ArrayList<Player> players;
+    private ArrayList<String> playerIds;
+    private ArrayList<String> playerNames;
 
-    public Game(String name, String id, Player hostPlayer, ArrayList<Player> players) {
+    public Game(String name, String id, Player hostPlayer) {
         this.name = name;
         this.id = id;
         this.hostPlayer = hostPlayer;
-        this.players = players;
+        this.playerIds = new ArrayList<>();
+        this.playerNames = new ArrayList<>();
     }
 
     public String getName() {
@@ -40,23 +41,22 @@ public class Game {
         this.hostPlayer = hostPlayer;
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
 
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
 
-    public void addPlayer(Player player) {
-        for (Player currP : this.players) {
-            if (currP.getId().equals(player.getId())) {
-                return;
-            }
+    public void addPlayer(String playerName, String playerId) {
+        if (!playerIds.contains(playerId)) {
+            playerNames.add(playerName);
+            playerIds.add(playerId);
         }
-        players.add(player);
     }
 
+    public ArrayList<String> getPlayerIds() {
+        return playerIds;
+    }
+
+    public ArrayList<String> getPlayerNames() {
+        return playerNames;
+    }
 }
 
 
