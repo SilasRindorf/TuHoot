@@ -1,5 +1,6 @@
 package dtu.group8.lobby;
 
+import dtu.group8.util.Printer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.SequentialSpace;
@@ -54,6 +55,7 @@ public class LobbyServer {
 
             while (true) {
                 spaceLobby.get(new ActualField(CREATE_BOARD));
+                Printer log = new Printer();
                 System.out.println("Creating board...");
                 //Get all clients from lobby
                 LinkedList<Object[]> allClients = spaceLobby.getAll(new ActualField("lobby"), new FormalField(String.class), new FormalField(String.class));

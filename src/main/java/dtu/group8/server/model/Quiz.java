@@ -9,6 +9,21 @@ public class Quiz {
     public QuizQuestion getCurrentQuestion() {
         return currentQuestion;
     }
+    public int quizSize(){
+        return questions.size();
+    }
+
+    public String getQuestion(int index){
+        return questions.get(index).getQuestion();
+    }
+
+    public String getAnswer(int index){
+        return questions.get(index).getAnswer();
+    }
+
+    public boolean checkAnswer(int index, String answer){
+        return questions.get(index).checkAnswer(answer);
+    }
 
     private QuizQuestion currentQuestion;
 
