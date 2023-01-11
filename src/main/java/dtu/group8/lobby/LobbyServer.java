@@ -32,6 +32,7 @@ public class LobbyServer {
     }
 
     public void startServer() {
+
         try {
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             SpaceRepository repository = new SpaceRepository();
