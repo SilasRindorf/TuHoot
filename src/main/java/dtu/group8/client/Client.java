@@ -255,5 +255,4 @@ public class Client {
     private String getUri(String parameter) {
         return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
-
 }
