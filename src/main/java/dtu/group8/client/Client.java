@@ -1,6 +1,5 @@
 package dtu.group8.client;
 
-import dtu.group8.server.ClientServer;
 import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
 import dtu.group8.util.Printer;
@@ -75,10 +74,9 @@ public class Client {
             // remoteSpace.put("lobby", clientName, clientID); // no need for this now
 
             if (game == null) game = new Game();
-            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(game, player, remoteSpace);
-            Thread thread = new Thread(threadCreateBoard);
-            thread.start();
-            thread.join(); // has no effect, at least for now (remoteSpace.get() blocks anyway).
+            CreateBoard createBoard = new CreateBoard(game, player, remoteSpace);
+            createBoard.showOptions_andTakeInput();
+
             Object[] obj = remoteSpace.get(new ActualField("mySpaceId"), new ActualField(player.getId()), new FormalField(Object.class), new FormalField(Object.class));
 
             if (Objects.equals(game.getHost(), player.getId()))

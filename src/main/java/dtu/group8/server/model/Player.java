@@ -5,6 +5,10 @@ public class Player {
     private String id;
     private int point;
 
+    public Player(String id) {
+        this.id = id;
+        this.point = 0;
+    }
 
     public Player(String name, String playerId, int point){
         this.name = name;

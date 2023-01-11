@@ -2,27 +2,26 @@ package dtu.group8.client;
 
 import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
-import org.jspace.ActualField;
 import org.jspace.RemoteSpace;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ThreadCreateBoard implements Runnable {
+public class CreateBoard {
     private final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
     private RemoteSpace remoteSpace;
     private Player player;
     private Game game;
 
-    public ThreadCreateBoard(Game game,Player player, RemoteSpace remoteSpace) {
+    public CreateBoard(Game game, Player player, RemoteSpace remoteSpace) {
         this.game = game;
         this.player = player;
         this.remoteSpace = remoteSpace;
 
     }
-    @Override
-    public void run() {
+
+    public void showOptions_andTakeInput() {
         try {
             while (true) {
                 System.out.println(OPTIONS);
