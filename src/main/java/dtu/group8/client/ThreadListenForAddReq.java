@@ -34,7 +34,7 @@ public class ThreadListenForAddReq implements Runnable{
                         new FormalField(String.class), new FormalField(String.class));
 
                 String pName = objs[2].toString();
-                String pId = objs[2].toString();
+                String pId = objs[3].toString();
 
                 System.out.println("\nThreadListenForAddReq: " + pName + " wants to join");
                 System.out.println("Enter ok to accept, or no to refuse the request");
@@ -42,8 +42,10 @@ public class ThreadListenForAddReq implements Runnable{
                 //String str = Util.takeUserInput();
                 System.out.println(str);
                 if (str.equalsIgnoreCase("ok")) {
-                    lobbySpace.put(JOINT_RES_FROM_HOST, game.getId(), pName, pId);
+                    lobbySpace.put(JOINT_RES_FROM_HOST, game.getHostId(), pName, pId);
                     printer.println("You accepted: " + pName);
+                    printer.println("Sent req back to server: " + pName);
+
                 } else if (str.equalsIgnoreCase("no")) {
                     // do nothing
                 }

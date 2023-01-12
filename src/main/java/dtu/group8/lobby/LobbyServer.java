@@ -177,7 +177,7 @@ public class LobbyServer {
                     String gameId = obj[1].toString();
                     String playerName = obj[2].toString();
                     String playerId = obj[3].toString();
-                    System.out.println(playerId);
+                    System.out.println("Host accepted: " + playerName + "; " + playerId);
 
 
 
