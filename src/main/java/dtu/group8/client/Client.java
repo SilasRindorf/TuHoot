@@ -30,13 +30,7 @@ import static dtu.group8.lobby.Util.*;
  * Reconnect to game
  */
 public class Client {
-    // Port of server
-/*    static final String PORT = "9002";
-    // localhost
-    static final String IP = "localhost";
-    static final String TYPE = "?keep";*/
     GameSetup gameSetup;
-
 
     public Game matchMake() {
         try {
