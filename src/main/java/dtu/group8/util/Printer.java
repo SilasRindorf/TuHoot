@@ -1,6 +1,6 @@
 package dtu.group8.util;
 
-public class Printer {
+public class Printer{
     private boolean log = true;
     private String defaultTAG = "";
     private PrintColor defaultPrintColor = PrintColor.ANSI_RESET;
@@ -42,6 +42,7 @@ public class Printer {
     public void println(String prefixes, String str){
         println(prefixes,defaultTAG,str, defaultPrintColor);
     }
+
 
     public boolean isLog() {
         return log;

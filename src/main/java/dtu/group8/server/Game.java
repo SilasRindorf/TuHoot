@@ -6,19 +6,19 @@ import dtu.group8.server.model.QuizQuestion;
 import dtu.group8.util.Printer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.StringTokenizer;
 
 public class Game {
     private ArrayList<Player> players;
     private Quiz quiz;
-
     public Game() {
         quiz = new Quiz();
         quiz.questions.add(new QuizQuestion("2+2", "5"));
         quiz.questions.add(new QuizQuestion("apples", "bananas"));
         players = new ArrayList<>();
     }
-
     public Game(Quiz quiz) {
         this.quiz = quiz;
     }
@@ -37,7 +37,6 @@ public class Game {
         }
 
     }
-
     public void removePlayer(String playerId) {
 
     }
@@ -80,8 +79,18 @@ public class Game {
         }
     }
 
-    private int calculatePoints(int index) {
-        return 100 * (1 + players.size() - quiz.getAmountOfCorrectAnswers(index));
+    public String getScores(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("Highest scores:");
+        builder.append("\tName\tScore");
+        Collections.sort(players);
+        for (Player player :
+                players) {
+            builder.append("\n\t" + player.getName() + "\t");
+        }
+        return builder.toString();
     }
+
+
 
 }

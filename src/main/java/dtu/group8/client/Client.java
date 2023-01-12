@@ -235,7 +235,7 @@ public class Client {
 
     public void endGame(){
         Printer printer = new Printer();
-        printer.print("Do you want join another lobby? y/n ");
+        printer.print("Do you want join another lobby(y/n)?");
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         try {
             String str =  input.readLine().trim();

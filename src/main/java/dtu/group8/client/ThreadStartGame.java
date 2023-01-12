@@ -41,6 +41,7 @@ public class ThreadStartGame implements Runnable {
         try {
             while (alive) {
                 Printer log = new Printer("ThreadStartGame", Printer.PrintColor.BLUE);
+                log.setLog(false);
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
                 input = new BufferedReader(new InputStreamReader(System.in));
