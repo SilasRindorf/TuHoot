@@ -134,12 +134,7 @@ public class GameSetup {
         ArrayList<String> arr = (ArrayList<String>) obj[2];
 
         System.out.println("Available game(s): " + arr.size());
-        if (arr.isEmpty()) {
-            // TODO Must go back to the initial state, so that user can create a game
-        }
-
         HashMap<String, String> gameNames = new HashMap<>();
-
         for (String s : arr) {
             String[] currGame = s.split(PATTERN_FOR_PLAYER_ID_SPLITTER, 2);
             String gameName = currGame[0];
@@ -148,14 +143,13 @@ public class GameSetup {
             System.out.println("\t" + currGame[0]);
         }
 
-        String userChosenGameId = "";
+        String userChosenGameId;
         while (true) {
             if (arr.isEmpty()) printer.print("Press enter to go back: ");
             else printer.print("Enter a game name to join or press enter to go back: ");
 
             String userInput = game.takeUserInput();
             if (userInput.equals("")){
-                //initializeGame(game.getMe());
                 return false;
             }
 
