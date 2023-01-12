@@ -75,6 +75,7 @@ public class LobbyServer {
                 semaphore.release();
                 SequentialSpace newSpace = new SequentialSpace();
                 repository.add(gameId, newSpace);
+                // getPlayerNames and getPlayerIds contains only the host, for now.
                 newSpace.put(ALL_PLAYERS, newGameLobby.getPlayerNames(), newGameLobby.getPlayerIds());
                 spaceLobby.put(MY_SPACE_ID, hostId, gameId, gameName);
                 System.out.println("LobbyServer: Game created");
@@ -179,6 +180,16 @@ public class LobbyServer {
                     String playerId = obj[3].toString();
                     System.out.println("Host accepted: " + playerName + "; " + playerId);
 
+                    semaphore.acquire();
+                    for (GameLobby currGame : gameList) {
+                        if (gameId.equals(currGame.getId())) {
+                            currGame.addPlayer(playerName, playerId);
+
+
+                        }
+                    }
+
+                    semaphore.release();
 
 
                 }

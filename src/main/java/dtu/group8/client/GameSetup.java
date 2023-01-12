@@ -94,7 +94,7 @@ public class GameSetup {
     }
 
     void getAllPlayersFromSpace(Game game) throws InterruptedException {
-        Object[] obj = game.getSpace().get(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
+        Object[] obj = game.getSpace().query(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
         ArrayList<String> playerNames = (ArrayList<String>) obj[1];
         ArrayList<String> playerIds = (ArrayList<String>) obj[2];
         assert playerIds.size() != playerNames.size() : "players.size != playerIds.size";
