@@ -35,7 +35,6 @@ public class Client {
     // localhost
     static final String IP = "localhost";
     static final String TYPE = "?keep";*/
-    private BufferedReader input;
     GameSetup gameSetup;
 
 
@@ -43,7 +42,7 @@ public class Client {
         try {
             Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
 
-            input = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             // Set the URI of the chat space
             printer.print("Enter URI of the chat server or press enter for default: ");
             String uri = input.readLine();
@@ -81,9 +80,9 @@ public class Client {
             return null;
         }
         try {
-            if (input == null) {
+/*            if (input == null) {
                 input = new BufferedReader(new InputStreamReader(System.in));
-            }
+            }*/
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
@@ -182,7 +181,8 @@ public class Client {
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
                 printer.println("Question " + (i + 1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
-                space.put("A", game.getMe().getId(), input.readLine(), i);
+                String str = game.takeUserInput();
+                space.put("A", game.getMe().getId(), str, i);
                 log.println("Waiting for verification of answer");
                 answer = space.get(new ActualField("V"), new FormalField(String.class), new FormalField(Boolean.class));
                 log.println("Received verification from Space");
@@ -197,7 +197,7 @@ public class Client {
             log.println("Stopping game...");
             //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
-                IOException | InterruptedException e) {
+                InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
