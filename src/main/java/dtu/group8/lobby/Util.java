@@ -23,4 +23,15 @@ public class Util {
     public static final String TYPE = "?keep";
 
 
+    public static String takeUserInput() {
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        String userInput;
+        try {
+            userInput = input.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Game: " + userInput);
+        return userInput;
+    }
 }

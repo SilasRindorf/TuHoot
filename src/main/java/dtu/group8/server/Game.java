@@ -180,6 +180,7 @@ public class Game {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Game: " + userInput);
         return userInput;
     }
 
