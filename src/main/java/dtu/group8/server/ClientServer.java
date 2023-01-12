@@ -1,7 +1,5 @@
 package dtu.group8.server;
 
-import org.jspace.Space;
-
 public class ClientServer implements Runnable {
     private final GameController gameController;
 
@@ -13,8 +11,6 @@ public class ClientServer implements Runnable {
     public void run() {
         try {
             gameController.startGame();
-
-            //space.put("joinMe");
         } catch (Exception e) {
             e.printStackTrace();
         }

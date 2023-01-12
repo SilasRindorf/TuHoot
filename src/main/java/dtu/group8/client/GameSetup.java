@@ -46,7 +46,10 @@ public class GameSetup {
                     String gameName = game.takeUserInput();
                     game.setName(gameName);
                     game.setHostId(player.getId());
+                    /* Sends a request to the server to create a new game. */
                     lobbySpace.put(CREATE_GAME_REQ,gameName, player.getId(), player.getName());
+
+                    /* Gets the appropriate space from the server*/
                     getSpace(game);
                     // TODO Check if the given game-name already exists in the server.
                     break;
@@ -103,7 +106,7 @@ public class GameSetup {
 
     void getSpace(Game game) throws InterruptedException, IOException {
         Printer printer = new Printer("GameSetup: getSpace", Printer.PrintColor.WHITE);
-
+        /* Awaits a response from the server regarding the game creation. */
         Object[] obj = lobbySpace.get(new ActualField(MY_SPACE_ID), new ActualField(game.getMe().getId()),
                 new FormalField(Object.class), new FormalField(Object.class),
                 new FormalField(Object.class), new FormalField(Object.class));
@@ -118,7 +121,8 @@ public class GameSetup {
         game.setHostName(hostName);
         game.setHostId(hostId);
 
-        if (Objects.equals(game.getHostId(), game.getMe().getId()))
+        // Checks if this player/client is the host
+        if (game.getMe().getId().equals(game.getHostId()))
             printer.println("Game " + game.getName() +" created");
         String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
         printer.println("You are connected to game " + game.getName());

@@ -65,7 +65,7 @@ public class LobbyServer {
                 String hostName = createBoardObj[3].toString();
 
                 spaceCounter++;
-                String gameId = "gameId" + spaceCounter;  // gameId/boardId/spaceId
+                String gameId = "gameId" + spaceCounter;  // gameId = boardId = spaceId
                 GameLobby newGameLobby = new GameLobby(gameName, gameId, new PlayerLobby(hostName, hostId));
                 newGameLobby.addPlayer(hostName, hostId);
                 semaphore.acquire();
@@ -73,7 +73,7 @@ public class LobbyServer {
                 semaphore.release();
                 SequentialSpace newSpace = new SequentialSpace();
                 repository.add(gameId, newSpace);
-                // getPlayerNames and getPlayerIds contains only the host, for now.
+                // Currently, the getPlayerNames and getPlayerIds methods only contain the hostId and hostName.
                 newSpace.put(ALL_PLAYERS, newGameLobby.getPlayerNames(), newGameLobby.getPlayerIds());
                 String receiverId = hostId; // just not to mix up.
                 spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId);
@@ -169,14 +169,14 @@ public class LobbyServer {
                     System.out.println(hostName + " accepted " + addedClientName);
 
                     semaphore.acquire();
-                    // Adding the new player to the belonging game has no effect for now. The full game list already exists in the private space.
+                    /* Adding the new player to the appropriate game. This has no effect for now,
+                       the full game list already exists in the private space. */
                     for (GameLobby currGame : gameList) {
                         if (gameId.equals(currGame.getId())) {
                             currGame.addPlayer(addedClientName, addedClientId);
 
                             // Sending response back to client
-                            //String hostPlayerId = currGame.getHostPlayer().getId();
-                            String receiverId = addedClientId; // just not to mix up.
+                            String receiverId = addedClientId; // just to avoid confusion.
                             spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId);
                             System.out.println("LobbyServer: sent gameId/spaceId to client");
                             break;

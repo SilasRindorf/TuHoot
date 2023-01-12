@@ -23,6 +23,7 @@ public class Game {
     private Player me;
     private ArrayList<Player> players;
     private final Quiz quiz;
+    private boolean amIHost;
 
     private RemoteSpace remoteSpace;
     private Space space;
@@ -240,5 +241,9 @@ public class Game {
         readerLock = 0;
         if (semaphore.availablePermits() == 0) semaphore.release();
         return userInput;
+    }
+
+    public boolean amIHost() {
+        return this.getMe().getId().equals(this.getHostId());
     }
 }
