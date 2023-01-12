@@ -22,8 +22,7 @@ public class Game {
     private ArrayList<Player> players;
     private RemoteSpace remoteSpace;
     private Space space;
-    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-    private int readerLock = 0;
+
 
 
     private Quiz quiz;
@@ -175,6 +174,10 @@ public class Game {
         this.remoteSpace = remoteSpace;
     }
 
+
+    /*----------------------------Global user input method-----------------------------*/
+    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    private int readerLock = 0;
     private Semaphore semaphore = new Semaphore(1);
     private String userInput;
 
