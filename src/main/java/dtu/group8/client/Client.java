@@ -100,11 +100,7 @@ public class Client {
     public Space startGame(Space space) {
         //____________________________________ SETUP FOR GAME ____________________________________
         if (space == null) {
-            long time = System.currentTimeMillis();
-            long end = time + 15000;
-            while (end > System.currentTimeMillis()) {
 
-            }
             return null;
         }
         try {
