@@ -69,8 +69,10 @@ public class GameSetup {
         try {
             final String OPTIONS = "Options:\n\t1. start game\n\tor just wait for other to join";
             while (true) {
+                game.getPrinterLock().acquire();
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
+                game.getPrinterLock().release();
                 String userInput = game.takeUserInput();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     getAllPlayersFromSpace(game);

@@ -2,12 +2,10 @@ package dtu.group8.lobby;
 
 import dtu.group8.lobby.data_class.GameLobby;
 import dtu.group8.lobby.data_class.PlayerLobby;
-import dtu.group8.server.Game;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.SequentialSpace;
 import org.jspace.SpaceRepository;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -45,7 +43,6 @@ public class LobbyServer {
             String uri = input.readLine();
 
             if (uri.isEmpty()) {
-                //uri = "tcp://localhost:9002/?keep";
                 uri = getUri("");
             }
 

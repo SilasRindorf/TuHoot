@@ -23,7 +23,8 @@ public class Game {
     private ArrayList<Player> players;
     private RemoteSpace remoteSpace;
     private Space space;
-
+    private Semaphore printerLock = new Semaphore(1);
+    Printer printer = new Printer("Game:", Printer.PrintColor.WHITE);
 
 
     private Quiz quiz;
@@ -183,6 +184,15 @@ public class Game {
         this.hostName = hostName;
     }
 
+
+    public Semaphore getPrinterLock() {
+        return printerLock;
+    }
+
+    public void display_size_of_added_player() {
+        printer.println("Total players: " + this.players.size());
+    }
+
     /*----------------------------Global user input method-----------------------------*/
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     private int readerLock = 0;
@@ -208,5 +218,4 @@ public class Game {
         if (semaphore.availablePermits() == 0) semaphore.release();
         return userInput;
     }
-
 }

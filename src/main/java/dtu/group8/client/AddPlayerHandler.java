@@ -1,6 +1,6 @@
 package dtu.group8.client;
 
-import dtu.group8.lobby.Util;
+
 import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
 import dtu.group8.util.Printer;
@@ -8,19 +8,15 @@ import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
 import org.jspace.Space;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import static dtu.group8.lobby.Util.*;
 
-public class ThreadListenForAddReq implements Runnable{
+public class AddPlayerHandler implements Runnable{
     private Game game;
     private RemoteSpace lobbySpace;
     private Space space;
-    public ThreadListenForAddReq(Game game) {
+    public AddPlayerHandler(Game game) {
         this.game = game;
         this.lobbySpace = game.getRemoteSpace();
         this.space = game.getSpace();
@@ -30,7 +26,7 @@ public class ThreadListenForAddReq implements Runnable{
     @Override
     public void run() {
         //BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        Printer printer = new Printer("ThreadListenForAddReq:", Printer.PrintColor.WHITE);
+        Printer printer = new Printer("AddPlayerHandler:", Printer.PrintColor.WHITE);
 
         try {
             while (true) {
@@ -41,18 +37,16 @@ public class ThreadListenForAddReq implements Runnable{
                 String pId = objs[3].toString();
                 Player newPlayer = new Player(pName, pId, 0);
 
-
-                System.out.println("\nThreadListenForAddReq: " + newPlayer.getName() + " wants to join");
-                System.out.println("Enter ok to accept, or no to refuse the request");
+                game.getPrinterLock().acquire();
+                printer.println(newPlayer.getName() + " wants to join");
+                printer.println("Enter ok to accept, or no to refuse the request");
                 String str = game.takeUserInput();
-                //String str = Util.takeUserInput();
-                System.out.println(str);
+
                 if (str.equalsIgnoreCase("ok")) {
                     lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
                             game.getHostId(), newPlayer.getName(), newPlayer.getId());
 
                     printer.println("You accepted: " + newPlayer.getName());
-
                     game.addPlayer(newPlayer);
                     Object[] obj = space.get(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
                     ArrayList<String> playerNames = (ArrayList<String>) obj[1];
@@ -61,11 +55,13 @@ public class ThreadListenForAddReq implements Runnable{
                     playerIds.add(newPlayer.getId());
                     space.put(ALL_PLAYERS, playerNames, playerIds);
 
-                    printer.println("Sent req back to server: " + pName);
-
+                    printer.println("AddReqHandler: Sent req back to server:" + pName);
+                    game.display_size_of_added_player();
                 } else if (str.equalsIgnoreCase("no")) {
                     // do nothing
+                    // TODO Send a message back to the server, and the client should receive a response("no")
                 }
+                game.getPrinterLock().release();
             }
 
 

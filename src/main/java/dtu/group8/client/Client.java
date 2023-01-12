@@ -77,7 +77,7 @@ public class Client {
 
             // Checks if this client is the host
             if (game.getHostId().equals(game.getMe().getId())) {
-                ThreadListenForAddReq listenForAddReq = new ThreadListenForAddReq(game);
+                AddPlayerHandler listenForAddReq = new AddPlayerHandler(game);
                 new Thread(listenForAddReq).start();
                 gameSetup.display_start_game_option(game);
             } else {
