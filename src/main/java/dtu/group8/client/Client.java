@@ -193,6 +193,7 @@ public class Client {
             Object[] size = space.query(new ActualField("QuizSize"),new FormalField(Integer.class));
             log.println("starting game loop");
             Object[] question;
+            Object[] highscores;
             for (int i = 0; i < (Integer) size[1]; i++){
                 printer.println("Question coming up!");
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
@@ -200,6 +201,8 @@ public class Client {
                 log.println("Getting answer and sending it to space");
 
                 questionGuess(space, log, printer, i);
+                highscores = space.query(new ActualField("Highscores"), new FormalField(String.class));
+                printer.println(highscores[1].toString());
             }
             log.println("Stopping game...");
             endGame();

@@ -73,6 +73,8 @@ public class GameController {
                     log.println("Player  " + game.getPlayers().get(k).getName() +" " + game.getPlayers().get(k).getPoints());
                 }
                 log.println("Round " + i + " ends");
+                space.getp(new ActualField("Highscores"),new FormalField(String.class));
+                space.put("Highscores",game.getScores());
             }
             //___________________ GAME END ___________________
 

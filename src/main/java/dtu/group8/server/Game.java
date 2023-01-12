@@ -81,11 +81,11 @@ public class Game {
     public String getScores(){
         StringBuilder builder = new StringBuilder();
         builder.append("Highest scores:");
-        builder.append("\tName\tScore");
+        builder.append("\n\tName\tScore");
         Collections.sort(players);
         for (Player player :
                 players) {
-            builder.append("\n\t" + player.getName() + "\t" + player.getPoints());
+            builder.append("\n\t").append(player.getName()).append("\t").append(player.getPoints());
         }
         return builder.toString();
     }
