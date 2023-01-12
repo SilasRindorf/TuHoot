@@ -24,6 +24,7 @@ public class GameController {
 
     public void startGame() {
         Printer printer = new Printer();
+        printer.setLog(false);
         printer.setDefaultTAG(TAG + ":startGame");
         printer.setDefaultPrintColor(Printer.PrintColor.CYAN);
         printer.println("starting game...");

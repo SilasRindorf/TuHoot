@@ -111,7 +111,7 @@ public class Client {
 
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
-
+            log.setLog(false);
             ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
             Thread sThread = new Thread(threadStartGame);
             sThread.start();
@@ -159,7 +159,6 @@ public class Client {
                 System.out.println("You are the host.");
                 Thread gameThread = new Thread(new ClientServer(space));
                 gameThread.start();
-                printer.println("Thread started", Printer.PrintColor.YELLOW);
             }
 
             // Connect to space
@@ -190,6 +189,7 @@ public class Client {
 
     public void start(Space space) {
         Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+        log.setLog(false);
         Printer printer = new Printer();
         try {
             //____________________________________ STARTING GAME ____________________________________
