@@ -91,6 +91,7 @@ public class GameSetup {
         }
     }
 
+    // TODO Add all the added players from the host server to space
     void getAllPlayersFromSpace(Game game) throws InterruptedException {
         Object[] obj = game.getSpace().query(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
         ArrayList<String> playerNames = (ArrayList<String>) obj[1];
@@ -122,24 +123,27 @@ public class GameSetup {
         game.setHostId(hostId);
 
         // Checks if this player/client is the host
-        if (game.getMe().getId().equals(game.getHostId()))
+        if (game.amIHost())
             printer.println("Game " + game.getName() +" created");
         String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
         printer.println("You are connected to game " + game.getName());
         game.setSpace(new RemoteSpace(uri2));
-        if (game.getMe().getId().equals(game.getHostId())) {
+
+        // Displays the size of added players.
+        if (game.amIHost()) {
             game.display_size_of_added_player();
         }
     }
 
 
     boolean joinGame(Game game) throws InterruptedException, IOException {
-
+        /* Retrieves all the available game from the server/lobby */
         String myId =  game.getMe().getId();
         lobbySpace.put( SHOW_ME_AVAILABLE_GAMES_REQ, myId);
         Object[] obj = lobbySpace.get(new ActualField(SHOW_ME_AVAILABLE_GAMES_RES), new ActualField(myId), new FormalField(ArrayList.class));
         ArrayList<String> arr = (ArrayList<String>) obj[2];
 
+        /* Displays the available games that are obtained by making the request above. */
         System.out.println("Available game(s): " + arr.size());
         HashMap<String, String> gameNames = new HashMap<>();
         for (String s : arr) {
@@ -147,28 +151,25 @@ public class GameSetup {
             String gameName = currGame[0];
             String gameId = currGame[1];
             gameNames.put(gameName,gameId);
-            System.out.println("\t" + currGame[0]);
+            System.out.println("\t" + gameName);
         }
 
+        /* Lets the user choose a game by typing its name. */
         String userChosenGameId;
         while (true) {
             if (arr.isEmpty()) printer.print("Press enter to go back: ");
             else printer.print("Enter a game name to join or press enter to go back: ");
 
             String userInput = game.takeUserInput();
-            if (userInput.equals("")){
-                return false;
-            }
+            if (userInput.equals("")) return false;   // This means the user wants to go back.
 
             userChosenGameId = gameNames.get(userInput);
-            if (userChosenGameId != null) {
-                break;
-            } else {
-                System.out.println("There is no game with a name " + userInput);
-            }
+            if (userChosenGameId != null) break;   // The chosen game name does not exist in the game.
+            else System.out.println("There is no game with a name " + userInput);
 
         }
 
+        /* Sends a request to the lobby server to ask the host to allow this client to join the chosen game. */
         lobbySpace.put(ADD_ME_REQ_FROM_CLIENT, game.getMe().getName(), game.getMe().getId(), userChosenGameId);
         printer.println("joinGame: Sent add req to server");
 

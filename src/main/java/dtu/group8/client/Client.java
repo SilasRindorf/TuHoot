@@ -75,7 +75,7 @@ public class Client {
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
             // Checks if this client is the host
-            if (game.getHostId().equals(game.getMe().getId())) {
+            if (game.amIHost()) {
                 AddPlayerHandler listenForAddReq = new AddPlayerHandler(game);
                 new Thread(listenForAddReq).start();
                 gameSetup.display_start_game_option(game);
@@ -87,7 +87,7 @@ public class Client {
             System.out.println("Game is starting...");
 
             // Checks if this client is the host
-            if (game.getHostId().equals(game.getMe().getId())) {
+            if (game.amIHost()) {
                 Thread gameThread = new Thread(new ClientServer(game));
                 gameThread.start();
             }
