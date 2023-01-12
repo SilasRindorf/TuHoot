@@ -2,12 +2,18 @@ package dtu.group8.server.model;
 
 public class Player implements Comparable<Player> {
     private String name;
+    private int point;
     private final String id;
-    private int point = 0;
 
+    public Player(String id) {
+        this.id = id;
+        this.point = 0;
+    }
 
-    public Player(String playerId) {
+    public Player(String name, String playerId, int point){
+        this.name = name;
         this.id = playerId;
+        this.point = point;
     }
 
     void addPoint(int point) {
