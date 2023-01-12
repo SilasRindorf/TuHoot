@@ -8,6 +8,7 @@ import dtu.group8.util.Printer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.StringTokenizer;
 
 public class Game {
     private ArrayList<Player> players;
@@ -30,6 +31,7 @@ public class Game {
         for (Player currPlayer : players) {
             if (Objects.equals(currPlayer.getId(), playerId)) {
                 isFound = true;
+                break;
             }
         }
 
@@ -38,16 +40,15 @@ public class Game {
         }
 
     }
-
     public void removePlayer(String playerId) {
 
     }
 
-    public int quizSize() {
+    public int quizSize(){
         return quiz.quizSize();
     }
 
-    public String getQuestion(int index) {
+    public String getQuestion(int index){
         return quiz.getQuestion(index);
     }
 
@@ -59,7 +60,7 @@ public class Game {
         boolean isCorrect = quiz.checkAnswer(index, answer);
         // Adds point if players answers correctly
         for (Player player1 : players) {
-            if (player1.getId().equals(id) && isCorrect) {
+            if (player1.getId().equals(id) && isCorrect)  {
                 player1.setPoints(calculatePoints(index));
             }
         }
@@ -74,6 +75,9 @@ public class Game {
         return quiz.getAmountOfCorrectAnswers(index) == players.size();
     }
 
+    public boolean checkAnswer(String answer) {
+        return quiz.getCurrentQuestion().checkAnswer(answer);
+    }
 
     public void printOutPlayers() {
         for (Player player : players) {
@@ -96,6 +100,5 @@ public class Game {
     private int calculatePoints(int index) {
         return 100 * (1 + players.size() - quiz.getAmountOfCorrectAnswers(index));
     }
-
 
 }

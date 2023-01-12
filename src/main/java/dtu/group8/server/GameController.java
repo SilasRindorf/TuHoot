@@ -30,8 +30,12 @@ public class GameController {
     }
 
     public void startGame() {
-        log.println("starting game...");
-        log.println("Adding players...");
+        Printer printer = new Printer();
+        printer.setLog(false);
+        printer.setDefaultTAG(TAG + ":startGame");
+        printer.setDefaultPrintColor(Printer.PrintColor.CYAN);
+        printer.println("starting game...");
+        printer.println("Adding players...");
         Object[] answer;
         // Add players to game
         try {
@@ -40,7 +44,7 @@ public class GameController {
             for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
                 game.addPlayer(t[1].toString(), t[2].toString());
                 log.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
-                space.put(t[2], "ok");
+                space.put("ACK", t[2], "ok");
             }
             log.println("Done adding players");
             updateGameState(GameState.START);

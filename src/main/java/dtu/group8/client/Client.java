@@ -159,10 +159,10 @@ public class Client {
             // Connect to space
             // Get ack from space
             log.println("Getting ack");
-            Object[] t = space.get(new ActualField(clientID), new FormalField(String.class));
+            Object[] t = space.get(new ActualField("ACK"), new ActualField(clientID), new FormalField(String.class));
             log.println("Got ack response");
 
-            if (!t[1].equals("ok")) {
+            if (!t[2].equals("ok")) {
                 System.out.println("Server did not ack... returning");
                 return null;
             }
@@ -216,7 +216,28 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public void endGame() {
+        Printer printer = new Printer();
+        printer.print("Do you want join another lobby(y/n)? ");
+
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        try {
+
+            while (true) {
+                String str = input.readLine().trim();
+
+                if (str.equalsIgnoreCase("y")) {
+
+                    start(matchMake());
+                } else {
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //TODO: Should give right answer if user does not guess right

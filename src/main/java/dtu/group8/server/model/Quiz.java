@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Quiz {
     public ArrayList<QuizQuestion> questions = new ArrayList<QuizQuestion>();
+    private QuizQuestion currentQuestion;
 
     public int quizSize() {
         return questions.size();
