@@ -18,6 +18,7 @@ public class Game {
     private String id;
     private String name;
     private String hostId;
+    private String hostName;
     private Player me;
     private ArrayList<Player> players;
     private RemoteSpace remoteSpace;
@@ -174,6 +175,13 @@ public class Game {
         this.remoteSpace = remoteSpace;
     }
 
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
 
     /*----------------------------Global user input method-----------------------------*/
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));

@@ -48,7 +48,9 @@ public class ThreadListenForAddReq implements Runnable{
                 //String str = Util.takeUserInput();
                 System.out.println(str);
                 if (str.equalsIgnoreCase("ok")) {
-                    lobbySpace.put(JOINT_RES_FROM_HOST, game.getHostId(), newPlayer.getName(), newPlayer.getId());
+                    lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
+                            game.getHostId(), newPlayer.getName(), newPlayer.getId());
+
                     printer.println("You accepted: " + newPlayer.getName());
 
                     game.addPlayer(newPlayer);

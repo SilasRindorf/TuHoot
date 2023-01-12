@@ -5,14 +5,14 @@ import java.util.ArrayList;
 public class GameLobby {
     private String name;
     private String id;
-    private PlayerLobby hostPlayerLobby;
+    private PlayerLobby hostPlayer;
     private ArrayList<String> playerIds;
     private ArrayList<String> playerNames;
 
-    public GameLobby(String name, String id, PlayerLobby hostPlayerLobby) {
+    public GameLobby(String name, String id, PlayerLobby hostPlayer) {
         this.name = name;
         this.id = id;
-        this.hostPlayerLobby = hostPlayerLobby;
+        this.hostPlayer = hostPlayer;
         this.playerIds = new ArrayList<>();
         this.playerNames = new ArrayList<>();
     }
@@ -34,11 +34,11 @@ public class GameLobby {
     }
 
     public PlayerLobby getHostPlayer() {
-        return hostPlayerLobby;
+        return hostPlayer;
     }
 
     public void setHostPlayer(PlayerLobby hostPlayerLobby) {
-        this.hostPlayerLobby = hostPlayerLobby;
+        this.hostPlayer = hostPlayerLobby;
     }
 
 

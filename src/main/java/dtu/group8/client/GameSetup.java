@@ -19,13 +19,12 @@ import static dtu.group8.lobby.Util.PORT;
 import static dtu.group8.lobby.Util.TYPE;
 
 public class GameSetup {
-    //BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     private RemoteSpace lobbySpace;
-
-    Printer printer = new Printer("GameSetup:", Printer.PrintColor.WHITE);
+    private Printer printer;
 
     public GameSetup(RemoteSpace lobbySpace) {
         this.lobbySpace = lobbySpace;
+        this.printer = new Printer("GameSetup:", Printer.PrintColor.WHITE);
 
     }
 
@@ -109,13 +108,23 @@ public class GameSetup {
     void getSpace(Game game) throws InterruptedException, IOException {
         Printer printer = new Printer("GameSetup: getSpace", Printer.PrintColor.WHITE);
 
-        Object[] obj = lobbySpace.get(new ActualField(MY_SPACE_ID), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
-        game.setName(obj[3].toString());
+        Object[] obj = lobbySpace.get(new ActualField(MY_SPACE_ID), new ActualField(game.getMe().getId()),
+                new FormalField(Object.class), new FormalField(Object.class),
+                new FormalField(Object.class), new FormalField(Object.class));
+
+        String gameName = obj[2].toString();
+        String gameId = obj[3].toString();
+        String hostName = obj[4].toString();
+        String hostId = obj[5].toString();
+
+        game.setName(gameName);
+        game.setId(gameId);
+        game.setHostName(hostName);
+        game.setHostId(hostId);
+
 
         if (Objects.equals(game.getHostId(), game.getMe().getId()))
             printer.println("Game " + game.getName() +" created");
-
-        game.setId(obj[2].toString()); // spaceId/gameId
         String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
         printer.println("You are connected to game " + game.getName());
         game.setSpace(new RemoteSpace(uri2));
@@ -161,6 +170,7 @@ public class GameSetup {
 
         // TODO Set space in game, when message is received
         //lobbySpace.get()
+        getSpace(game);
 
 
 
