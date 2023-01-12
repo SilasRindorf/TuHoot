@@ -30,7 +30,6 @@ public class Game {
     Printer printer = new Printer("Game:", Printer.PrintColor.WHITE);
 
 
-    private Quiz quiz;
     public Game() {
         quiz = new Quiz();
         quiz.questions.add(new QuizQuestion("2+2", "5"));
@@ -51,6 +50,7 @@ public class Game {
         this.players = players;
         this.remoteSpace = remoteSpace;
         this.space = space;
+        this.quiz = new Quiz();
     }
 
     public void addPlayer(String playerId) {
@@ -174,9 +174,6 @@ public class Game {
         return quiz;
     }
 
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
 
     public Space getSpace() {
         return space;

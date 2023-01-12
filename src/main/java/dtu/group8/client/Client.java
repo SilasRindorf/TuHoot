@@ -119,13 +119,14 @@ public class Client {
                 System.out.println("Failed to start game");
                 return null;
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return game;
     }
 
-    public void start(Space space) {
+    public void start(Game game) {
+        Space space = game.getSpace();
         Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
         log.setLog(false);
         Printer printer = new Printer();
@@ -142,7 +143,7 @@ public class Client {
                 printer.println("Question " + (i + 1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
 
-                questionQuess(space, log, printer, i);
+                questionQuess(game, log, printer, i);
                 /*
                 space.put("A",clientID, input.readLine(),i);
                 log.println("Waiting for verification of answer");
@@ -192,9 +193,11 @@ public class Client {
         }
     }
 
-    private void questionQuess(Space space, Printer log, Printer printer, int i) throws IOException, InterruptedException {
+    private void questionQuess(Game game, Printer log, Printer printer, int i) throws IOException, InterruptedException {
+        Space space = game.getSpace();
+        String clientID = game.getMe().getId();
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         Object[] answer;
-
         space.put("A", clientID, input.readLine(), i);
         log.println("Waiting for verification of answer");
         answer = space.get(new ActualField("V"), new FormalField(String.class), new FormalField(Boolean.class));
@@ -205,7 +208,7 @@ public class Client {
             log.println("Getting correct answer");
             answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
             printer.println("You got the answer wrong! The correct answer was " + answer[1]);
-            questionQuess(space, log, printer, i);
+            questionQuess(game, log, printer, i);
         }
     }
 
