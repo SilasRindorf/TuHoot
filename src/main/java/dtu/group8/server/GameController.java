@@ -18,7 +18,7 @@ public class GameController {
 
     public GameController(Space space) {
         this.log = new Printer();
-        log.setLog(false);
+        //log.setLog(false);
         log.setDefaultTAG("GameController");
         log.setDefaultPrintColor(Printer.PrintColor.CYAN);
         this.game = new Game();
@@ -54,25 +54,22 @@ public class GameController {
         }
 
         /**
-         * TODO : Skal køres i runder a et givent antal tid
-         * TODO : Der skal gives point
-         * TODO : Highscores skal ud i tuple space?
-         * TODO : Alle får 500 point for et rigtigt svar lige nu
+         * TODO: Fix at clients bliver softlocked hvis de ikke svarer på sidste spørgsmål
+         * TODO: Hvis der løbes tør for tid og serveren går til næste spørgsmål, kan klienten svare på det gamle / Klienten skal have at vide den skal gå videre
          */
 
         try {
-
             space.put("QuizSize", game.quizSize());
             for (int i = 0; i < game.quizSize(); i++) {
+                long time = System.currentTimeMillis();
+                long end = System.currentTimeMillis() + 15000;
                 space.put("Q" + i, game.getQuestion(i));
                 space.put("CA" + i, game.getAnswer(i));
                 log.println("Round " + (i + 1) + " begins");
                 log.println("Game info: " + game.allAnsweredCorrect(i), Printer.PrintColor.GREEN);
-                for (Player player :
-                        game.getPlayers()) {
-                    log.println("Hi my name is " + player.getName(), Printer.PrintColor.RED);
-                }
-                while (alive && !game.allAnsweredCorrect(i)) {
+                while (alive && !game.allAnsweredCorrect(i) && time < end) {
+                    time = System.currentTimeMillis();
+                    log.println("Time left " + (end - time));
                     log.println("Waiting for answers");
                     //Tuple contains:
                     //'A', clientId, answer, question index
