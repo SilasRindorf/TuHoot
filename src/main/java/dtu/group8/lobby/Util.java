@@ -1,5 +1,9 @@
 package dtu.group8.lobby;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class Util {
     public final static String JOINT_REQ_FROM_SERVER = "join_req_from_server";
     public final static String JOINT_RES_FROM_HOST = "join_res_from_host";
@@ -17,21 +21,6 @@ public class Util {
     public static final String PORT = "9002";
     public static final String IP = "localhost";
     public static final String TYPE = "?keep";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

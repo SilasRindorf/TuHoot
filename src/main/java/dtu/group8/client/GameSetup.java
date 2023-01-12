@@ -8,21 +8,18 @@ import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
 import org.jspace.Space;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static dtu.group8.client.Client.*;
 import static dtu.group8.lobby.Util.*;
 import static dtu.group8.lobby.Util.IP;
 import static dtu.group8.lobby.Util.PORT;
 import static dtu.group8.lobby.Util.TYPE;
 
 public class GameSetup {
-    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    //BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     private RemoteSpace lobbySpace;
 
     Printer printer = new Printer("GameSetup:", Printer.PrintColor.WHITE);
@@ -36,12 +33,14 @@ public class GameSetup {
         Game game = new Game();
         game.setMe(player);
         game.setRemoteSpace(lobbySpace);
+
         final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
         try {
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
-                String userInput = input.readLine();
+
+                String userInput = input.readLine;
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
 
@@ -155,6 +154,8 @@ public class GameSetup {
 
         lobbySpace.put(ADD_ME_REQ_FROM_CLIENT, game.getMe().getName(), game.getMe().getId(), userChosenGameId);
         printer.println("joinGame: Sent add req to server");
+
+        // TODO Set space in game, when message is received
         //lobbySpace.get()
 
 

@@ -1,5 +1,6 @@
 package dtu.group8.server;
 
+import dtu.group8.client.UserInput;
 import dtu.group8.server.model.Player;
 import dtu.group8.server.model.Quiz;
 import dtu.group8.server.model.QuizQuestion;
@@ -18,6 +19,8 @@ public class Game {
     private ArrayList<Player> players;
     private RemoteSpace remoteSpace;
     private Space space;
+    private UserInput userInput;
+    private Thread userInputThread;
 
     private Quiz quiz;
     public Game() {
@@ -25,6 +28,8 @@ public class Game {
         quiz.questions.add(new QuizQuestion("2+2","5"));
         quiz.questions.add(new QuizQuestion("apples","bananas"));
         players = new ArrayList<>();
+        this.userInput = new UserInput();
+        this.userInputThread = new Thread(this.userInput);
     }
 
     public Game(Quiz quiz) {
@@ -167,4 +172,7 @@ public class Game {
     public void setRemoteSpace(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
     }
+
+
+
 }
