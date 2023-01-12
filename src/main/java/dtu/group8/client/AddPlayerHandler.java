@@ -37,15 +37,17 @@ public class AddPlayerHandler implements Runnable{
                 Player newPlayer = new Player(pName, pId, 0);
 
                 game.getPrinterLock().acquire();
-                printer.println(newPlayer.getName() + " wants to join");
+                System.out.println();
+                printer.println( newPlayer.getName() + " wants to join");
                 printer.println("Enter ok to accept, or no to refuse the request");
+                System.out.print("Input command: ");
                 String str = game.takeUserInput();
 
                 if (str.equalsIgnoreCase("ok")) {
                     lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
                             game.getHostId(), newPlayer.getName(), newPlayer.getId());
 
-                    printer.println("You accepted: " + newPlayer.getName());
+                    printer.println("You accepted " + newPlayer.getName());
                     game.addPlayer(newPlayer);
                     Object[] obj = space.get(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
                     ArrayList<String> playerNames = (ArrayList<String>) obj[1];
@@ -53,8 +55,7 @@ public class AddPlayerHandler implements Runnable{
                     playerNames.add(newPlayer.getName());
                     playerIds.add(newPlayer.getId());
                     space.put(ALL_PLAYERS, playerNames, playerIds);
-
-                    printer.println("AddReqHandler: Sent req back to server:" + pName);
+                    printer.println("Sent response to " + pName); //
                     game.display_size_of_added_player();
                 } else if (str.equalsIgnoreCase("no")) {
                     // do nothing

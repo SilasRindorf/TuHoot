@@ -121,6 +121,7 @@ public class GameSetup {
         String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
         printer.println("You are connected to game " + game.getName());
         game.setSpace(new RemoteSpace(uri2));
+        game.display_size_of_added_player();
     }
 
 
@@ -145,7 +146,7 @@ public class GameSetup {
             gameNames.put(gameName,gameId);
             System.out.println("\t" + currGame[0]);
         }
-        System.out.println("Enter a game name to join: ");
+        System.out.print("Enter a game name to join: ");
         String userChosenGameId = "";
         while (true) {
             String userInput = game.takeUserInput();
