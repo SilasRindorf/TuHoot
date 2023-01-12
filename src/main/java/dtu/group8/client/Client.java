@@ -36,7 +36,6 @@ public class Client {
     public Game matchMake() {
         try {
             Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
-
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             // Set the URI of the chat space
             printer.print("Enter URI of the chat server or press enter for default: ");
@@ -47,7 +46,6 @@ public class Client {
             }
             // Connect to the remote chat space
             printer.println("Connecting to chat space " + uri + "...");
-
             RemoteSpace remoteSpace = new RemoteSpace(uri);
 
             // Read client name from the console
@@ -85,8 +83,6 @@ public class Client {
                 printer.println("Waiting for game to start...");
             }
 
-
-
             space.query(new ActualField(GAME_START));
             System.out.println("Game is starting...");
 
@@ -97,7 +93,6 @@ public class Client {
             }
 
             /*-----------------------------Initialization of a game done-------------------------------------*/
-
 
             // Connect to space
             // Get ack from space
