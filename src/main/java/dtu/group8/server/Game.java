@@ -8,7 +8,6 @@ import dtu.group8.util.Printer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.StringTokenizer;
 
 public class Game {
     private ArrayList<Player> players;
@@ -73,10 +72,6 @@ public class Game {
 
     public boolean allAnsweredCorrect(int index) {
         return quiz.getAmountOfCorrectAnswers(index) == players.size();
-    }
-
-    public boolean checkAnswer(String answer) {
-        return quiz.getCurrentQuestion().checkAnswer(answer);
     }
 
     public void printOutPlayers() {
