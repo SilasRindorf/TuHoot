@@ -18,32 +18,31 @@ import java.util.UUID;
  * Client
  * Responsibilities:
  * Must have:
- *      Receive questions
- *      Send answers
- *      Receive correct answer
- *      Show if answer was correct or wrong
+ * Receive questions
+ * Send answers
+ * Receive correct answer
+ * Show if answer was correct or wrong
  * Can have:
- *      See opponent points
- *      See timer
- *      See amount of remaining questions
- *      Reconnect to game
+ * See opponent points
+ * See timer
+ * See amount of remaining questions
+ * Reconnect to game
  */
 public class Client {
-    private final String PORT = "9002", IP = "localhost";
-    private String clientName = "", clientID = "";
     //private static final String LOCALHOST = "10.209.95.114";
     private static final String TYPE = "?keep";
+    private static final String JOIN_ME_REQ = "join_req", JOIN_ME_RES = "join_res";
+    public static Object[] allPlayers;
+    private final String PORT = "9002", IP = "localhost";
+    private String clientName = "", clientID = "";
     private Player player;
     private BufferedReader input;
-    public static Object[] allPlayers;
-    private static final String JOIN_ME_REQ = "join_req", JOIN_ME_RES = "join_res";
     private RemoteSpace lobby;
 
 
-
-    public Space matchMake(){
+    public Space matchMake() {
         try {
-            Printer printer = new Printer("Client:matchMake",Printer.PrintColor.WHITE);
+            Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
             if (input == null) {
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
@@ -97,12 +96,13 @@ public class Client {
         return null;
 
     }
+
     public Space startGame(Space space) {
         //____________________________________ SETUP FOR GAME ____________________________________
         if (space == null) {
             long time = System.currentTimeMillis();
             long end = time + 15000;
-            while (end > System.currentTimeMillis()){
+            while (end > System.currentTimeMillis()) {
 
             }
             return null;
@@ -188,20 +188,20 @@ public class Client {
         return space;
     }
 
-        public void start(Space space){
-            Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
-            Printer printer = new Printer();
-            try{
+    public void start(Space space) {
+        Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+        Printer printer = new Printer();
+        try {
             //____________________________________ STARTING GAME ____________________________________
             log.println("playing game!");
             log.println("getting question size");
-            Object[] size = space.query(new ActualField("QuizSize"),new FormalField(Integer.class));
+            Object[] size = space.query(new ActualField("QuizSize"), new FormalField(Integer.class));
             log.println("starting game loop");
             Object[] question;
-            for (int i = 0; i < (Integer) size[1]; i++){
+            for (int i = 0; i < (Integer) size[1]; i++) {
                 printer.println("Question coming up!");
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
-                printer.println("Question " + (i+1) + ":\n\t" + question[1].toString());
+                printer.println("Question " + (i + 1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
 
                 questionQuess(space, log, printer, i);
@@ -220,19 +220,19 @@ public class Client {
                 */
             }
             log.println("Stopping game...");
-                endGame();
+            endGame();
 
-                //____________________________________ EXCEPTION HANDLING ____________________________________
+            //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
                 InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
+        }
     }
 
-    public void endGame(){
+    public void endGame() {
         Printer printer = new Printer();
         printer.print("Do you want join another lobby(y/n)? ");
 
@@ -249,22 +249,21 @@ public class Client {
 
                 }
             }
-        }   catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void questionQuess(Space space, Printer log,  Printer printer, int i) throws IOException, InterruptedException {
+    private void questionQuess(Space space, Printer log, Printer printer, int i) throws IOException, InterruptedException {
         Object[] answer;
 
-        space.put("A",clientID, input.readLine(),i);
+        space.put("A", clientID, input.readLine(), i);
         log.println("Waiting for verification of answer");
-        answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+        answer = space.get(new ActualField("V"), new FormalField(String.class), new FormalField(Boolean.class));
         log.println("Received verification from Space");
-        if ((boolean) answer[2]){
+        if ((boolean) answer[2]) {
             printer.println("You got the answer correct!");
-            return;
-        } else{
+        } else {
             log.println("Getting correct answer");
             answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
             printer.println("You got the answer wrong! The correct answer was " + answer[1]);
@@ -273,6 +272,6 @@ public class Client {
     }
 
     private String getUri(String parameter) {
-        return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
+        return "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
 }

@@ -1,8 +1,8 @@
 package dtu.group8.server.model;
 
 public class QuizQuestion {
-    private String question;
-    private String answer;
+    private final String question;
+    private final String answer;
 
     public QuizQuestion(String question, String answer) {
         this.question = question;
@@ -10,7 +10,7 @@ public class QuizQuestion {
     }
 
     public boolean checkAnswer(String answer) {
-        return (this.answer.trim().toLowerCase().equals(answer.trim().toLowerCase()));
+        return (this.answer.trim().equalsIgnoreCase(answer.trim()));
     }
 
     public String getQuestion() {

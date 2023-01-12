@@ -5,30 +5,30 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Quiz {
     public ArrayList<QuizQuestion> questions = new ArrayList<QuizQuestion>();
+    private QuizQuestion currentQuestion;
 
     public QuizQuestion getCurrentQuestion() {
         return currentQuestion;
     }
-    public int quizSize(){
+
+    public int quizSize() {
         return questions.size();
     }
 
-    public String getQuestion(int index){
+    public String getQuestion(int index) {
         return questions.get(index).getQuestion();
     }
 
-    public String getAnswer(int index){
+    public String getAnswer(int index) {
         return questions.get(index).getAnswer();
     }
 
-    public boolean checkAnswer(int index, String answer){
+    public boolean checkAnswer(int index, String answer) {
         return questions.get(index).checkAnswer(answer);
     }
 
-    private QuizQuestion currentQuestion;
-
-    public void selectRandomQuestion(){
-        if (questions.size() == 0){
+    public void selectRandomQuestion() {
+        if (questions.size() == 0) {
             return;
         }
         int randomNum = ThreadLocalRandom.current().nextInt(0, questions.size());

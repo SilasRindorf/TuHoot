@@ -9,23 +9,22 @@ import org.jspace.Space;
 public class GameController {
     private final String TAG = "GameController";
     public Game game;
-    private Space space;
+    private final Space space;
+    private boolean alive = true;
+
 
     public GameController(Space space) {
         this.game = new Game();
         this.space = space;
     }
 
-
-    private boolean alive = true;
-
     public void setAlive(boolean alive) {
         this.alive = alive;
     }
 
-    public void startGame(){
+    public void startGame() {
         Printer printer = new Printer();
-        printer.setDefaultTAG( TAG + ":startGame");
+        printer.setDefaultTAG(TAG + ":startGame");
         printer.setDefaultPrintColor(Printer.PrintColor.CYAN);
         printer.println("starting game...");
         printer.println("Adding players...");
@@ -35,11 +34,11 @@ public class GameController {
             for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
                 game.addPlayer(t[2].toString());
                 printer.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
-                space.put("ACK",t[2], "ok");
+                space.put("ACK", t[2], "ok");
             }
             printer.println("Done adding players");
             updateGameState(GameState.START);
-        } catch (InterruptedException e ){
+        } catch (InterruptedException e) {
             printer.println("Error adding players", Printer.PrintColor.RED);
             e.printStackTrace();
         }
@@ -53,27 +52,27 @@ public class GameController {
 
         try {
             space.put("QuizSize", game.quizSize());
-            for (int i = 0; i < game.quizSize(); i++){
-                space.put("Q"+ i, game.getQuestion(i));
-                space.put("CA" + i,game.getAnswer(i));
+            for (int i = 0; i < game.quizSize(); i++) {
+                space.put("Q" + i, game.getQuestion(i));
+                space.put("CA" + i, game.getAnswer(i));
             }
 
             while (alive) {
                 //Tuple contains:
                 //'A', clientId, answer, question index
                 answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
-                space.put("V",answer[1].toString(),game.checkAnswer((Integer) answer[3],answer[2].toString(), answer[1].toString()));
+                space.put("V", answer[1].toString(), game.checkAnswer((Integer) answer[3], answer[2].toString(), answer[1].toString()));
                 printer.println("Score " + game.getPlayers().get(0).getPoint());
             }
-        } catch (InterruptedException e){
+        } catch (InterruptedException e) {
             printer.println("Error in game loop", Printer.PrintColor.RED);
             e.printStackTrace();
         }
     }
 
 
-    private void updateGameState(GameState state) throws InterruptedException{
-        space.getp(new ActualField("gameState"),new FormalField(Integer.class));
+    private void updateGameState(GameState state) throws InterruptedException {
+        space.getp(new ActualField("gameState"), new FormalField(Integer.class));
         space.put("gameState", state.value);
 
     }
