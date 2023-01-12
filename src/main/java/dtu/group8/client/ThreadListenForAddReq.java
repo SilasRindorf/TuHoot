@@ -9,6 +9,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import static dtu.group8.lobby.Util.JOINT_REQ_FROM_SERVER;
+import static dtu.group8.lobby.Util.JOINT_RES_FROM_HOST;
+
 public class ThreadListenForAddReq implements Runnable{
     private Game game;
     private RemoteSpace lobbySpace;
@@ -23,7 +26,7 @@ public class ThreadListenForAddReq implements Runnable{
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            Object[] objs = lobbySpace.query(new ActualField("join_req_from_server"), new ActualField(game.getMe().getId()),
+            Object[] objs = lobbySpace.query(new ActualField(JOINT_REQ_FROM_SERVER), new ActualField(game.getMe().getId()),
                     new FormalField(String.class), new FormalField(String.class));
 
             String pName = objs[2].toString();
@@ -33,7 +36,7 @@ public class ThreadListenForAddReq implements Runnable{
             System.out.println("Enter ok to accept, or no to refuse the request");
             String str = input.readLine();
             if (str.equalsIgnoreCase("ok")) {
-                lobbySpace.put("join_req_from_host", game.getId(), pName, pId);
+                lobbySpace.put(JOINT_RES_FROM_HOST, game.getId(), pName, pId);
             } else if (str.equalsIgnoreCase("no")) {
                 // do nothing
             }

@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.UUID;
 
+import static dtu.group8.lobby.Util.*;
+
 /**
  * Client
  * Responsibilities:
@@ -29,13 +31,11 @@ import java.util.UUID;
  */
 public class Client {
     // Port of server
-    static final String PORT = "9002";
+/*    static final String PORT = "9002";
     // localhost
     static final String IP = "localhost";
-    static final String TYPE = "?keep";
+    static final String TYPE = "?keep";*/
     private BufferedReader input;
-    private static final String JOIN_ME_REQ = "join_req";
-    private static final String JOIN_ME_RES = "join_res";
     GameSetup gameSetup;
 
 

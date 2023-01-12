@@ -13,13 +13,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+import static dtu.group8.lobby.Util.*;
+
 public class LobbyServer {
-    static final String CREATE_GAME = "create game";
-    private static final String PORT = "9002";
-    //private static final String LOCALHOST = "10.209.95.114";
-    private static final String IP = "localhost";
-    private static final String TYPE = "?keep";
-    private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private ArrayList<GameLobby> gameList = new ArrayList<>();
     Semaphore semaphore = new Semaphore(1);
     private SpaceRepository repository;
@@ -57,16 +53,14 @@ public class LobbyServer {
             System.out.println("Opening repository gate at " + uri + "...");
             repository.addGate(uri);
             // --------------------------- waiting for requests -----------------------
-            listenForAvailableGameListReq.start();
-            listenForAddPlayerReq_from_client.start();
-            listenForAddPlayerReq_from_host.start();
+            listen_for_available_gameList_req_from_client.start();
+            listen_for_add_player_req_from_client.start();
+            listen_for_add_player_response_from_host.start();
 
 
-            //Lock for starting a game
-            spaceLobby.put("createBoardLock");
 
             while (true) {
-                Object[] createBoardObj = spaceLobby.get(new ActualField(CREATE_GAME), new FormalField(Object.class), new FormalField(Object.class), new FormalField(Object.class));
+                Object[] createBoardObj = spaceLobby.get(new ActualField(CREATE_GAME_REQ), new FormalField(Object.class), new FormalField(Object.class), new FormalField(Object.class));
                 System.out.println("Creating board...");
                 String gameName = createBoardObj[1].toString();
                 String hostId = createBoardObj[2].toString();
@@ -81,8 +75,8 @@ public class LobbyServer {
                 semaphore.release();
                 SequentialSpace newSpace = new SequentialSpace();
                 repository.add(gameId, newSpace);
-                newSpace.put("allPlayers", newGameLobby.getPlayerNames(), newGameLobby.getPlayerIds());
-                spaceLobby.put("mySpaceId", hostId, gameId, gameName);
+                newSpace.put(ALL_PLAYERS, newGameLobby.getPlayerNames(), newGameLobby.getPlayerIds());
+                spaceLobby.put(MY_SPACE_ID, hostId, gameId, gameName);
                 System.out.println("Game created");
                 System.out.println("\tGame name: " + gameName);
 
@@ -140,12 +134,12 @@ public class LobbyServer {
         return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
 
-    Thread listenForAddPlayerReq_from_client = new Thread(new Runnable() {
+    Thread listen_for_add_player_req_from_client = new Thread(new Runnable() {
         @Override
         public void run() {
             try {
                 while (true) {
-                    Object[] addMeObj = spaceLobby.get(new ActualField("addMeToGame"), new FormalField(Object.class), new FormalField(Object.class));
+                    Object[] addMeObj = spaceLobby.get(new ActualField(ADD_ME_REQ_FROM_CLIENT), new FormalField(Object.class), new FormalField(Object.class));
                     String playerName = addMeObj[1].toString();
                     String playerId = addMeObj[2].toString();
                     String boardId = addMeObj[3].toString();
@@ -156,7 +150,7 @@ public class LobbyServer {
                         if (currGame.getId().equals(boardId)) {
                             // Sends add request to the host
                             String hostId = currGame.getHostPlayer().getId();
-                            spaceLobby.put("join_req_from_server", hostId, playerName, playerId);
+                            spaceLobby.put(JOINT_REQ_FROM_SERVER, hostId, playerName, playerId);
                             break;
                         }
                     }
@@ -177,12 +171,12 @@ public class LobbyServer {
     }*/
 
 
-    Thread listenForAddPlayerReq_from_host = new Thread(new Runnable() {
+    Thread listen_for_add_player_response_from_host = new Thread(new Runnable() {
         @Override
         public void run() {
             try {
                 while (true) {
-                    Object[] obj = spaceLobby.get(new ActualField("join_req_from_host"), new FormalField(String.class),
+                    Object[] obj = spaceLobby.get(new ActualField(JOINT_RES_FROM_HOST), new FormalField(String.class),
                             new FormalField(String.class), new FormalField(String.class));
                     String gameId = obj[1].toString();
                     String playerName = obj[2].toString();
@@ -199,12 +193,12 @@ public class LobbyServer {
     });
 
 
-    Thread listenForAvailableGameListReq = new Thread(new Runnable() {
+    Thread listen_for_available_gameList_req_from_client = new Thread(new Runnable() {
         @Override
         public void run() {
             try {
                 while (true) {
-                    Object[] obj = spaceLobby.get(new ActualField("showMeAvailableGames"), new FormalField(String.class));
+                    Object[] obj = spaceLobby.get(new ActualField(SHOW_ME_AVAILABLE_GAMES), new FormalField(String.class));
                     System.out.println("Request for game-list received from: " + obj[1]);
 
                     ArrayList<String> tempGames = new ArrayList<>();

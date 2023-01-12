@@ -16,13 +16,13 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static dtu.group8.client.Client.*;
+import static dtu.group8.lobby.Util.*;
+import static dtu.group8.lobby.Util.IP;
+import static dtu.group8.lobby.Util.PORT;
+import static dtu.group8.lobby.Util.TYPE;
 
 public class GameSetup {
-    private static final String LOCK_FOR_GAME_START = "lockForGameStart";
-    private static final String JOIN_ME_REQ = "join_req";
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-
-
     private RemoteSpace lobbySpace;
 
     public GameSetup(RemoteSpace lobbySpace) {
@@ -48,7 +48,7 @@ public class GameSetup {
                     String gameName = input.readLine();
                     game.setName(gameName);
                     game.setHostId(player.getId());
-                    lobbySpace.put("create game",gameName, player.getId(), player.getName());
+                    lobbySpace.put(CREATE_GAME_REQ,gameName, player.getId(), player.getName());
                     getSpace(game);
                     // TODO Check if the given game-name already exists in the server.
                     break;
@@ -89,7 +89,7 @@ public class GameSetup {
     }
 
     void getAllPlayersFromSpace(Game game) throws InterruptedException {
-        Object[] obj = game.getSpace().get(new ActualField("allPlayers"), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
+        Object[] obj = game.getSpace().get(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
         ArrayList<String> playerNames = (ArrayList<String>) obj[1];
         ArrayList<String> playerIds = (ArrayList<String>) obj[2];
         assert playerIds.size() != playerNames.size() : "players.size != playerIds.size";
@@ -104,7 +104,7 @@ public class GameSetup {
     void getSpace(Game game) throws InterruptedException, IOException {
         Printer printer = new Printer("GameSetup: getSpace", Printer.PrintColor.WHITE);
 
-        Object[] obj = lobbySpace.get(new ActualField("mySpaceId"), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
+        Object[] obj = lobbySpace.get(new ActualField(MY_SPACE_ID), new ActualField(game.getMe().getId()), new FormalField(Object.class), new FormalField(Object.class));
         game.setName(obj[3].toString());
 
         if (Objects.equals(game.getHostId(), game.getMe().getId()))
@@ -121,7 +121,7 @@ public class GameSetup {
         //Printer printer = new Printer("GameSetup:joinGame", Printer.PrintColor.WHITE);
 
         String myId =  game.getMe().getId();
-        lobbySpace.put("showMeAvailableGames", myId);
+        lobbySpace.put( SHOW_ME_AVAILABLE_GAMES, myId);
         Object[] obj = lobbySpace.get(new ActualField(myId), new FormalField(ArrayList.class));
         ArrayList<String> arr = (ArrayList<String>) obj[1];
 
@@ -152,7 +152,7 @@ public class GameSetup {
 
         }
 
-        lobbySpace.put("addMeToGame", game.getMe().getName(), game.getMe().getId(), userChosenGameId);
+        lobbySpace.put(ADD_ME_REQ_FROM_CLIENT, game.getMe().getName(), game.getMe().getId(), userChosenGameId);
         //lobbySpace.get()
 
 
