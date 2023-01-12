@@ -25,6 +25,8 @@ public class GameSetup {
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     private RemoteSpace lobbySpace;
 
+    Printer printer = new Printer("GameSetup:", Printer.PrintColor.WHITE);
+
     public GameSetup(RemoteSpace lobbySpace) {
         this.lobbySpace = lobbySpace;
 
@@ -118,7 +120,6 @@ public class GameSetup {
 
 
     void joinGame(Game game) throws InterruptedException, IOException {
-        //Printer printer = new Printer("GameSetup:joinGame", Printer.PrintColor.WHITE);
 
         String myId =  game.getMe().getId();
         lobbySpace.put( SHOW_ME_AVAILABLE_GAMES_REQ, myId);
@@ -153,7 +154,9 @@ public class GameSetup {
         }
 
         lobbySpace.put(ADD_ME_REQ_FROM_CLIENT, game.getMe().getName(), game.getMe().getId(), userChosenGameId);
+        printer.println("joinGame: Sent add req to server");
         //lobbySpace.get()
+
 
 
     }
