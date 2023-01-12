@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.Semaphore;
 
 public class Game {
     private String id;
@@ -22,6 +23,7 @@ public class Game {
     private RemoteSpace remoteSpace;
     private Space space;
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    private int readerLock = 0;
 
 
     private Quiz quiz;
@@ -173,14 +175,26 @@ public class Game {
         this.remoteSpace = remoteSpace;
     }
 
+    private Semaphore semaphore = new Semaphore(1);
+    private String userInput;
+
     public String takeUserInput() {
-        String userInput;
+
         try {
+            if (readerLock == 1) {
+                semaphore.acquire();
+                semaphore.release();
+                return userInput;
+            }
+
+            readerLock = 1;
+            semaphore.acquire();
             userInput = input.readLine();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Game: " + userInput);
+        readerLock = 0;
+        if (semaphore.availablePermits() == 0) semaphore.release();
         return userInput;
     }
 

@@ -30,7 +30,7 @@ public class ThreadListenForAddReq implements Runnable{
 
         try {
             while (true) {
-                Object[] objs = lobbySpace.query(new ActualField(JOINT_REQ_FROM_SERVER), new ActualField(game.getMe().getId()),
+                Object[] objs = lobbySpace.get(new ActualField(JOINT_REQ_FROM_SERVER), new ActualField(game.getMe().getId()),
                         new FormalField(String.class), new FormalField(String.class));
 
                 String pName = objs[2].toString();
@@ -38,8 +38,8 @@ public class ThreadListenForAddReq implements Runnable{
 
                 System.out.println("\nThreadListenForAddReq: " + pName + " wants to join");
                 System.out.println("Enter ok to accept, or no to refuse the request");
-                //String str = input.readLine();
-                String str = Util.takeUserInput();
+                String str = game.takeUserInput();
+                //String str = Util.takeUserInput();
                 System.out.println(str);
                 if (str.equalsIgnoreCase("ok")) {
                     lobbySpace.put(JOINT_RES_FROM_HOST, game.getId(), pName, pId);
