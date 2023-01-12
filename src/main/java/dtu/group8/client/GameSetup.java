@@ -33,20 +33,23 @@ public class GameSetup {
         Game game = new Game();
         game.setMe(player);
         game.setRemoteSpace(lobbySpace);
-
         final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
         try {
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
 
-                String userInput = input.readLine;
+                //String userInput = input.readLine;
+                String userInput = game.takeUserInput();
+
+
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
 
                     //remoteSpace.get(new ActualField("createBoardLock"));
                     System.out.print("Enter game name: ");
-                    String gameName = input.readLine();
+                    //String gameName = input.readLine();
+                    String gameName = game.takeUserInput();
                     game.setName(gameName);
                     game.setHostId(player.getId());
                     lobbySpace.put(CREATE_GAME_REQ,gameName, player.getId(), player.getName());
@@ -76,7 +79,8 @@ public class GameSetup {
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
-                String userInput = input.readLine();
+                //String userInput = input.readLine();
+                String userInput = game.takeUserInput();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     getAllPlayersFromSpace(game);
                     space.put("gameStart");
@@ -84,7 +88,7 @@ public class GameSetup {
 
                 }
             }
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -142,7 +146,7 @@ public class GameSetup {
         System.out.println("Enter a game name to join: ");
         String userChosenGameId = "";
         while (true) {
-            String userInput = input.readLine();
+            String userInput = game.takeUserInput();
             userChosenGameId = gameNames.get(userInput);
             if (userChosenGameId != null) {
                 break;

@@ -1,6 +1,5 @@
 package dtu.group8.server;
 
-import dtu.group8.client.UserInput;
 import dtu.group8.server.model.Player;
 import dtu.group8.server.model.Quiz;
 import dtu.group8.server.model.QuizQuestion;
@@ -8,6 +7,9 @@ import dtu.group8.util.Printer;
 import org.jspace.RemoteSpace;
 import org.jspace.Space;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -19,8 +21,8 @@ public class Game {
     private ArrayList<Player> players;
     private RemoteSpace remoteSpace;
     private Space space;
-    private UserInput userInput;
-    private Thread userInputThread;
+    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
 
     private Quiz quiz;
     public Game() {
@@ -28,8 +30,6 @@ public class Game {
         quiz.questions.add(new QuizQuestion("2+2","5"));
         quiz.questions.add(new QuizQuestion("apples","bananas"));
         players = new ArrayList<>();
-        this.userInput = new UserInput();
-        this.userInputThread = new Thread(this.userInput);
     }
 
     public Game(Quiz quiz) {
@@ -173,6 +173,14 @@ public class Game {
         this.remoteSpace = remoteSpace;
     }
 
-
+    public String takeUserInput() {
+        String userInput;
+        try {
+            userInput = input.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return userInput;
+    }
 
 }
