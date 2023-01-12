@@ -37,17 +37,11 @@ public class GameSetup {
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
-
-                //String userInput = input.readLine;
                 String userInput = game.takeUserInput();
-
 
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
-
-                    //remoteSpace.get(new ActualField("createBoardLock"));
                     System.out.print("Enter game name: ");
-                    //String gameName = input.readLine();
                     String gameName = game.takeUserInput();
                     game.setName(gameName);
                     game.setHostId(player.getId());
@@ -74,11 +68,9 @@ public class GameSetup {
         Space space = game.getSpace();
         try {
             final String OPTIONS = "Options:\n\t1. start game\n\tor just wait for other to join";
-
             while (true) {
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
-                //String userInput = input.readLine();
                 String userInput = game.takeUserInput();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     getAllPlayersFromSpace(game);
@@ -121,7 +113,6 @@ public class GameSetup {
         game.setId(gameId);
         game.setHostName(hostName);
         game.setHostId(hostId);
-
 
         if (Objects.equals(game.getHostId(), game.getMe().getId()))
             printer.println("Game " + game.getName() +" created");
@@ -169,7 +160,6 @@ public class GameSetup {
         printer.println("joinGame: Sent add req to server");
 
         // TODO Set space in game, when message is received
-        //lobbySpace.get()
         getSpace(game);
 
 
