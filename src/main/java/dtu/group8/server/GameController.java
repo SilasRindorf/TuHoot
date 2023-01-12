@@ -35,7 +35,7 @@ public class GameController {
             for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
                 game.addPlayer(t[2].toString());
                 printer.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
-                space.put(t[2], "ok");
+                space.put("ACK",t[2], "ok");
             }
             printer.println("Done adding players");
             updateGameState(GameState.START);
