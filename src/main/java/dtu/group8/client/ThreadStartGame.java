@@ -2,6 +2,7 @@ package dtu.group8.client;
 
 
 import dtu.group8.server.model.Player;
+import dtu.group8.util.Printer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.RemoteSpace;
@@ -19,59 +20,75 @@ public class ThreadStartGame implements Runnable {
     private Space space;
     private static final String LOCK_FOR_GAME_START = "lockForGameStart";
     private Player player;
-    BufferedReader input;
+    private BufferedReader input;
     private static final String JOIN_ME_REQ = "join_req";
-
-
-
-
-
     public ThreadStartGame(Space space, Player player) {
         this.space = space;
         this.player = player;
+    }
+    private boolean alive = true;
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 
     @Override
     public void run() {
         try {
-            while (true) {
+            while (alive) {
+                Printer log = new Printer("ThreadStartGame", Printer.PrintColor.BLUE);
                 System.out.println(OPTIONS);
                 System.out.print("Input command: ");
                 input = new BufferedReader(new InputStreamReader(System.in));
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
-                    Object[] obj = space.getp(new ActualField(LOCK_FOR_GAME_START));
-
+                    close();
+                    Object[] obj = space.get(new ActualField(LOCK_FOR_GAME_START));
+                    log.println("Locked lobby server");
                     if (obj[0].equals(LOCK_FOR_GAME_START)) {
-
+                        log.println("Getting all clients");
                         Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
+                        log.println("Got all clients");
                         String[] pids = (String[]) Client.allPlayers[2];
-
+                        log.println("Sending player names to server");
                         for (String pid : pids) {
+                            log.println("\t","pid=" + pid + " name=" + player.getName());
                             space.put(pid, JOIN_ME_REQ, player.getName());
                         }
-                        space.put(LOCK_FOR_GAME_START);
-
+                        log.println("Adding host...");
                         // TODO The host must be removed from the tuple when the game is over
                         space.put("host", player.getId());
+                        log.println("Unlocking server");
+                        space.put(LOCK_FOR_GAME_START);
                         break;
-
                     } else {
                         System.out.println("The game has already been started");
                     }
+                    //space.put(LOCK_FOR_GAME_START);
 
                 } else if (userInput.equalsIgnoreCase("")) {
                     Client.allPlayers = space.query(new ActualField("allMembers"), new FormalField(Object.class), new FormalField(Object.class));
                     System.out.println("Waiting for a game to start...");
+                    close();
                     break;
                 }
+                close ();
             }
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public void close(){
+        alive = false;
+
+    }
 }
+
 
 class Thread_Acknowledgement_ToJoinGame implements Runnable {
     Space space;
