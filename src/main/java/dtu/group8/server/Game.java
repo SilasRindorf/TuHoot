@@ -6,7 +6,9 @@ import dtu.group8.server.model.QuizQuestion;
 import dtu.group8.util.Printer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.StringTokenizer;
 
 public class Game {
     private ArrayList<Player> players;
@@ -77,6 +79,18 @@ public class Game {
         for (Player player : players) {
             new Printer().println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
         }
+    }
+
+    public String getScores(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("Highest scores:");
+        builder.append("\tName\tScore");
+        Collections.sort(players);
+        for (Player player :
+                players) {
+            builder.append("\n\t" + player.getName() + "\t");
+        }
+        return builder.toString();
     }
 
 
