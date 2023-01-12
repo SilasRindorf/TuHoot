@@ -6,15 +6,15 @@ import org.jspace.RemoteSpace;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
 public class ThreadCreateBoard implements Runnable {
     private final String OPTIONS = "Options:\n\t1. create board\n\tor press enter to wait for a board";
-    private RemoteSpace remoteSpace;
+    private final RemoteSpace remoteSpace;
 
     public ThreadCreateBoard(RemoteSpace remoteSpace) {
         this.remoteSpace = remoteSpace;
     }
+
     @Override
     public void run() {
         try {
@@ -24,14 +24,14 @@ public class ThreadCreateBoard implements Runnable {
                 BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
                 String userInput = input.readLine();
                 if (userInput.equalsIgnoreCase("create board") ||
-                        userInput.equalsIgnoreCase("1")){
+                        userInput.equalsIgnoreCase("1")) {
                     remoteSpace.get(new ActualField("createBoardLock"));
 
                     remoteSpace.put("create board");
                     remoteSpace.put("createBoardLock");
                     break;
 
-                } else if (userInput.equalsIgnoreCase("")){
+                } else if (userInput.equalsIgnoreCase("")) {
                     System.out.println("Waiting for a board...");
                     break;
                 }

@@ -1,28 +1,27 @@
 package dtu.group8.server.model;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Quiz {
     public ArrayList<QuizQuestion> questions = new ArrayList<QuizQuestion>();
 
-    public int quizSize(){
+    public int quizSize() {
         return questions.size();
     }
 
-    public String getQuestion(int index){
+    public String getQuestion(int index) {
         return questions.get(index).getQuestion();
     }
 
-    public String getAnswer(int index){
+    public String getAnswer(int index) {
         return questions.get(index).getAnswer();
     }
 
-    public boolean checkAnswer(int index, String answer){
+    public boolean checkAnswer(int index, String answer) {
         return questions.get(index).checkAnswer(answer);
     }
 
-    public int getAmountOfCorrectAnswers(int index){
+    public int getAmountOfCorrectAnswers(int index) {
         return questions.get(index).getAmountOfCorrectAnswers();
     }
 

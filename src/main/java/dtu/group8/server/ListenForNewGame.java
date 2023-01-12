@@ -6,8 +6,6 @@ import org.jspace.Space;
 
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 class ListenForNewGame implements Runnable {
     Space space;
     Game game;
@@ -56,9 +54,9 @@ class ListenForNewGame implements Runnable {
 
     void initializePlayers() {
         try {
-            System.out.println("Space from the thread " +  space);
+            System.out.println("Space from the thread " + space);
             //add, gameID, name, clientID
-            List<Object[]> objs = space.queryAll(new ActualField("add"),new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
+            List<Object[]> objs = space.queryAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
 
             for (Object[] obj : objs) {
                 //addPlayerToGame(obj);

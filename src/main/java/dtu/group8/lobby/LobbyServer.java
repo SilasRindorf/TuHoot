@@ -9,9 +9,7 @@ import org.jspace.SpaceRepository;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.SimpleTimeZone;
 
 public class LobbyServer {
     static final String CREATE_BOARD = "create board";
@@ -101,7 +99,7 @@ public class LobbyServer {
     }
 
     public String getUri(String parameter) {
-        return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
+        return "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
 }
 

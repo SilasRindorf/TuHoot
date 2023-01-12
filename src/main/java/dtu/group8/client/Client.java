@@ -29,14 +29,14 @@ import java.util.UUID;
  * Reconnect to game
  */
 public class Client {
-    private final String PORT = "9002", IP = "localhost";
-    private String clientName = "", clientID = "";
     //private static final String LOCALHOST = "10.209.95.114";
     private static final String TYPE = "?keep";
+    private static final String JOIN_ME_REQ = "join_req", JOIN_ME_RES = "join_res";
+    public static Object[] allPlayers;
+    private final String PORT = "9002", IP = "localhost";
+    private String clientName = "", clientID = "";
     private Player player;
     private BufferedReader input;
-    public static Object[] allPlayers;
-    private static final String JOIN_ME_REQ = "join_req", JOIN_ME_RES = "join_res";
     private RemoteSpace lobby;
 
 

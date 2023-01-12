@@ -11,8 +11,10 @@ import java.util.ArrayList;
 
 public class GameController {
     public Game game;
-    private Space space;
-    private Printer log;
+    private final Space space;
+    private final Printer log;
+    private boolean alive = true;
+
 
     public GameController(Space space) {
         this.log = new Printer();
@@ -22,9 +24,6 @@ public class GameController {
         this.game = new Game();
         this.space = space;
     }
-
-
-    private boolean alive = true;
 
     public void setAlive(boolean alive) {
         this.alive = alive;
@@ -63,7 +62,7 @@ public class GameController {
             for (int i = 0; i < game.quizSize(); i++) {
                 space.put("Q" + i, game.getQuestion(i));
                 space.put("CA" + i, game.getAnswer(i));
-                log.println("Round " + (i+1) + " begins");
+                log.println("Round " + (i + 1) + " begins");
                 log.println("Game info: " + game.allAnsweredCorrect(i), Printer.PrintColor.GREEN);
                 for (Player player :
                         game.getPlayers()) {
@@ -81,7 +80,7 @@ public class GameController {
 
                     log.println("Player  " + game.getPlayers().get(k).getName() + " " + game.getPlayers().get(k).getPoints());
                 }
-                log.println("Round " + (1+ i) + " ends");
+                log.println("Round " + (1 + i) + " ends");
 
                 handleHighScores();
 
@@ -117,27 +116,27 @@ public class GameController {
             long time = System.currentTimeMillis();
             long end = time + 15000;
             Object[] ACK;
-            ArrayList<Player> IDs = new ArrayList<>( game.getPlayers());
-            log.println("\t","Listening for ACKs");
+            ArrayList<Player> IDs = new ArrayList<>(game.getPlayers());
+            log.println("\t", "Listening for ACKs");
             while (end > System.currentTimeMillis()) {
                 // ACK, ClientID, OK/NO
                 ACK = space.getp(new ActualField("ACK"), new FormalField(String.class), new FormalField(String.class));
-                if (ACK != null && ACK[2].toString().equalsIgnoreCase("ok")){
-                    for (Player player : IDs){
-                        log.println("\t","Received ACK from: " + player.getId());
-                        if (player.getId().equals(ACK[1])){
-                            log.println("\t\t","ACK was OK");
+                if (ACK != null && ACK[2].toString().equalsIgnoreCase("ok")) {
+                    for (Player player : IDs) {
+                        log.println("\t", "Received ACK from: " + player.getId());
+                        if (player.getId().equals(ACK[1])) {
+                            log.println("\t\t", "ACK was OK");
                             IDs.remove(player);
                             if (IDs.size() == 0)
                                 updateGameState(GameState.CONTINUE);
-                                return;
+                            return;
                         }
                     }
                 }
                 updateGameState(GameState.CONTINUE);
             }
-            for (Player player: IDs) {
-                log.println("\t","Player with ID" + player.getId() + " has been kicked");
+            for (Player player : IDs) {
+                log.println("\t", "Player with ID" + player.getId() + " has been kicked");
                 game.removePlayer(player.getId());
             }
         } catch (InterruptedException e) {

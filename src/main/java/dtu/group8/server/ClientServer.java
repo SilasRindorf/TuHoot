@@ -1,12 +1,11 @@
 package dtu.group8.server;
 
-import org.jspace.ActualField;
-import org.jspace.FormalField;
 import org.jspace.Space;
 
-public class ClientServer implements Runnable{
-    private GameController gameController;
-    public ClientServer(Space space){
+public class ClientServer implements Runnable {
+    private final GameController gameController;
+
+    public ClientServer(Space space) {
         this.gameController = new GameController(space);
     }
 
