@@ -25,7 +25,6 @@ public class AddPlayerHandler implements Runnable{
 
     @Override
     public void run() {
-        //BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         Printer printer = new Printer("AddPlayerHandler:", Printer.PrintColor.WHITE);
 
         try {
