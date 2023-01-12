@@ -31,6 +31,7 @@ public class GameSetup {
     public Game initializeGame(Player player) {
         Game game = new Game();
         game.setMe(player);
+        game.addPlayer(player);
         game.setRemoteSpace(lobbySpace);
         final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
         try {
