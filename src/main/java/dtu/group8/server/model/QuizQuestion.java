@@ -12,7 +12,7 @@ public class QuizQuestion {
     }
 
     public boolean checkAnswer(String answer) {
-        boolean correctAnswer = (this.answer.trim().equalsIgnoreCase(answer.trim()));
+        boolean correctAnswer = this.answer.trim().equalsIgnoreCase(answer.trim());
         if (correctAnswer){
             amountOfCorrectAnswers++;
         }

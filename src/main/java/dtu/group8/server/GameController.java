@@ -57,13 +57,14 @@ public class GameController {
                 space.put("Q"+ i, game.getQuestion(i));
                 space.put("CA" + i,game.getAnswer(i));
                 log.println("Round begins " + i);
-                while (alive && game.allAnsweredCorrect(i)) {
+                while (alive && !game.allAnsweredCorrect(i)) {
                     log.println("Waiting for answers");
+                    log.println("\t","game.allAnsweredCorrect " + game.allAnsweredCorrect(i));
                     //Tuple contains:
                     //'A', clientId, answer, question index
                     answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
                     space.put("V", answer[1].toString(), game.checkAnswer((Integer) answer[3], answer[2].toString(), answer[1].toString()));
-                    log.println("Score " + game.getPlayers().get(0).getPoint());
+                    log.println("\t","Player  " + game.getPlayers().get(0).toString() + game.getPlayers().get(0).getPoint());
                 }
                 log.println("Round ends " + i);
             }

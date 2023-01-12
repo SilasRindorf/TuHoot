@@ -53,13 +53,14 @@ public class Game {
     }
 
     public boolean checkAnswer(int index, String answer, String id){
+        boolean isCorrect = quiz.checkAnswer(index,answer);
         // Adds point if players answers correctly
         for (Player player1: players) {
-            if(player1.getId().equals(id) && quiz.checkAnswer(index,answer)){
+            if(player1.getId().equals(id) && isCorrect){
                 player1.setPoint(calculatePoints(index));
             }
         }
-        return quiz.checkAnswer(index,answer);
+        return isCorrect;
     }
     public ArrayList<Player> getPlayers() {
         return players;
