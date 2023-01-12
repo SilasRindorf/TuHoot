@@ -1,5 +1,6 @@
 package dtu.group8.client;
 
+import dtu.group8.server.ClientServer;
 import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
 import dtu.group8.util.Printer;
@@ -42,7 +43,6 @@ public class Client {
             String uri = input.readLine();
             // Default value
             if (uri.isEmpty()) {
-                //uri = "tcp://" + LOCALHOST + ":" + PORT + "/lobby" + TYPE;
                 uri = getUri("lobby");
             }
             // Connect to the remote chat space
@@ -56,7 +56,6 @@ public class Client {
             String clientName = input.readLine();
             String clientId = UUID.randomUUID().toString();
             Player player = new Player(clientName, clientId, 0);
-            // remoteSpace.put("lobby", clientName, clientID); // no need for this now
             gameSetup = new GameSetup(remoteSpace);
             return gameSetup.initializeGame(player);
 
@@ -68,18 +67,15 @@ public class Client {
     }
 
     public Game setup(Game game) {
-        //____________________________________ SETUP ____________________________________
         Space space = game.getSpace();
-        if (space == null) {
-            return null;
-        }
+        if (space == null) return null;
+
         try {
-/*            if (input == null) {
-                input = new BufferedReader(new InputStreamReader(System.in));
-            }*/
+
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
+            // Checks if this client is the host
             if (game.getHostId().equals(game.getMe().getId())) {
                 ThreadListenForAddReq listenForAddReq = new ThreadListenForAddReq(game);
                 new Thread(listenForAddReq).start();
@@ -90,45 +86,18 @@ public class Client {
 
 
 
-/*            // Checks if this client is the host
-            if (!Objects.equals(hostClientId, clientID)) {
-                while (true) {
-                    System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
-                    String userInput = input.readLine();
-                    if (userInput.equalsIgnoreCase("ok")) {
-                        space.put(JOIN_ME_RES, "ok", clientID);
-                        break;
-
-                    } else if (userInput.equalsIgnoreCase("no")) {
-                        space.put(JOIN_ME_RES, "no", clientID);
-                        break;
-                    }
-                }
-            } else {
-                System.out.println("Waiting for player(s) to join...");
-            }
-
-            if (Objects.equals(hostClientId, clientID)) {
-                Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, false));
-                checkAckThread.start();
-                //checkAckThread.join();
-                Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, true));
-                sleepThread.start();
-            }*/
-
-/*            space.query(new ActualField("game started"));
+            space.query(new ActualField(GAME_START));
             System.out.println("Game is starting...");
 
-            ///// Game starts here.
-            printer.println("Adding client");
-            space.put("add", clientName, clientID);
-
-            if (Objects.equals(hostClientId, clientID)) {
-                System.out.println("You are the host.");
+            // Checks if this client is the host
+            if (game.getHostId().equals(game.getMe().getId())) {
                 Thread gameThread = new Thread(new ClientServer(space));
                 gameThread.start();
                 printer.println("Thread started", Printer.PrintColor.YELLOW);
-            }*/
+            }
+
+            /*-----------------------------All setup done-------------------------------------*/
+
 
             // Connect to space
             // Get ack from space

@@ -11,6 +11,7 @@ public class Util {
     public final static String SHOW_ME_AVAILABLE_GAMES_REQ = "show_me_games_req";
     public final static String SHOW_ME_AVAILABLE_GAMES_RES = "show_me_games_res";
     public final static String PATTERN_FOR_PLAYER_ID_SPLITTER = "::";
+    public final static String GAME_START = "game-start";
 
 
 

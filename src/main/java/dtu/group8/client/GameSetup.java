@@ -82,7 +82,7 @@ public class GameSetup {
                 String userInput = game.takeUserInput();
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     getAllPlayersFromSpace(game);
-                    space.put("gameStart");
+                    space.put(GAME_START);
                     break;
 
                 }
