@@ -121,9 +121,9 @@ public class GameSetup {
         //Printer printer = new Printer("GameSetup:joinGame", Printer.PrintColor.WHITE);
 
         String myId =  game.getMe().getId();
-        lobbySpace.put( SHOW_ME_AVAILABLE_GAMES, myId);
-        Object[] obj = lobbySpace.get(new ActualField(myId), new FormalField(ArrayList.class));
-        ArrayList<String> arr = (ArrayList<String>) obj[1];
+        lobbySpace.put( SHOW_ME_AVAILABLE_GAMES_REQ, myId);
+        Object[] obj = lobbySpace.get(new ActualField(SHOW_ME_AVAILABLE_GAMES_RES), new ActualField(myId), new FormalField(ArrayList.class));
+        ArrayList<String> arr = (ArrayList<String>) obj[2];
 
         System.out.println("Available game(s): " + arr.size());
         if (arr.isEmpty()) {

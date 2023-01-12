@@ -198,8 +198,8 @@ public class LobbyServer {
         public void run() {
             try {
                 while (true) {
-                    Object[] obj = spaceLobby.get(new ActualField(SHOW_ME_AVAILABLE_GAMES), new FormalField(String.class));
-                    System.out.println("Request for game-list received from: " + obj[1]);
+                    Object[] obj = spaceLobby.get(new ActualField(SHOW_ME_AVAILABLE_GAMES_REQ), new FormalField(String.class));
+                    System.out.println("LobbyServer: Request for game-list received from: " + obj[1]);
 
                     ArrayList<String> tempGames = new ArrayList<>();
                     semaphore.acquire();
@@ -207,7 +207,7 @@ public class LobbyServer {
                         tempGames.add(gameLobby.getName() +"::" + gameLobby.getId());
                     }
                     semaphore.release();
-                    spaceLobby.put(obj[1].toString(), tempGames);
+                    spaceLobby.put(SHOW_ME_AVAILABLE_GAMES_RES, obj[1].toString(), tempGames);
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
