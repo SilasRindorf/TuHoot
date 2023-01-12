@@ -3,7 +3,7 @@ package dtu.group8.server.model;
 public class Player implements Comparable<Player>{
     private String name;
     private String id;
-    private int point = 0;
+    private int points = 0;
 
 
     public Player(String playerId){
@@ -15,14 +15,14 @@ public class Player implements Comparable<Player>{
     }
 
     void addPoint(int point) {
-        this.point += point;
+        this.points += point;
     }
 
-    public int getPoint() {
-        return point;
+    public int getPoints() {
+        return points;
     }
 
-    public void setPoint(int point){this.point += point;}
+    public void setPoints(int points){this.points += points;}
 
     public String getId() {
         return id;
@@ -38,6 +38,6 @@ public class Player implements Comparable<Player>{
 
     @Override
     public int compareTo(Player o) {
-        return this.getPoint() - ((Player) o).getPoint();
+        return this.getPoints() - ((Player) o).getPoints();
     }
 }

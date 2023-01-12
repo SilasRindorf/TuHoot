@@ -6,8 +6,6 @@ import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.Space;
 
-import javax.swing.plaf.synth.SynthRadioButtonMenuItemUI;
-
 public class GameController {
     private final String TAG = "GameController";
     public Game game;
@@ -72,7 +70,7 @@ public class GameController {
                 }
                 for (int k = 0; k < game.getPlayers().size(); k++){
 
-                    log.println("Player  " + game.getPlayers().get(k).getName() +" " + game.getPlayers().get(k).getPoint());
+                    log.println("Player  " + game.getPlayers().get(k).getName() +" " + game.getPlayers().get(k).getPoints());
                 }
                 log.println("Round " + i + " ends");
             }
