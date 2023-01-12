@@ -59,7 +59,7 @@ public class AddPlayerHandler implements Runnable{
                     game.display_size_of_added_player();
                 } else if (str.equalsIgnoreCase("no")) {
                     // do nothing
-                    // TODO Send a message back to the server, and the client should receive a response("no")
+                    // TODO Send a message to the server, and then have the server send a response back to the client.
                 }
                 game.getPrinterLock().release();
             }
