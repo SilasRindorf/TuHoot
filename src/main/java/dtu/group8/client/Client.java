@@ -205,20 +205,7 @@ public class Client {
                 printer.println("Question " + (i+1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
 
-                questionQuess(space, log, printer, i);
-                /*
-                space.put("A",clientID, input.readLine(),i);
-                log.println("Waiting for verification of answer");
-                answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
-                log.println("Received verification from Space");
-                if ((boolean) answer[2]){
-                    printer.println("You got the answer correct!");
-                } else{
-                    log.println("Getting correct answer");
-                    answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
-                    printer.println("You got the answer wrong! The correct answer was " + answer[1]);
-                }
-                */
+                questionGuess(space, log, printer, i);
             }
             log.println("Stopping game...");
 
@@ -233,7 +220,7 @@ public class Client {
 
         }
 
-    private void questionQuess(Space space, Printer log,  Printer printer, int i) throws IOException, InterruptedException {
+    private void questionGuess(Space space, Printer log, Printer printer, int i) throws IOException, InterruptedException {
         Object[] answer;
 
         space.put("A",clientID, input.readLine(),i);
@@ -242,12 +229,11 @@ public class Client {
         log.println("Received verification from Space");
         if ((boolean) answer[2]){
             printer.println("You got the answer correct!");
-            return;
         } else{
             log.println("Getting correct answer");
             answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
             printer.println("You got the answer wrong! The correct answer was " + answer[1]);
-            questionQuess(space, log, printer, i);
+            questionGuess(space, log, printer, i);
         }
     }
 

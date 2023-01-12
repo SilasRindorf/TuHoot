@@ -54,10 +54,9 @@ public class Game {
 
     public boolean checkAnswer(int index, String answer, String id){
         // Adds point if players answers correctly
-        Player player = new Player(id);
         for (Player player1: players) {
-            if(player1.getId().equals(player.getId()) && quiz.checkAnswer(index,answer)){
-                player1.setPoint(500);
+            if(player1.getId().equals(id) && quiz.checkAnswer(index,answer)){
+                player1.setPoint(calculatePoints(index));
             }
         }
         return quiz.checkAnswer(index,answer);
@@ -66,24 +65,20 @@ public class Game {
         return players;
     }
 
-    public void selectNewQuestion(){
-        quiz.selectRandomQuestion();
-    }
-    public String getCurrentQuestion() {
-        return quiz.getCurrentQuestion().getQuestion();
-    }
-    public String getCurrentAnswer(){
-        return quiz.getCurrentQuestion().getAnswer();
+    public boolean allAnsweredCorrect(int index){
+        return quiz.getAmountOfCorrectAnswers(index) == players.size();
     }
 
-    public boolean checkAnswer(String answer){
-        return quiz.getCurrentQuestion().checkAnswer(answer);
-    }
+
 
     public void printOutPlayers() {
         for (Player player : players) {
             new Printer().println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
         }
+    }
+
+    private int calculatePoints(int index){
+        return 100 * (players.size() - quiz.getAmountOfCorrectAnswers(index));
     }
 
 
