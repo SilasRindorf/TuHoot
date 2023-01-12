@@ -32,6 +32,7 @@ import static dtu.group8.lobby.Util.*;
  */
 public class Client {
     GameSetup gameSetup;
+    Printer printerNoTag = new Printer("", Printer.PrintColor.WHITE);
 
     public Game matchMake() {
         try {
@@ -80,7 +81,7 @@ public class Client {
                 new Thread(listenForAddReq).start();
                 gameSetup.display_start_game_option(game);
             } else {
-                printer.println("Waiting for game to start...");
+                printerNoTag.println("Waiting for game to start...");
             }
 
             space.query(new ActualField(GAME_START));

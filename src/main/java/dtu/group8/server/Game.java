@@ -127,6 +127,7 @@ public class Game {
 
     public void printOutPlayers() {
         for (Player player : players) {
+
             new Printer().println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
         }
     }
@@ -214,6 +215,7 @@ public class Game {
     }
 
     public void display_size_of_added_player() {
+        Printer printer = new Printer("", Printer.PrintColor.WHITE);
         printer.println("Total players: " + this.players.size());
     }
 

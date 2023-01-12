@@ -21,10 +21,12 @@ import static dtu.group8.lobby.Util.TYPE;
 public class GameSetup {
     private RemoteSpace lobbySpace;
     private Printer printer;
+    private Printer printerNoTag;
 
     public GameSetup(RemoteSpace lobbySpace) {
         this.lobbySpace = lobbySpace;
         this.printer = new Printer("GameSetup:", Printer.PrintColor.WHITE);
+        this.printerNoTag = new Printer("", Printer.PrintColor.WHITE);
 
     }
 
@@ -36,7 +38,7 @@ public class GameSetup {
         final String OPTIONS = "Options:\n\t1. create game\n\t2. join game";
         try {
             while (true) {
-                System.out.println(OPTIONS);
+                printerNoTag.println(OPTIONS);
                 System.out.print("Input command: ");
                 String userInput = game.takeUserInput();
 
@@ -75,7 +77,7 @@ public class GameSetup {
             final String OPTIONS = "Options:\n\t1. start game\n\tor just wait for other to join";
             while (true) {
                 game.getPrinterLock().acquire();
-                System.out.println(OPTIONS);
+                printerNoTag.println(OPTIONS);
                 System.out.print("Input command: ");
                 game.getPrinterLock().release();
                 String userInput = game.takeUserInput();
@@ -106,7 +108,7 @@ public class GameSetup {
     }
 
     void getSpace(Game game) throws InterruptedException, IOException {
-        Printer printer = new Printer("GameSetup: getSpace", Printer.PrintColor.WHITE);
+        Printer printer = new Printer("", Printer.PrintColor.WHITE);
         /* Awaits a response from the server regarding the game creation. */
         Object[] obj = lobbySpace.get(new ActualField(MY_SPACE_ID), new ActualField(game.getMe().getId()),
                 new FormalField(Object.class), new FormalField(Object.class),
@@ -126,7 +128,7 @@ public class GameSetup {
         if (game.amIHost())
             printer.println("Game " + game.getName() +" created");
         String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
-        printer.println("You are connected to game " + game.getName());
+        printerNoTag.println("You are connected to game " + game.getName());
         game.setSpace(new RemoteSpace(uri2));
 
         // Displays the size of added players.
@@ -144,21 +146,22 @@ public class GameSetup {
         ArrayList<String> arr = (ArrayList<String>) obj[2];
 
         /* Displays the available games that are obtained by making the request above. */
-        System.out.println("Available game(s): " + arr.size());
+        printerNoTag.print("Available game(s): ");
+        System.out.println(arr.size());
         HashMap<String, String> gameNames = new HashMap<>();
         for (String s : arr) {
             String[] currGame = s.split(PATTERN_FOR_PLAYER_ID_SPLITTER, 2);
             String gameName = currGame[0];
             String gameId = currGame[1];
             gameNames.put(gameName,gameId);
-            System.out.println("\t" + gameName);
+            printerNoTag.println("\t" + gameName);
         }
 
         /* Lets the user choose a game by typing its name. */
         String userChosenGameId;
         while (true) {
-            if (arr.isEmpty()) printer.print("Press enter to go back: ");
-            else printer.print("Enter a game name to join or press enter to go back: ");
+            if (arr.isEmpty()) System.out.print("Press enter to go back: ");
+            else System.out.print("Enter game name to join or press enter to return: ");
 
             String userInput = game.takeUserInput();
             if (userInput.equals("")) return false;   // This means the user wants to go back.
@@ -171,7 +174,8 @@ public class GameSetup {
 
         /* Sends a request to the lobby server to ask the host to allow this client to join the chosen game. */
         lobbySpace.put(ADD_ME_REQ_FROM_CLIENT, game.getMe().getName(), game.getMe().getId(), userChosenGameId);
-        printer.println("joinGame: Sent add req to server");
+        //printer.println("joinGame: Sent add req to server");
+        printerNoTag.println("Waiting for host approval");
 
         // TODO Set space in game, when message is received
         getSpace(game);
