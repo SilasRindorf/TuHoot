@@ -198,12 +198,14 @@ public class Client {
             Object[] size = space.query(new ActualField("QuizSize"),new FormalField(Integer.class));
             log.println("starting game loop");
             Object[] question;
-            Object[] answer;
             for (int i = 0; i < (Integer) size[1]; i++){
                 printer.println("Question coming up!");
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
                 printer.println("Question " + (i+1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
+
+                questionQuess(space, log, printer, i);
+                /*
                 space.put("A",clientID, input.readLine(),i);
                 log.println("Waiting for verification of answer");
                 answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
@@ -215,16 +217,19 @@ public class Client {
                     answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
                     printer.println("You got the answer wrong! The correct answer was " + answer[1]);
                 }
+                */
             }
             log.println("Stopping game...");
-            endGame();
+                endGame();
 
-            //____________________________________ EXCEPTION HANDLING ____________________________________
+                //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
-                IOException | InterruptedException e) {
+                InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     public void endGame(){
@@ -249,8 +254,25 @@ public class Client {
         }
     }
 
+    private void questionQuess(Space space, Printer log,  Printer printer, int i) throws IOException, InterruptedException {
+        Object[] answer;
+
+        space.put("A",clientID, input.readLine(),i);
+        log.println("Waiting for verification of answer");
+        answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+        log.println("Received verification from Space");
+        if ((boolean) answer[2]){
+            printer.println("You got the answer correct!");
+            return;
+        } else{
+            log.println("Getting correct answer");
+            answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
+            printer.println("You got the answer wrong! The correct answer was " + answer[1]);
+            questionQuess(space, log, printer, i);
+        }
+    }
+
     private String getUri(String parameter) {
         return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
-
 }

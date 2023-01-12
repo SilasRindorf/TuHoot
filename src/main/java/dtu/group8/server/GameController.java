@@ -43,6 +43,14 @@ public class GameController {
             printer.println("Error adding players", Printer.PrintColor.RED);
             e.printStackTrace();
         }
+
+        /**
+         * TODO : Skal køres i runder a et givent antal tid
+         * TODO : Der skal gives point
+         * TODO : Highscores skal ud i tuple space?
+         * TODO : Alle får 500 point for et rigtigt svar lige nu
+         */
+
         try {
             space.put("QuizSize", game.quizSize());
             for (int i = 0; i < game.quizSize(); i++){
@@ -51,16 +59,17 @@ public class GameController {
             }
 
             while (alive) {
+                //Tuple contains:
+                //'A', clientId, answer, question index
                 answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
-                space.put("V",answer[1].toString(),game.checkAnswer((Integer) answer[3],answer[2].toString()));
+                space.put("V",answer[1].toString(),game.checkAnswer((Integer) answer[3],answer[2].toString(), answer[1].toString()));
+                printer.println("Score " + game.getPlayers().get(0).getPoint());
             }
         } catch (InterruptedException e){
             printer.println("Error in game loop", Printer.PrintColor.RED);
             e.printStackTrace();
         }
     }
-
-
 
 
     private void updateGameState(GameState state) throws InterruptedException{

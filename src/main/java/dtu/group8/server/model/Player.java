@@ -17,6 +17,8 @@ public class Player implements Comparable<Player>{
         return point;
     }
 
+    public void setPoint(int point){this.point += point;}
+
     public String getId() {
         return id;
     }
