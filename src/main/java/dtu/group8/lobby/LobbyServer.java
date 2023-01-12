@@ -22,7 +22,6 @@ public class LobbyServer {
     private SpaceRepository repository;
     private SequentialSpace spaceLobby;
     private BufferedReader input;
-
     Integer spaceCounter = 0;
 
     public static void main(String[] args) {
@@ -82,48 +81,6 @@ public class LobbyServer {
                 spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId);
                 System.out.println("LobbyServer: Game created");
                 System.out.println("\tGame name: " + gameName);
-
-
-
-
-
-
-/*
-                Printer log = new Printer();
-                System.out.println("Creating board...");
-                //Get all clients from lobby
-                LinkedList<Object[]> allClients = spaceLobby.getAll(new ActualField("lobby"), new FormalField(String.class), new FormalField(String.class));
-                //id++
-                SequentialSpace newSpace = new SequentialSpace();
-                repository.add(newSpaceId, newSpace);
-
-
-                //Not used yet
-                newSpace.put(LOCK_FOR_GAME_START);
-
-
-                String[] playerNames = new String[allClients.size()];
-                String[] playerIds = new String[allClients.size()];
-                int counter = 0;
-
-                // Info print
-                System.out.println("\tboardId: " + spaceCounter);
-                System.out.println("\tClients");
-                for (Object[] client : allClients) {
-                    String pName = client[1].toString();
-                    String pid = client[2].toString();
-
-                    System.out.println("\t\tClient: " + pid);
-
-                    //Send info to clients
-                    spaceLobby.put(pid, newSpaceId);
-                    playerNames[counter] = pName;
-                    playerIds[counter] = pid;
-                    counter++;
-                }
-
-                newSpace.put("allMembers", playerNames, playerIds);
-*/
 
             }
         } catch (IOException e) {
@@ -187,7 +144,6 @@ public class LobbyServer {
                     semaphore.release();
                 }
 
-
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -229,10 +185,6 @@ public class LobbyServer {
                         }
                     }
                     semaphore.release();
-
-
-
-
 
                 }
             } catch (InterruptedException e) {
