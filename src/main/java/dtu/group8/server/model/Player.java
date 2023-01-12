@@ -9,6 +9,11 @@ public class Player {
     public Player(String playerId){
         this.id = playerId;
     }
+    public Player(String playerId, String name){
+        this.id = playerId;
+        this.name = name;
+    }
+
     void addPoint(int point) {
         this.point += point;
     }

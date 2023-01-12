@@ -6,6 +6,8 @@ import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.Space;
 
+import javax.swing.plaf.synth.SynthRadioButtonMenuItemUI;
+
 public class GameController {
     private final String TAG = "GameController";
     public Game game;
@@ -32,8 +34,10 @@ public class GameController {
         Object[] answer;
         // Add players to game
         try {
+            //Touple contains
+            //
             for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
-                game.addPlayer(t[2].toString());
+                game.addPlayer(t[1].toString(),t[2].toString());
                 log.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
                 space.put(t[2], "ok");
             }
@@ -52,22 +56,28 @@ public class GameController {
          */
 
         try {
+
             space.put("QuizSize", game.quizSize());
             for (int i = 0; i < game.quizSize(); i++){
                 space.put("Q"+ i, game.getQuestion(i));
                 space.put("CA" + i,game.getAnswer(i));
-                log.println("Round begins " + i);
+                log.println("Round " + i + " begins");
                 while (alive && !game.allAnsweredCorrect(i)) {
                     log.println("Waiting for answers");
-                    log.println("\t","game.allAnsweredCorrect " + game.allAnsweredCorrect(i));
                     //Tuple contains:
                     //'A', clientId, answer, question index
                     answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
                     space.put("V", answer[1].toString(), game.checkAnswer((Integer) answer[3], answer[2].toString(), answer[1].toString()));
-                    log.println("\t","Player  " + game.getPlayers().get(0).toString() + game.getPlayers().get(0).getPoint());
+                    log.println("\t","game.allAnsweredCorrect " + game.allAnsweredCorrect(i));
                 }
-                log.println("Round ends " + i);
+                for (int k = 0; k < game.getPlayers().size(); k++){
+
+                    log.println("Player  " + game.getPlayers().get(k).getName() +" " + game.getPlayers().get(k).getPoint());
+                }
+                log.println("Round " + i + " ends");
             }
+            //___________________ GAME END ___________________
+
         } catch (InterruptedException e){
             log.println("Error in game loop", Printer.PrintColor.RED);
             e.printStackTrace();

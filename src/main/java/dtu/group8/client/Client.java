@@ -202,7 +202,7 @@ public class Client {
                 questionGuess(space, log, printer, i);
             }
             log.println("Stopping game...");
-
+            endGame();
             //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
                 InterruptedException e) {
@@ -215,8 +215,10 @@ public class Client {
         }
 
     private void questionGuess(Space space, Printer log, Printer printer, int i) throws IOException, InterruptedException {
+        //Tuple contains:
+        //"A", clientId, answer, question index
         Object[] answer;
-
+        printer.print("Please input your answer: ");
         space.put("A",clientID, input.readLine(),i);
         log.println("Waiting for verification of answer");
         answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));

@@ -11,19 +11,20 @@ import java.util.Objects;
 public class Game {
     private ArrayList<Player> players;
     private Quiz quiz;
+
     public Game() {
         quiz = new Quiz();
-        quiz.questions.add(new QuizQuestion("2+2","5"));
-        quiz.questions.add(new QuizQuestion("apples","bananas"));
+        quiz.questions.add(new QuizQuestion("2+2", "5"));
+        quiz.questions.add(new QuizQuestion("apples", "bananas"));
         players = new ArrayList<>();
     }
+
     public Game(Quiz quiz) {
         this.quiz = quiz;
     }
 
 
-
-    public void addPlayer(String playerId) {
+    public void addPlayer(String name, String playerId) {
         boolean isFound = false;
         for (Player currPlayer : players) {
             if (Objects.equals(currPlayer.getId(), playerId)) {
@@ -32,44 +33,45 @@ public class Game {
         }
 
         if (!isFound) {
-            players.add(new Player(playerId));
+            players.add(new Player(playerId, name));
         }
 
     }
+
     public void removePlayer(String playerId) {
 
     }
 
-    public int quizSize(){
+    public int quizSize() {
         return quiz.quizSize();
     }
 
-    public String getQuestion(int index){
+    public String getQuestion(int index) {
         return quiz.getQuestion(index);
     }
 
-    public String getAnswer(int index){
+    public String getAnswer(int index) {
         return quiz.getAnswer(index);
     }
 
-    public boolean checkAnswer(int index, String answer, String id){
-        boolean isCorrect = quiz.checkAnswer(index,answer);
+    public boolean checkAnswer(int index, String answer, String id) {
+        boolean isCorrect = quiz.checkAnswer(index, answer);
         // Adds point if players answers correctly
-        for (Player player1: players) {
-            if(player1.getId().equals(id) && isCorrect){
+        for (Player player1 : players) {
+            if (player1.getId().equals(id) && isCorrect) {
                 player1.setPoint(calculatePoints(index));
             }
         }
         return isCorrect;
     }
+
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
-    public boolean allAnsweredCorrect(int index){
+    public boolean allAnsweredCorrect(int index) {
         return quiz.getAmountOfCorrectAnswers(index) == players.size();
     }
-
 
 
     public void printOutPlayers() {
@@ -78,10 +80,8 @@ public class Game {
         }
     }
 
-    private int calculatePoints(int index){
-        return 100 * (players.size() - quiz.getAmountOfCorrectAnswers(index));
+    private int calculatePoints(int index) {
+        return 100 * (1 + players.size() - quiz.getAmountOfCorrectAnswers(index));
     }
-
-
 
 }
