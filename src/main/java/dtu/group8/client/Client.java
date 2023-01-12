@@ -18,15 +18,15 @@ import java.util.UUID;
  * Client
  * Responsibilities:
  * Must have:
- *      Receive questions
- *      Send answers
- *      Receive correct answer
- *      Show if answer was correct or wrong
+ * Receive questions
+ * Send answers
+ * Receive correct answer
+ * Show if answer was correct or wrong
  * Can have:
- *      See opponent points
- *      See timer
- *      See amount of remaining questions
- *      Reconnect to game
+ * See opponent points
+ * See timer
+ * See amount of remaining questions
+ * Reconnect to game
  */
 public class Client {
     private final String PORT = "9002", IP = "localhost";
@@ -40,10 +40,9 @@ public class Client {
     private RemoteSpace lobby;
 
 
-
-    public Space matchMake(){
+    public Space matchMake() {
         try {
-            Printer printer = new Printer("Client:matchMake",Printer.PrintColor.WHITE);
+            Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
             if (input == null) {
                 input = new BufferedReader(new InputStreamReader(System.in));
             }
@@ -97,6 +96,7 @@ public class Client {
         return null;
 
     }
+
     public Space startGame(Space space) {
         //____________________________________ SETUP FOR GAME ____________________________________
         if (space == null) {
@@ -106,7 +106,7 @@ public class Client {
 
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
-
+            log.setLog(false);
             ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
             Thread sThread = new Thread(threadStartGame);
             sThread.start();
@@ -154,7 +154,6 @@ public class Client {
                 System.out.println("You are the host.");
                 Thread gameThread = new Thread(new ClientServer(space));
                 gameThread.start();
-                printer.println("Thread started", Printer.PrintColor.YELLOW);
             }
 
             // Connect to space
@@ -183,26 +182,29 @@ public class Client {
         return space;
     }
 
-        public void start(Space space){
-            Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
-            Printer printer = new Printer();
-            try{
+    public void start(Space space) {
+        Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+        log.setLog(false);
+        Printer printer = new Printer();
+        try {
             //____________________________________ STARTING GAME ____________________________________
             log.println("playing game!");
             log.println("getting question size");
-            Object[] size = space.query(new ActualField("QuizSize"),new FormalField(Integer.class));
+            Object[] size = space.query(new ActualField("QuizSize"), new FormalField(Integer.class));
             log.println("starting game loop");
             Object[] question;
             Object[] highscores;
-            for (int i = 0; i < (Integer) size[1]; i++){
+            for (int i = 0; i < (Integer) size[1]; i++) {
                 printer.println("Question coming up!");
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
-                printer.println("Question " + (i+1) + ":\n\t" + question[1].toString());
+                printer.println("Question " + (i + 1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
 
                 questionGuess(space, log, printer, i);
                 highscores = space.query(new ActualField("Highscores"), new FormalField(String.class));
                 printer.println(highscores[1].toString());
+                log.println("Replying to ACK");
+                space.put("ACK", clientID, "OK");
             }
             log.println("Stopping game...");
             endGame();
@@ -212,48 +214,50 @@ public class Client {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            e.printStackTrace();
         }
+
+    }
+
+    //TODO: Should give right answer if user does not guess right
 
     private void questionGuess(Space space, Printer log, Printer printer, int i) throws IOException, InterruptedException {
         //Tuple contains:
         //"A", clientId, answer, question index
         Object[] answer;
         printer.print("Please input your answer: ");
-        space.put("A",clientID, input.readLine(),i);
+        space.put("A", clientID, input.readLine(), i);
         log.println("Waiting for verification of answer");
-        answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
+        answer = space.get(new ActualField("V"), new FormalField(String.class), new FormalField(Boolean.class));
         log.println("Received verification from Space");
-        if ((boolean) answer[2]){
+        if ((boolean) answer[2]) {
             printer.println("You got the answer correct!");
-        } else{
+        } else {
             log.println("Getting correct answer");
             answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
-            printer.println("You got the answer wrong! The correct answer was " + answer[1]);
+            printer.println("You got the answer wrong!");
             questionGuess(space, log, printer, i);
         }
     }
 
-    public void endGame(){
+    public void endGame() {
         Printer printer = new Printer();
         printer.print("Do you want join another lobby(y/n)?");
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         try {
-            String str =  input.readLine().trim();
-            if (str.equalsIgnoreCase("y")){
+            String str = input.readLine().trim();
+            if (str.equalsIgnoreCase("y")) {
 
                 start(matchMake());
             } else {
 
             }
-        }  catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private String getUri(String parameter) {
-        return  "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
+        return "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }
 }
