@@ -51,8 +51,9 @@ public class GameSetup {
                     break;
 
                 } else if (userInput.equalsIgnoreCase("2") || userInput.equalsIgnoreCase("join game")){
-                    joinGame(game);
-                    break;
+                    if (joinGame(game)) {
+                        break;
+                    } else return initializeGame(player);
                 }
             }
 
@@ -125,7 +126,7 @@ public class GameSetup {
     }
 
 
-    void joinGame(Game game) throws InterruptedException, IOException {
+    boolean joinGame(Game game) throws InterruptedException, IOException {
 
         String myId =  game.getMe().getId();
         lobbySpace.put( SHOW_ME_AVAILABLE_GAMES_REQ, myId);
@@ -146,10 +147,18 @@ public class GameSetup {
             gameNames.put(gameName,gameId);
             System.out.println("\t" + currGame[0]);
         }
-        System.out.print("Enter a game name to join: ");
+
         String userChosenGameId = "";
         while (true) {
+            if (arr.isEmpty()) printer.print("Press enter to go back: ");
+            else printer.print("Enter a game name to join or press enter to go back: ");
+
             String userInput = game.takeUserInput();
+            if (userInput.equals("")){
+                //initializeGame(game.getMe());
+                return false;
+            }
+
             userChosenGameId = gameNames.get(userInput);
             if (userChosenGameId != null) {
                 break;
@@ -164,9 +173,7 @@ public class GameSetup {
 
         // TODO Set space in game, when message is received
         getSpace(game);
-
-
-
+        return true;
     }
 
 }

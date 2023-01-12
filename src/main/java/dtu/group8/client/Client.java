@@ -62,6 +62,7 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("return null");
         return null;
 
     }
