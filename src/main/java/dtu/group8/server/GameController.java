@@ -39,6 +39,8 @@ public class GameController {
                 space.put("ACK", t[2], "ok");
             }*/
 
+            /* The loop below performs the same function as the one above. The difference is
+               that the given game parameter already contains all the added players */
             for (Player currPlayer : game.getPlayers()) {
                 printer.println("PLAYER ADD ", currPlayer.getId(), Printer.PrintColor.CYAN);
                 space.put("ACK", currPlayer.getId(), "ok");
