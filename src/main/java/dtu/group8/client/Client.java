@@ -261,23 +261,6 @@ public class Client {
         }
     }
 
-    public void endGame() {
-        Printer printer = new Printer();
-        printer.print("Do you want join another lobby(y/n)?");
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        try {
-            String str = input.readLine().trim();
-            if (str.equalsIgnoreCase("y")) {
-
-                start(matchMake());
-            } else {
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private String getUri(String parameter) {
         return "tcp://" + IP + ":" + PORT + "/" + parameter + TYPE;
     }

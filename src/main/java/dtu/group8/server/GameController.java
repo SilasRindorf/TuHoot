@@ -32,7 +32,7 @@ public class GameController {
     public void startGame() {
         Printer printer = new Printer();
         printer.setLog(false);
-        printer.setDefaultTAG(TAG + ":startGame");
+        printer.setDefaultTAG("startGame");
         printer.setDefaultPrintColor(Printer.PrintColor.CYAN);
         printer.println("starting game...");
         printer.println("Adding players...");
