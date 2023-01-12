@@ -4,15 +4,33 @@ import dtu.group8.server.model.Player;
 import dtu.group8.server.model.Quiz;
 import dtu.group8.server.model.QuizQuestion;
 import dtu.group8.util.Printer;
+import org.jspace.RemoteSpace;
+import org.jspace.Space;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.concurrent.Semaphore;
 
 public class Game {
+    private String id;
+    private String name;
+    private String hostId;
+    private String hostName;
+    private Player me;
     private ArrayList<Player> players;
     private final Quiz quiz;
 
+    private RemoteSpace remoteSpace;
+    private Space space;
+    private Semaphore printerLock = new Semaphore(1);
+    Printer printer = new Printer("Game:", Printer.PrintColor.WHITE);
+
+
+    private Quiz quiz;
     public Game() {
         quiz = new Quiz();
         quiz.questions.add(new QuizQuestion("2+2", "5"));
@@ -24,6 +42,16 @@ public class Game {
         this.quiz = quiz;
     }
 
+    public Game(String id, String name, String hostId, Player me,
+                ArrayList<Player> players, RemoteSpace remoteSpace, Space space) {
+        this.id = id;
+        this.name = name;
+        this.hostId = hostId;
+        this.me = me;
+        this.players = players;
+        this.remoteSpace = remoteSpace;
+        this.space = space;
+    }
 
     public void addPlayer(String playerId) {
         boolean isFound = false;
@@ -38,6 +66,15 @@ public class Game {
             players.add(new Player(playerId));
         }
 
+    }
+
+    public void addPlayer(Player player) {
+        for (Player currP : this.players) {
+            if (currP.getId().equals(player.getId())) {
+                return;
+            }
+        }
+        players.add(player);
     }
 
     public void removePlayer(String playerId) {
@@ -105,5 +142,106 @@ public class Game {
         return builder.toString();
     }
 
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(String hostId) {
+        this.hostId = hostId;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+    }
+
+    public Space getSpace() {
+        return space;
+    }
+
+    public void setSpace(Space space) {
+        this.space = space;
+    }
+
+    public Player getMe() {
+        return me;
+    }
+
+    public void setMe(Player me) {
+        this.me = me;
+    }
+
+    public RemoteSpace getRemoteSpace() {
+        return remoteSpace;
+    }
+
+    public void setRemoteSpace(RemoteSpace remoteSpace) {
+        this.remoteSpace = remoteSpace;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+
+    public Semaphore getPrinterLock() {
+        return printerLock;
+    }
+
+    public void display_size_of_added_player() {
+        printer.println("Total players: " + this.players.size());
+    }
+
+    /*----------------------------Global user input method-----------------------------*/
+    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    private int readerLock = 0;
+    private Semaphore semaphore = new Semaphore(1);
+    private String userInput;
+
+    public String takeUserInput() {
+
+        try {
+            if (readerLock == 1) {
+                semaphore.acquire();
+                semaphore.release();
+                return userInput;
+            }
+
+            readerLock = 1;
+            semaphore.acquire();
+            userInput = input.readLine();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        readerLock = 0;
+        if (semaphore.availablePermits() == 0) semaphore.release();
+        return userInput;
+    }
 }

@@ -1,6 +1,7 @@
 package dtu.group8.client;
 
 import dtu.group8.server.ClientServer;
+import dtu.group8.server.Game;
 import dtu.group8.server.model.Player;
 import dtu.group8.util.Printer;
 import org.jspace.ActualField;
@@ -11,8 +12,9 @@ import org.jspace.Space;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Objects;
 import java.util.UUID;
+
+import static dtu.group8.lobby.Util.*;
 
 /**
  * Client
@@ -29,142 +31,78 @@ import java.util.UUID;
  * Reconnect to game
  */
 public class Client {
-    //private static final String LOCALHOST = "10.209.95.114";
-    private static final String TYPE = "?keep";
-    private static final String JOIN_ME_REQ = "join_req", JOIN_ME_RES = "join_res";
-    public static Object[] allPlayers;
-    private final String PORT = "9002", IP = "localhost";
-    private String clientName = "", clientID = "";
-    private Player player;
-    private BufferedReader input;
-    private RemoteSpace lobby;
+    GameSetup gameSetup;
 
-
-    public Space matchMake() {
+    public Game matchMake() {
         try {
             Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
-            if (input == null) {
-                input = new BufferedReader(new InputStreamReader(System.in));
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+            // Set the URI of the chat space
+            printer.print("Enter URI of the chat server or press enter for default: ");
+            String uri = input.readLine();
+            // Default value
+            if (uri.isEmpty()) {
+                uri = getUri("lobby");
             }
-            // ____________________________________ SETUP CONNECTION TO LOBBY ____________________________________
-            clientID = UUID.randomUUID().toString();
-            player = new Player(clientID);
-            player.setName(clientName);
-            if (lobby == null) {
-                // Set the URI of the chat space
-                printer.print("Enter URI of the chat server or press enter for default: ");
-                String uri = input.readLine();
-                // Default value
-                if (uri.isEmpty()) {
-                    //uri = "tcp://" + LOCALHOST + ":" + PORT + "/lobby" + TYPE;
-                    uri = getUri("lobby");
-                }
-                // Connect to the remote chat space
-                printer.println("Connecting to chat space " + uri + "...");
+            // Connect to the remote chat space
+            printer.println("Connecting to chat space " + uri + "...");
 
-                lobby = new RemoteSpace(uri);
+            RemoteSpace remoteSpace = new RemoteSpace(uri);
 
-                // Read client name from the console
-                printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
+            // Read client name from the console
+            printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
 
-                clientName = input.readLine();
-                player.setName(clientName);
-            }
+            String clientName = input.readLine();
+            String clientId = UUID.randomUUID().toString();
+            Player player = new Player(clientName, clientId, 0);
+            gameSetup = new GameSetup(remoteSpace);
+            return gameSetup.initializeGame(player);
 
-            // ____________________________________ JOIN LOBBY ____________________________________
-            lobby.put("lobby", clientName, clientID);
-
-            ThreadCreateBoard threadCreateBoard = new ThreadCreateBoard(lobby);
-            Thread thread = new Thread(threadCreateBoard);
-            thread.start();
-
-            Object[] obj = lobby.get(new ActualField(clientID), new FormalField(String.class));
-            thread.join();
-
-            String spaceId = obj[1].toString();
-            String uri2 = "tcp://" + IP + ":" + PORT + "/" + spaceId + TYPE;
-            //String uri2 = "tcp://" + LOCALHOST + ":" + PORT + "/" + spaceId + TYPE;
-            printer.println("You are connected to board " + spaceId);
-
-            Space gameSpace = new RemoteSpace(uri2);
-            startGame(gameSpace);
-            return gameSpace;
-        } catch (
-                IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("return null");
         return null;
 
     }
 
-    public Space startGame(Space space) {
-        //____________________________________ SETUP FOR GAME ____________________________________
-        if (space == null) {
-            long time = System.currentTimeMillis();
-            long end = time + 15000;
-            while (end > System.currentTimeMillis()) {
+    public Game setup(Game game) {
+        Space space = game.getSpace();
+        if (space == null) return null;
 
-            }
-            return null;
-        }
         try {
 
             Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
-            log.setLog(false);
-            ThreadStartGame threadStartGame = new ThreadStartGame(space, player);
-            Thread sThread = new Thread(threadStartGame);
-            sThread.start();
-            // Waiting for an invitation
-            Object[] ackMsg = space.get(new ActualField(clientID), new FormalField(Object.class), new FormalField(Object.class));
-            String invitedPlayerName = ackMsg[2].toString();
 
-            Object[] obj = space.query(new ActualField("host"), new FormalField(Object.class));
-            String hostClientId = obj[1].toString();
-            sThread.join();
             // Checks if this client is the host
-            if (!Objects.equals(hostClientId, clientID)) {
-                while (true) {
-                    System.out.println("You are invited to join " + invitedPlayerName + "'s game.\nWrite <ok> to join, or <no> to refuse. You have 10 seconds.");
-                    String userInput = input.readLine();
-                    if (userInput.equalsIgnoreCase("ok")) {
-                        space.put(JOIN_ME_RES, "ok", clientID);
-                        break;
-
-                    } else if (userInput.equalsIgnoreCase("no")) {
-                        space.put(JOIN_ME_RES, "no", clientID);
-                        break;
-                    }
-                }
+            if (game.getHostId().equals(game.getMe().getId())) {
+                AddPlayerHandler listenForAddReq = new AddPlayerHandler(game);
+                new Thread(listenForAddReq).start();
+                gameSetup.display_start_game_option(game);
             } else {
-                System.out.println("Waiting for player(s) to join...");
+                printer.println("Waiting for game to start...");
             }
 
-            if (Objects.equals(hostClientId, clientID)) {
-                Thread checkAckThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, false));
-                checkAckThread.start();
-                //checkAckThread.join();
-                Thread sleepThread = new Thread(new Thread_Acknowledgement_ToJoinGame(space, true));
-                sleepThread.start();
-            }
 
-            space.query(new ActualField("game started"));
+
+            space.query(new ActualField(GAME_START));
             System.out.println("Game is starting...");
 
-            ///// Game starts here.
-            printer.println("Adding client");
-            space.put("add", clientName, clientID);
-
-            if (Objects.equals(hostClientId, clientID)) {
-                System.out.println("You are the host.");
+            // Checks if this client is the host
+            if (game.getHostId().equals(game.getMe().getId())) {
                 Thread gameThread = new Thread(new ClientServer(space));
                 gameThread.start();
             }
 
+            /*-----------------------------All setup done-------------------------------------*/
+
+
             // Connect to space
             // Get ack from space
             log.println("Getting ack");
-            Object[] t = space.get(new ActualField("ACK"), new ActualField(clientID), new FormalField(String.class));
+            Object[] t = space.get(new ActualField("ACK"), new ActualField(game.getMe().getId()), new FormalField(String.class));
             log.println("Got ack response");
 
             if (!t[2].equals("ok")) {
@@ -184,7 +122,7 @@ public class Client {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        return space;
+        return game;
     }
 
     public void start(Space space) {
@@ -195,7 +133,7 @@ public class Client {
             //____________________________________ STARTING GAME ____________________________________
             log.println("playing game!");
             log.println("getting question size");
-            Object[] size = space.query(new ActualField("QuizSize"), new FormalField(Integer.class));
+            Object[] size = space.query(new ActualField("QuizSize"),new FormalField(Integer.class));
             log.println("starting game loop");
             Object[] question;
             for (int i = 0; i < (Integer) size[1]; i++) {
