@@ -133,7 +133,7 @@ public class GameSetup {
         HashMap<String, String> gameNames = new HashMap<>();
 
         for (String s : arr) {
-            String[] currGame = s.split("::", 2);
+            String[] currGame = s.split(PATTERN_FOR_PLAYER_ID_SPLITTER, 2);
             String gameName = currGame[0];
             String gameId = currGame[1];
             gameNames.put(gameName,gameId);

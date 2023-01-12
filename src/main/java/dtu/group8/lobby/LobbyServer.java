@@ -61,7 +61,7 @@ public class LobbyServer {
 
             while (true) {
                 Object[] createBoardObj = spaceLobby.get(new ActualField(CREATE_GAME_REQ), new FormalField(Object.class), new FormalField(Object.class), new FormalField(Object.class));
-                System.out.println("Creating board...");
+                System.out.println("LobbyServer: Creating board...");
                 String gameName = createBoardObj[1].toString();
                 String hostId = createBoardObj[2].toString();
                 String hostName = createBoardObj[3].toString();
@@ -77,7 +77,7 @@ public class LobbyServer {
                 repository.add(gameId, newSpace);
                 newSpace.put(ALL_PLAYERS, newGameLobby.getPlayerNames(), newGameLobby.getPlayerIds());
                 spaceLobby.put(MY_SPACE_ID, hostId, gameId, gameName);
-                System.out.println("Game created");
+                System.out.println("LobbyServer: Game created");
                 System.out.println("\tGame name: " + gameName);
 
 
@@ -143,7 +143,7 @@ public class LobbyServer {
                     String playerName = addMeObj[1].toString();
                     String playerId = addMeObj[2].toString();
                     String boardId = addMeObj[3].toString();
-                    System.out.println("Add to game: request from " + playerId);
+                    System.out.println("LobbyServer: Add to game: request from " + playerId);
 
                     semaphore.acquire();
                     for (GameLobby currGame : gameList) {
@@ -164,11 +164,6 @@ public class LobbyServer {
         }
     });
 
-
-/*    void sendAddReqToHost(GameLobby game, String playerName, String playerId) throws InterruptedException {
-        String hostId = game.getHostPlayer().getId();
-        spaceLobby.put("join_req", hostId, playerName, playerId);
-    }*/
 
 
     Thread listen_for_add_player_response_from_host = new Thread(new Runnable() {
@@ -204,7 +199,7 @@ public class LobbyServer {
                     ArrayList<String> tempGames = new ArrayList<>();
                     semaphore.acquire();
                     for (GameLobby gameLobby : gameList) {
-                        tempGames.add(gameLobby.getName() +"::" + gameLobby.getId());
+                        tempGames.add(gameLobby.getName() + PATTERN_FOR_PLAYER_ID_SPLITTER + gameLobby.getId());
                     }
                     semaphore.release();
                     spaceLobby.put(SHOW_ME_AVAILABLE_GAMES_RES, obj[1].toString(), tempGames);
