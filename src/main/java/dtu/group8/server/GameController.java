@@ -1,6 +1,7 @@
 package dtu.group8.server;
 
 import dtu.group8.server.model.GameState;
+import dtu.group8.server.model.Player;
 import dtu.group8.util.Printer;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
@@ -13,9 +14,9 @@ public class GameController {
     private boolean alive = true;
 
 
-    public GameController(Space space) {
-        this.game = new Game();
-        this.space = space;
+    public GameController(Game game) {
+        this.game = game;
+        this.space = game.getSpace();
     }
 
     public void setAlive(boolean alive) {
@@ -32,11 +33,17 @@ public class GameController {
         Object[] answer;
         // Add players to game
         try {
-            for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
+/*            for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
                 game.addPlayer(t[2].toString());
                 printer.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
                 space.put("ACK", t[2], "ok");
+            }*/
+
+            for (Player currPlayer : game.getPlayers()) {
+                printer.println("PLAYER ADD ", currPlayer.getId(), Printer.PrintColor.CYAN);
+                space.put("ACK", currPlayer.getId(), "ok");
             }
+
             printer.println("Done adding players");
             updateGameState(GameState.START);
         } catch (InterruptedException e) {

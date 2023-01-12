@@ -92,11 +92,11 @@ public class Client {
 
             // Checks if this client is the host
             if (game.getHostId().equals(game.getMe().getId())) {
-                Thread gameThread = new Thread(new ClientServer(space));
+                Thread gameThread = new Thread(new ClientServer(game));
                 gameThread.start();
             }
 
-            /*-----------------------------All setup done-------------------------------------*/
+            /*-----------------------------Initialization of a game done-------------------------------------*/
 
 
             // Connect to space
