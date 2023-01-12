@@ -123,7 +123,9 @@ public class GameSetup {
         String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
         printer.println("You are connected to game " + game.getName());
         game.setSpace(new RemoteSpace(uri2));
-        game.display_size_of_added_player();
+        if (game.getMe().getId().equals(game.getHostId())) {
+            game.display_size_of_added_player();
+        }
     }
 
 
