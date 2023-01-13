@@ -52,7 +52,7 @@ public class Client {
 
             // Read client name from the console
             String clientName = "";
-            while (clientName.isEmpty()) {
+            while (clientName.isBlank()) {
                 printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
                 clientName = input.readLine();
             }

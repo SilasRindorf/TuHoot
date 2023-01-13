@@ -45,7 +45,7 @@ public class GameSetup {
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
                     String gameName = "";
-                    while (gameName.isEmpty()) {
+                    while (gameName.isBlank()) {
                         System.out.print("Enter game name: ");
                         gameName = game.takeUserInput();
                     }
