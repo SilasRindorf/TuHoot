@@ -179,7 +179,10 @@ public class GameSetup {
 
             userChosenGameId = gameNames.get(userInput);
             if (userChosenGameId != null) break;   // The chosen game name does not exist in the game.
-            else System.out.println("There is no game with a name " + userInput);
+            else {
+                printerNoTag.print("There is no game with a name ");
+                System.out.println(userInput);
+            }
 
         }
 

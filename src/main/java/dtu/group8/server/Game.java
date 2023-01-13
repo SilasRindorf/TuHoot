@@ -216,7 +216,8 @@ public class Game {
 
     public void display_size_of_added_player() {
         Printer printer = new Printer("", Printer.PrintColor.WHITE);
-        printer.println("Total players: " + this.players.size());
+        printer.print("Total players: ");
+        System.out.println(this.players.size());
     }
 
     /*----------------------------Global user input method-----------------------------*/

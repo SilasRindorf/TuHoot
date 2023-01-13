@@ -38,10 +38,11 @@ public class AddPlayerHandler implements Runnable{
 
                 game.getPrinterLock().acquire();
                 System.out.println();
-                printer.println( newPlayer.getName() + " wants to join");
+                System.out.print(" " + newPlayer.getName());
+                printer.println("wants to join");
+                printer.println("Enter 'ok' to accept or 'no' to decline request.");
 
                 while (true) {
-                    printer.println("Enter 'ok' to accept or 'no' to decline request.");
                     System.out.print("Input command: ");
                     String str = game.takeUserInput();
                     if (str.equalsIgnoreCase(OK)) {
