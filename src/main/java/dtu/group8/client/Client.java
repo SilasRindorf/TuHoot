@@ -42,14 +42,10 @@ public class Client {
             printer.print("Enter URI of the lobby server or press enter for default: ");
             String uri = input.readLine();
             // Default value
-            if (uri.isEmpty()) {
-                uri = getUri("lobby");
-            }
+            if (uri.isEmpty()) uri = getUri("lobby");
             // Connect to the remote chat space
             printer.println("Connecting to chat space " + uri + "...");
             RemoteSpace remoteSpace = new RemoteSpace(uri);
-
-
             // Read client name from the console
             String clientName = "";
             while (clientName.isBlank()) {

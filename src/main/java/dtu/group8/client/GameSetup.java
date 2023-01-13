@@ -136,9 +136,9 @@ public class GameSetup {
 
         // Checks if this player/client is the host
         if (game.amIHost())
-            printer.println("Game " + game.getName() +" created");
+            printer.println("Game '" + game.getName() +"' created");
         String uri2 = "tcp://" + IP + ":" + PORT + "/" + game.getId() + TYPE;
-        printerNoTag.println("You are connected to game " + game.getName());
+        printerNoTag.println("You are connected to game '" + game.getName() + "'");
         game.setSpace(new RemoteSpace(uri2));
 
         // Displays the size of added players.

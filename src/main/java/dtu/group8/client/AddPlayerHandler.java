@@ -49,7 +49,8 @@ public class AddPlayerHandler implements Runnable{
                         lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
                                 game.getHostId(), newPlayer.getName(), newPlayer.getId(), OK);
 
-                        printer.println("You have accepted " + newPlayer.getName());
+                        printer.print("You have accepted ");
+                        System.out.println(newPlayer.getName());
                         game.addPlayer(newPlayer);
                         Object[] obj = space.get(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
                         ArrayList<String> playerNames = (ArrayList<String>) obj[1];

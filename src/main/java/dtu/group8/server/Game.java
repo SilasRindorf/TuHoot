@@ -23,7 +23,6 @@ public class Game {
     private Player me;
     private ArrayList<Player> players;
     private final Quiz quiz;
-    private boolean amIHost;
 
     private RemoteSpace remoteSpace;
     private Space space;
