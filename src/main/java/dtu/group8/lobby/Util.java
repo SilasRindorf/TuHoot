@@ -8,8 +8,9 @@ public class Util {
     public final static String SHOW_ME_AVAILABLE_GAMES_RES = "show_me_games_res";
     public final static String PATTERN_FOR_PLAYER_ID_SPLITTER = "::";
     public final static String GAME_START = "game-start";
-
     public final static String ALL_PLAYERS = "allPlayers";
+    public final static String OK = "ok";
+    public final static String NO = "no";
     public final static String CREATE_GAME_REQ = "create game";
     public final static String MY_SPACE_ID = "mySpaceId";
 

@@ -43,9 +43,9 @@ public class AddPlayerHandler implements Runnable{
                 System.out.print("Input command: ");
                 String str = game.takeUserInput();
 
-                if (str.equalsIgnoreCase("ok")) {
+                if (str.equalsIgnoreCase(OK)) {
                     lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
-                            game.getHostId(), newPlayer.getName(), newPlayer.getId());
+                            game.getHostId(), newPlayer.getName(), newPlayer.getId(), OK);
 
                     printer.println("You have accepted " + newPlayer.getName());
                     game.addPlayer(newPlayer);
@@ -57,9 +57,11 @@ public class AddPlayerHandler implements Runnable{
                     space.put(ALL_PLAYERS, playerNames, playerIds);
                     //printer.println("Sent response to " + pName); //
                     game.display_size_of_added_player();
-                } else if (str.equalsIgnoreCase("no")) {
+                } else if (str.equalsIgnoreCase(NO)) {
                     // do nothing
                     // TODO Send a message to the server, and then have the server send a response back to the client.
+                    lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
+                            game.getHostId(), newPlayer.getName(), newPlayer.getId(), NO);
                 }
                 game.getPrinterLock().release();
             }

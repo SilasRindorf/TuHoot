@@ -40,7 +40,7 @@ public class LobbyServer {
         try {
 
             // Set the URI of the chat space
-            System.out.print("Enter URI of the chat server or press enter for default: ");
+            System.out.print("Enter URI of the lobby server or press enter for default: ");
             String uri = input.readLine();
 
             if (uri.isEmpty()) {
@@ -50,7 +50,7 @@ public class LobbyServer {
             // Open a gate
             System.out.println("Opening repository gate at " + uri + "...");
             repository.addGate(uri);
-            // --------------------------- waiting for requests -----------------------
+            /* --------------------------- Request handlers ----------------------- */
             listen_for_available_gameList_req_from_client.start();
             listen_for_add_player_req_from_client.start();
             listen_for_add_player_response_from_host.start();
@@ -76,7 +76,7 @@ public class LobbyServer {
                 // Currently, the getPlayerNames and getPlayerIds methods only contain the hostId and hostName.
                 newSpace.put(ALL_PLAYERS, newGameLobby.getPlayerNames(), newGameLobby.getPlayerIds());
                 String receiverId = hostId; // just not to mix up.
-                spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId);
+                spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId, OK);
                 System.out.println("LobbyServer: Game created");
                 System.out.println("\tGame name: " + gameName);
 
@@ -157,7 +157,7 @@ public class LobbyServer {
                 while (true) {
                     Object[] obj = spaceLobby.get(new ActualField(JOINT_RES_FROM_HOST), new FormalField(String.class),
                             new FormalField(String.class), new FormalField(String.class), new FormalField(String.class),
-                            new FormalField(String.class), new FormalField(String.class));
+                            new FormalField(String.class), new FormalField(String.class), new FormalField(String.class));
 
                     String gameName = obj[1].toString();
                     String gameId = obj[2].toString();
@@ -165,8 +165,17 @@ public class LobbyServer {
                     String hostId = obj[4].toString();
                     String addedClientName = obj[5].toString();
                     String addedClientId = obj[6].toString();
+                    String msg = obj[7].toString();
+                    String receiverId = addedClientId; // just to avoid confusion.
 
-                    System.out.println(hostName + " accepted " + addedClientName);
+                    if (msg.equals(NO)) {
+                        System.out.println(hostName + " have declined " + addedClientName);
+                        spaceLobby.put(MY_SPACE_ID, receiverId, gameName, "", hostName, "", NO);
+                        continue;
+
+                    } else if (msg.equals(OK)){
+                        System.out.println(hostName + " have accepted " + addedClientName);
+                    }
 
                     semaphore.acquire();
                     /* Adding the new player to the appropriate game. This has no effect for now,
@@ -176,8 +185,7 @@ public class LobbyServer {
                             currGame.addPlayer(addedClientName, addedClientId);
 
                             // Sending response back to client
-                            String receiverId = addedClientId; // just to avoid confusion.
-                            spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId);
+                            spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId, OK);
                             System.out.println("LobbyServer: sent gameId/spaceId to client");
                             break;
                         }

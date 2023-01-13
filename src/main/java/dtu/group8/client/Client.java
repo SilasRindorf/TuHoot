@@ -39,7 +39,7 @@ public class Client {
             Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
             // Set the URI of the chat space
-            printer.print("Enter URI of the chat server or press enter for default: ");
+            printer.print("Enter URI of the lobby server or press enter for default: ");
             String uri = input.readLine();
             // Default value
             if (uri.isEmpty()) {
@@ -49,10 +49,14 @@ public class Client {
             printer.println("Connecting to chat space " + uri + "...");
             RemoteSpace remoteSpace = new RemoteSpace(uri);
 
-            // Read client name from the console
-            printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
 
-            String clientName = input.readLine();
+            // Read client name from the console
+            String clientName = "";
+            while (clientName.isEmpty()) {
+                printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
+                clientName = input.readLine();
+            }
+
             String clientId = UUID.randomUUID().toString();
             Player player = new Player(clientName, clientId, 0);
             gameSetup = new GameSetup(remoteSpace);
@@ -71,8 +75,6 @@ public class Client {
         if (space == null) return null;
 
         try {
-
-            Printer printer = new Printer();
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
 
             // Checks if this client is the host

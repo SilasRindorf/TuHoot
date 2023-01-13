@@ -44,29 +44,32 @@ public class GameSetup {
 
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
-                    System.out.print("Enter game name: ");
-                    String gameName = game.takeUserInput();
+                    String gameName = "";
+                    while (gameName.isEmpty()) {
+                        System.out.print("Enter game name: ");
+                        gameName = game.takeUserInput();
+                    }
                     game.setName(gameName);
                     game.setHostId(player.getId());
                     /* Sends a request to the server to create a new game. */
                     lobbySpace.put(CREATE_GAME_REQ,gameName, player.getId(), player.getName());
 
                     /* Gets the appropriate space from the server*/
-                    getSpace(game);
-                    // TODO Check if the given game-name already exists in the server.
-                    break;
+                    //getSpace(game);
+                    if (getSpace(game)) break;
+                    else return initializeGame(player);
+
+                    // TODO Check if the given game-name already exists in the server (not so important).
 
                 } else if (userInput.equalsIgnoreCase("2") || userInput.equalsIgnoreCase("join game")){
-                    if (joinGame(game)) {
-                        break;
-                    } else return initializeGame(player);
+                    if (joinGame(game)) break;
+                    else return initializeGame(player);
                 }
             }
 
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
-
         return game;
     }
 
@@ -107,17 +110,24 @@ public class GameSetup {
 
     }
 
-    void getSpace(Game game) throws InterruptedException, IOException {
+    boolean getSpace(Game game) throws InterruptedException, IOException {
         Printer printer = new Printer("", Printer.PrintColor.WHITE);
         /* Awaits a response from the server regarding the game creation. */
         Object[] obj = lobbySpace.get(new ActualField(MY_SPACE_ID), new ActualField(game.getMe().getId()),
-                new FormalField(Object.class), new FormalField(Object.class),
+                new FormalField(Object.class), new FormalField(Object.class), new FormalField(Object.class),
                 new FormalField(Object.class), new FormalField(Object.class));
 
         String gameName = obj[2].toString();
         String gameId = obj[3].toString();
         String hostName = obj[4].toString();
         String hostId = obj[5].toString();
+        String msg = obj[6].toString();
+
+        if (msg.equals(NO)) {
+            System.out.println("Game host declined request" );
+            return false;
+        }
+
 
         game.setName(gameName);
         game.setId(gameId);
@@ -135,6 +145,7 @@ public class GameSetup {
         if (game.amIHost()) {
             game.display_size_of_added_player();
         }
+        return true;
     }
 
 
@@ -178,8 +189,8 @@ public class GameSetup {
         printerNoTag.println("Waiting for host approval");
 
         // TODO Set space in game, when message is received
-        getSpace(game);
-        return true;
+        return getSpace(game);
+        //return true;
     }
 
 }
