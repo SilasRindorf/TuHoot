@@ -39,29 +39,33 @@ public class AddPlayerHandler implements Runnable{
                 game.getPrinterLock().acquire();
                 System.out.println();
                 printer.println( newPlayer.getName() + " wants to join");
-                printer.println("Enter 'ok' to accept or 'no' to decline request.");
-                System.out.print("Input command: ");
-                String str = game.takeUserInput();
 
-                if (str.equalsIgnoreCase(OK)) {
-                    lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
-                            game.getHostId(), newPlayer.getName(), newPlayer.getId(), OK);
+                while (true) {
+                    printer.println("Enter 'ok' to accept or 'no' to decline request.");
+                    System.out.print("Input command: ");
+                    String str = game.takeUserInput();
+                    if (str.equalsIgnoreCase(OK)) {
+                        lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
+                                game.getHostId(), newPlayer.getName(), newPlayer.getId(), OK);
 
-                    printer.println("You have accepted " + newPlayer.getName());
-                    game.addPlayer(newPlayer);
-                    Object[] obj = space.get(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
-                    ArrayList<String> playerNames = (ArrayList<String>) obj[1];
-                    ArrayList<String> playerIds = (ArrayList<String>) obj[2];
-                    playerNames.add(newPlayer.getName());
-                    playerIds.add(newPlayer.getId());
-                    space.put(ALL_PLAYERS, playerNames, playerIds);
-                    //printer.println("Sent response to " + pName); //
-                    game.display_size_of_added_player();
-                } else if (str.equalsIgnoreCase(NO)) {
-                    // do nothing
-                    // TODO Send a message to the server, and then have the server send a response back to the client.
-                    lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
-                            game.getHostId(), newPlayer.getName(), newPlayer.getId(), NO);
+                        printer.println("You have accepted " + newPlayer.getName());
+                        game.addPlayer(newPlayer);
+                        Object[] obj = space.get(new ActualField(ALL_PLAYERS), new FormalField(ArrayList.class), new FormalField(ArrayList.class));
+                        ArrayList<String> playerNames = (ArrayList<String>) obj[1];
+                        ArrayList<String> playerIds = (ArrayList<String>) obj[2];
+                        playerNames.add(newPlayer.getName());
+                        playerIds.add(newPlayer.getId());
+                        space.put(ALL_PLAYERS, playerNames, playerIds);
+                        //printer.println("Sent response to " + pName); //
+                        game.display_size_of_added_player();
+                        break;
+                    } else if (str.equalsIgnoreCase(NO)) {
+                        // do nothing
+                        // TODO Send a message to the server, and then have the server send a response back to the client.
+                        lobbySpace.put(JOINT_RES_FROM_HOST, game.getName(), game.getId(), game.getHostName(),
+                                game.getHostId(), newPlayer.getName(), newPlayer.getId(), NO);
+                        break;
+                    }
                 }
                 game.getPrinterLock().release();
             }
