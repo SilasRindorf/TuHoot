@@ -4,44 +4,52 @@ public class Printer {
     private boolean log = true;
     private String defaultTAG = "";
     private PrintColor defaultPrintColor = PrintColor.ANSI_RESET;
-    public Printer(){
+
+    public Printer() {
 
     }
 
-    public Printer(String defaultTAG, PrintColor defaultPrintColor){
+    public Printer(String defaultTAG, PrintColor defaultPrintColor) {
         this.defaultTAG = defaultTAG + " ";
         this.defaultPrintColor = defaultPrintColor;
     }
-    public void print(String TAG, String str, PrintColor color){
+
+    public void print(String TAG, String str, PrintColor color) {
         if (log) {
             System.out.print(color.value + TAG + str + PrintColor.ANSI_RESET.value);
         }
     }
-    public void print(String str, PrintColor color){
-        print(defaultTAG,str,color);
+
+    public void print(String str, PrintColor color) {
+        print(defaultTAG, str, color);
     }
 
-    public void print(String str){
+    public void print(String str) {
         print(str, defaultPrintColor);
     }
-    public void println(String TAG, String str, PrintColor color){
+
+    public void println(String TAG, String str, PrintColor color) {
         println("", TAG, str, color);
     }
-    public void println(String prefixes, String TAG, String str, PrintColor color){
+
+    public void println(String prefixes, String TAG, String str, PrintColor color) {
         if (log) {
             System.out.println(color.value + prefixes + TAG + str + PrintColor.ANSI_RESET.value);
         }
     }
-    public void println(String str, PrintColor color){
-        println(defaultTAG,str,color);
+
+    public void println(String str, PrintColor color) {
+        println(defaultTAG, str, color);
     }
 
-    public void println(String str){
+    public void println(String str) {
         println(str, defaultPrintColor);
     }
-    public void println(String prefixes, String str){
-        println(prefixes,defaultTAG,str, defaultPrintColor);
+
+    public void println(String prefixes, String str) {
+        println(prefixes, defaultTAG, str, defaultPrintColor);
     }
+
 
     public boolean isLog() {
         return log;
@@ -68,7 +76,7 @@ public class Printer {
     }
 
     public enum PrintColor {
-        ANSI_RESET( "\u001B[0m"),
+        ANSI_RESET("\u001B[0m"),
         BLACK("\u001B[30m"),
         RED("\u001B[31m"),
         GREEN("\u001B[32m"),
@@ -80,7 +88,8 @@ public class Printer {
         WHITE("\u001B[37m");
 
         public final String value;
-        PrintColor(String value){
+
+        PrintColor(String value) {
             this.value = value;
         }
     }
