@@ -236,7 +236,6 @@ public class Game {
     public boolean amIHost() {
         return this.getMe().getId().equals(this.getHostId());
     }
-}
     private int calculatePoints(int index) {
         return 100 * (1 + players.size() - quiz.getAmountOfCorrectAnswers(index));
     }

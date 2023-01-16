@@ -49,6 +49,7 @@ public class GameController {
                 printer.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
                 space.put("ACK", t[2], "ok");
             }*/
+            }
 
             /* The loop below performs the same function as the one above. The difference is
                that the given game parameter already contains all the added players */
