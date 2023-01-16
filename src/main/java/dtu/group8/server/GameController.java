@@ -16,13 +16,13 @@ public class GameController {
     private boolean alive = true;
 
 
-    public GameController(Space space) {
+    public GameController(Game game) {
         this.log = new Printer();
         //log.setLog(false);
         log.setDefaultTAG("GameController");
         log.setDefaultPrintColor(Printer.PrintColor.CYAN);
-        this.game = new Game();
-        this.space = space;
+        this.game = game;
+        this.space = game.getSpace();
     }
 
     public void setAlive(boolean alive) {
@@ -44,8 +44,19 @@ public class GameController {
             for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
                 game.addPlayer(t[1].toString(), t[2].toString());
                 log.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
+/*            for (Object[] t : space.getAll(new ActualField("add"), new FormalField(String.class), new FormalField(String.class))) {
+                game.addPlayer(t[2].toString());
+                printer.println("PLAYER ADD ", t[2].toString(), Printer.PrintColor.CYAN);
                 space.put("ACK", t[2], "ok");
+            }*/
+
+            /* The loop below performs the same function as the one above. The difference is
+               that the given game parameter already contains all the added players */
+            for (Player currPlayer : game.getPlayers()) {
+                printer.println("PLAYER ADD ", currPlayer.getId(), Printer.PrintColor.CYAN);
+                space.put("ACK", currPlayer.getId(), "ok");
             }
+
             log.println("Done adding players");
             updateGameState(GameState.START);
         } catch (InterruptedException e) {
