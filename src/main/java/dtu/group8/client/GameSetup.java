@@ -42,6 +42,12 @@ public class GameSetup {
                 System.out.print("Input command: ");
                 String userInput = game.takeUserInput();
 
+                if (userInput.equals(SECOND_CALLED_OCCURRED)) {
+
+                    game.getSemSecondCall().acquire();
+                    game.getSemSecondCall().release();
+                }
+
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
                     String gameName = "";
