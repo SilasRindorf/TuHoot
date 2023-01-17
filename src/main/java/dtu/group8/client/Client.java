@@ -180,6 +180,7 @@ public class Client {
     }
 
     //TODO: Should give right answer if user does not guess right
+    //TODO: Should be forced to go to next question by game controller
 
     private void questionGuess(Game game, Printer log, Printer printer, int i) throws IOException, InterruptedException {
         Space space = game.getSpace();
