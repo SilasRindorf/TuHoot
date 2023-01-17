@@ -53,7 +53,7 @@ public class Game {
         this.quiz = new Quiz();
     }
 
-    public void addPlayer(String playerId) {
+    public void addPlayer(String name, String playerId) {
         boolean isFound = false;
         for (Player currPlayer : players) {
             if (Objects.equals(currPlayer.getId(), playerId)) {
@@ -63,7 +63,7 @@ public class Game {
         }
 
         if (!isFound) {
-            players.add(new Player(playerId));
+            players.add(new Player(playerId, name));
         }
 
     }
@@ -81,11 +81,11 @@ public class Game {
 
     }
 
-    public int quizSize() {
+    public int quizSize(){
         return quiz.quizSize();
     }
 
-    public String getQuestion(int index) {
+    public String getQuestion(int index){
         return quiz.getQuestion(index);
     }
 
@@ -94,51 +94,39 @@ public class Game {
     }
 
     public boolean checkAnswer(int index, String answer, String id) {
+        boolean isCorrect = quiz.checkAnswer(index, answer);
         // Adds point if players answers correctly
-        Player player = new Player(id);
         for (Player player1 : players) {
-            if (player1.getId().equals(player.getId()) && quiz.checkAnswer(index, answer)) {
-                player1.setPoint(500);
+            if (player1.getId().equals(id) && isCorrect)  {
+                player1.setPoints(calculatePoints(index));
             }
         }
-        return quiz.checkAnswer(index, answer);
+        return isCorrect;
     }
 
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
-    public void selectNewQuestion() {
-        quiz.selectRandomQuestion();
-    }
-
-    public String getCurrentQuestion() {
-        return quiz.getCurrentQuestion().getQuestion();
-    }
-
-    public String getCurrentAnswer() {
-        return quiz.getCurrentQuestion().getAnswer();
-    }
-
-    public boolean checkAnswer(String answer) {
-        return quiz.getCurrentQuestion().checkAnswer(answer);
+    public boolean allAnsweredCorrect(int index) {
+        return quiz.getAmountOfCorrectAnswers(index) == players.size();
     }
 
     public void printOutPlayers() {
         for (Player player : players) {
 
-            new Printer().println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoint());
+            new Printer().println("PlayerId: " + player.getId() + ", PlayerPoint: " + player.getPoints());
         }
     }
 
     public String getScores() {
         StringBuilder builder = new StringBuilder();
         builder.append("Highest scores:");
-        builder.append("\tName\tScore");
+        builder.append("\n\tName\tScore");
         Collections.sort(players);
         for (Player player :
                 players) {
-            builder.append("\n\t" + player.getName() + "\t");
+            builder.append("\n\t").append(player.getName()).append("\t").append(player.getPoints());
         }
         return builder.toString();
     }
@@ -248,4 +236,8 @@ public class Game {
     public boolean amIHost() {
         return this.getMe().getId().equals(this.getHostId());
     }
+    private int calculatePoints(int index) {
+        return 100 * (1 + players.size() - quiz.getAmountOfCorrectAnswers(index));
+    }
+
 }

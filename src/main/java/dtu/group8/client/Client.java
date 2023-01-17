@@ -96,6 +96,7 @@ public class Client {
             // Connect to space
             // Get ack from space
             log.println("Getting ack");
+            log.println("Player id " + game.getMe().getId());
             Object[] t = space.get(new ActualField("ACK"), new ActualField(game.getMe().getId()), new FormalField(String.class));
             log.println("Got ack response");
 
@@ -128,33 +129,24 @@ public class Client {
             //____________________________________ STARTING GAME ____________________________________
             log.println("playing game!");
             log.println("getting question size");
-            Object[] size = space.query(new ActualField("QuizSize"),new FormalField(Integer.class));
+            Object[] size = space.query(new ActualField("QuizSize"), new FormalField(Integer.class));
             log.println("starting game loop");
             Object[] question;
+            Object[] highscores;
             for (int i = 0; i < (Integer) size[1]; i++) {
                 printer.println("Question coming up!");
                 question = space.query(new ActualField("Q" + i), new FormalField(String.class));
                 printer.println("Question " + (i + 1) + ":\n\t" + question[1].toString());
                 log.println("Getting answer and sending it to space");
 
-                questionQuess(game, log, printer, i);
-                /*
-                space.put("A",clientID, input.readLine(),i);
-                log.println("Waiting for verification of answer");
-                answer = space.get(new ActualField("V"),new FormalField(String.class),new FormalField(Boolean.class));
-                log.println("Received verification from Space");
-                if ((boolean) answer[2]){
-                    printer.println("You got the answer correct!");
-                } else{
-                    log.println("Getting correct answer");
-                    answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
-                    printer.println("You got the answer wrong! The correct answer was " + answer[1]);
-                }
-                */
+                questionGuess(game, log, printer, i);
+                highscores = space.query(new ActualField("Highscores"), new FormalField(String.class));
+                printer.println(highscores[1].toString());
+                log.println("Replying to ACK");
+                space.put("ACK", game.getMe().getId(), "OK");
             }
             log.println("Stopping game...");
             endGame();
-
             //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
                 InterruptedException e) {
@@ -187,7 +179,9 @@ public class Client {
         }
     }
 
-    private void questionQuess(Game game, Printer log, Printer printer, int i) throws IOException, InterruptedException {
+    //TODO: Should give right answer if user does not guess right
+
+    private void questionGuess(Game game, Printer log, Printer printer, int i) throws IOException, InterruptedException {
         Space space = game.getSpace();
         String clientID = game.getMe().getId();
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -202,7 +196,7 @@ public class Client {
             log.println("Getting correct answer");
             answer = space.query(new ActualField("CA" + i), new FormalField(String.class));
             printer.println("You got the answer wrong! The correct answer was " + answer[1]);
-            questionQuess(game, log, printer, i);
+            questionGuess(game, log, printer, i);
         }
     }
 

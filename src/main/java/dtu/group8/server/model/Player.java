@@ -4,6 +4,7 @@ public class Player implements Comparable<Player> {
     private String name;
     private int point;
     private final String id;
+    private int points = 0;
 
     public Player(String id) {
         this.id = id;
@@ -16,16 +17,21 @@ public class Player implements Comparable<Player> {
         this.point = point;
     }
 
+    public Player(String playerId, String name) {
+        this.id = playerId;
+        this.name = name;
+    }
+
     void addPoint(int point) {
-        this.point += point;
+        this.points += point;
     }
 
-    public int getPoint() {
-        return point;
+    public int getPoints() {
+        return points;
     }
 
-    public void setPoint(int point) {
-        this.point += point;
+    public void setPoints(int points) {
+        this.points += points;
     }
 
     public String getId() {
@@ -42,6 +48,6 @@ public class Player implements Comparable<Player> {
 
     @Override
     public int compareTo(Player o) {
-        return this.getPoint() - o.getPoint();
+        return this.getPoints() - o.getPoints();
     }
 }
