@@ -43,9 +43,7 @@ public class GameSetup {
                 String userInput = game.takeUserInput();
 
                 if (userInput.equals(SECOND_CALLED_OCCURRED)) {
-
-                    game.getSemSecondCall().acquire();
-                    game.getSemSecondCall().release();
+                    game.waitUntilSecondCallDone();
                 }
 
                 if (userInput.equalsIgnoreCase("create game") ||

@@ -243,6 +243,14 @@ public class Game {
     public Semaphore getSemSecondCall() {
         return semSecondCall;
     }
+    public void waitUntilSecondCallDone() {
+        try {
+            semSecondCall.acquire();
+            semSecondCall.release();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public boolean amIHost() {
         return this.getMe().getId().equals(this.getHostId());
