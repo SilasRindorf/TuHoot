@@ -80,6 +80,7 @@ public class Client {
 
         try {
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+            log.setLog(false);
 
             // Checks if this client is the host
             if (game.amIHost()) {
