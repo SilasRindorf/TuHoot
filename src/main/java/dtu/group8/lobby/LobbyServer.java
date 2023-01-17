@@ -119,6 +119,10 @@ public class LobbyServer {
         }
     });
 
+    boolean isGameStarted(String gameId) {
+        Object gameState = spaceLobby.queryp(new ActualField(gameId), new ActualField(GAME_START));
+        return gameState != null;
+    }
 
 
     Thread listen_for_add_player_req_from_client = new Thread(new Runnable() {
@@ -129,12 +133,16 @@ public class LobbyServer {
                     Object[] addMeObj = spaceLobby.get(new ActualField(ADD_ME_REQ_FROM_CLIENT), new FormalField(Object.class), new FormalField(Object.class), new FormalField(Object.class));
                     String playerName = addMeObj[1].toString();
                     String playerId = addMeObj[2].toString();
-                    String boardId = addMeObj[3].toString();
+                    String gameId = addMeObj[3].toString();
                     System.out.println("LobbyServer: Add to game req: Received from client: " + playerId);
+
+                    if (isGameStarted(gameId)) {
+                        spaceLobby.put(MY_SPACE_ID, playerId, "", "", "", "", NO);
+                    }
 
                     semaphore.acquire();
                     for (GameLobby currGame : gameList) {
-                        if (currGame.getId().equals(boardId)) {
+                        if (currGame.getId().equals(gameId)) {
                             // Sends add request to the host
                             String hostId = currGame.getHostPlayer().getId();
                             spaceLobby.put(JOINT_REQ_FROM_SERVER, hostId, playerName, playerId);
