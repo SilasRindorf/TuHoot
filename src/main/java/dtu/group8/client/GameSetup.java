@@ -42,6 +42,12 @@ public class GameSetup {
                 System.out.print("Input command: ");
                 String userInput = game.takeUserInput();
 
+                if (userInput.equals(SECOND_CALLED_OCCURRED)) {
+
+                    game.getSemSecondCall().acquire();
+                    game.getSemSecondCall().release();
+                }
+
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
                     String gameName = "";
@@ -87,6 +93,8 @@ public class GameSetup {
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     getAllPlayersFromSpace(game);
                     space.put(GAME_START);
+                    game.getRemoteSpace().put(JOINT_REQ_FROM_SERVER, game.getMe().getId(), GAME_START, "");
+                    game.getRemoteSpace().put(game.getId(), GAME_START);
                     break;
 
                 }

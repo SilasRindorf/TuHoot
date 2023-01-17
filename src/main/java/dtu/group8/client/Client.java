@@ -34,7 +34,7 @@ public class Client {
     GameSetup gameSetup;
     Printer printerNoTag = new Printer("", Printer.PrintColor.WHITE);
 
-    public Game matchMake() {
+    public Game matchMake(Player client) {
         try {
             Printer printer = new Printer("Client:matchMake", Printer.PrintColor.WHITE);
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -46,15 +46,20 @@ public class Client {
             // Connect to the remote chat space
             printer.println("Connecting to chat space " + uri + "...");
             RemoteSpace remoteSpace = new RemoteSpace(uri);
-            // Read client name from the console
-            String clientName = "";
-            while (clientName.isBlank()) {
-                printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
-                clientName = input.readLine();
-            }
+            Player player;
+            if (client == null) {
+                // Read client name from the console
+                String clientName = "";
+                while (clientName.isBlank()) {
+                    printer.print("", "Enter your name: ", Printer.PrintColor.ANSI_RESET);
+                    clientName = input.readLine();
+                }
 
-            String clientId = UUID.randomUUID().toString();
-            Player player = new Player(clientName, clientId, 0);
+                String clientId = UUID.randomUUID().toString();
+                player = new Player(clientName, clientId, 0);
+            } else {
+                player = client;
+            }
             gameSetup = new GameSetup(remoteSpace);
             return gameSetup.initializeGame(player);
 
@@ -68,15 +73,20 @@ public class Client {
 
     public Game setup(Game game) {
         Space space = game.getSpace();
-        if (space == null) return null;
+        if (space == null) {
+            System.out.println("Space is null");
+            return null;
+        }
 
         try {
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+            log.setLog(false);
 
             // Checks if this client is the host
             if (game.amIHost()) {
                 AddPlayerHandler listenForAddReq = new AddPlayerHandler(game);
-                new Thread(listenForAddReq).start();
+                game.setThreadAddPlayer(new Thread(listenForAddReq));
+                game.getThreadAddPlayer().start();
                 gameSetup.display_start_game_option(game);
             } else {
                 printerNoTag.println("Waiting for game to start...");
@@ -146,7 +156,7 @@ public class Client {
                 space.put("ACK", game.getMe().getId(), "OK");
             }
             log.println("Stopping game...");
-            endGame();
+            endGame(game);
             //____________________________________ EXCEPTION HANDLING ____________________________________
         } catch (
                 InterruptedException e) {
@@ -157,7 +167,7 @@ public class Client {
         }
     }
 
-    public void endGame() {
+    public void endGame(Game game) {
         Printer printer = new Printer();
         printer.print("Do you want join another lobby(y/n)? ");
 
@@ -168,10 +178,9 @@ public class Client {
                 String str = input.readLine().trim();
 
                 if (str.equalsIgnoreCase("y")) {
-
-                    start(matchMake());
+                    start(setup(matchMake(game.getMe())));
                 } else {
-
+                    System.exit(0);
                 }
             }
         } catch (IOException e) {

@@ -105,7 +105,10 @@ public class LobbyServer {
                     ArrayList<String> tempGames = new ArrayList<>();
                     semaphore.acquire();
                     for (GameLobby gameLobby : gameList) {
-                        tempGames.add(gameLobby.getName() + PATTERN_FOR_PLAYER_ID_SPLITTER + gameLobby.getId());
+                        Object gameState = spaceLobby.queryp(new ActualField(gameLobby.getId()), new ActualField(GAME_START));
+                        if (gameState == null) {
+                            tempGames.add(gameLobby.getName() + PATTERN_FOR_PLAYER_ID_SPLITTER + gameLobby.getId());
+                        }
                     }
                     semaphore.release();
                     spaceLobby.put(SHOW_ME_AVAILABLE_GAMES_RES, obj[1].toString(), tempGames);
