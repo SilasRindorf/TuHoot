@@ -35,6 +35,10 @@ public class AddPlayerHandler implements Runnable{
                 String pName = objs[2].toString();
                 String pId = objs[3].toString();
                 Player newPlayer = new Player(pName, pId, 0);
+                if (pName.equals(GAME_START)) {
+                    printer.println("Join request disabled");
+                    break;
+                }
 
                 game.getPrinterLock().acquire();
                 System.out.println();
