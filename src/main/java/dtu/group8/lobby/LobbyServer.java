@@ -137,7 +137,7 @@ public class LobbyServer {
                     System.out.println("LobbyServer: Add to game req: Received from client: " + playerId);
 
                     if (isGameStarted(gameId)) {
-                        spaceLobby.put(MY_SPACE_ID, playerId, "", "", "", "", NO);
+                        spaceLobby.put(MY_SPACE_ID, playerId, "", "", "", "", GAME_START);
                     }
 
                     semaphore.acquire();
