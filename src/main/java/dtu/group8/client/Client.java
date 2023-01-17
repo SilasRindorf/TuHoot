@@ -31,8 +31,10 @@ import static dtu.group8.lobby.Util.*;
  * Reconnect to game
  */
 public class Client {
-    GameSetup gameSetup;
-    Printer printerNoTag = new Printer("", Printer.PrintColor.WHITE);
+    private GameSetup gameSetup;
+    private Printer printerNoTag = new Printer("", Printer.PrintColor.WHITE);
+    private Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
+
 
     public Game matchMake(Player client) {
         try {
@@ -71,6 +73,29 @@ public class Client {
 
     }
 
+    public void initialize(Game game, Space space) throws InterruptedException {
+        log.setLog(false);
+
+        // Checks if this client is the host
+        if (game.amIHost()) {
+            AddPlayerHandler listenForAddReq = new AddPlayerHandler(game);
+            game.setThreadAddPlayer(new Thread(listenForAddReq));
+            game.getThreadAddPlayer().start();
+            gameSetup.display_start_game_option(game);
+        } else {
+            printerNoTag.println("Waiting for game to start...");
+        }
+
+        space.query(new ActualField(GAME_START));
+        System.out.println("Game is starting...");
+
+        // Checks if this client is the host
+        if (game.amIHost()) {
+            Thread gameThread = new Thread(new ClientServer(game));
+            gameThread.start();
+        }
+    }
+
     public Game setup(Game game) {
         Space space = game.getSpace();
         if (space == null) {
@@ -79,27 +104,9 @@ public class Client {
         }
 
         try {
-            Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
-            log.setLog(false);
 
-            // Checks if this client is the host
-            if (game.amIHost()) {
-                AddPlayerHandler listenForAddReq = new AddPlayerHandler(game);
-                game.setThreadAddPlayer(new Thread(listenForAddReq));
-                game.getThreadAddPlayer().start();
-                gameSetup.display_start_game_option(game);
-            } else {
-                printerNoTag.println("Waiting for game to start...");
-            }
+            initialize(game,space);
 
-            space.query(new ActualField(GAME_START));
-            System.out.println("Game is starting...");
-
-            // Checks if this client is the host
-            if (game.amIHost()) {
-                Thread gameThread = new Thread(new ClientServer(game));
-                gameThread.start();
-            }
 
             /*-----------------------------Initialization of a game done-------------------------------------*/
 
