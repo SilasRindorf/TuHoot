@@ -28,6 +28,7 @@ public class Game {
     private Space space;
     private Semaphore printerLock = new Semaphore(1);
     Printer printer = new Printer("Game:", Printer.PrintColor.WHITE);
+    private Thread threadAddPlayer;
 
 
     public Game() {
@@ -240,4 +241,11 @@ public class Game {
         return 100 * (1 + players.size() - quiz.getAmountOfCorrectAnswers(index));
     }
 
+    public Thread getThreadAddPlayer() {
+        return threadAddPlayer;
+    }
+
+    public void setThreadAddPlayer(Thread threadAddPlayer) {
+        this.threadAddPlayer = threadAddPlayer;
+    }
 }

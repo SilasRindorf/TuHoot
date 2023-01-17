@@ -68,7 +68,10 @@ public class Client {
 
     public Game setup(Game game) {
         Space space = game.getSpace();
-        if (space == null) return null;
+        if (space == null) {
+            System.out.println("Space is null");
+            return null;
+        }
 
         try {
             Printer log = new Printer("PlayerLog", Printer.PrintColor.YELLOW);
@@ -76,7 +79,8 @@ public class Client {
             // Checks if this client is the host
             if (game.amIHost()) {
                 AddPlayerHandler listenForAddReq = new AddPlayerHandler(game);
-                new Thread(listenForAddReq).start();
+                game.setThreadAddPlayer(new Thread(listenForAddReq));
+                game.getThreadAddPlayer().start();
                 gameSetup.display_start_game_option(game);
             } else {
                 printerNoTag.println("Waiting for game to start...");
