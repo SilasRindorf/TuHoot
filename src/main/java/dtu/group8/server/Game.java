@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.Semaphore;
 
+import static dtu.group8.lobby.Util.SECOND_CALLED_OCCURRED;
+
 public class Game {
     private String id;
     private String name;
@@ -28,6 +30,7 @@ public class Game {
     private Space space;
     private Semaphore printerLock = new Semaphore(1);
     Printer printer = new Printer("Game:", Printer.PrintColor.WHITE);
+    private Thread threadAddPlayer;
 
 
     public Game() {
@@ -209,28 +212,36 @@ public class Game {
 
     /*----------------------------Global user input method-----------------------------*/
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-    private int readerLock = 0;
-    private Semaphore semaphore = new Semaphore(1);
+    private Semaphore semFirstCall = new Semaphore(1);
     private String userInput;
-
+    private Semaphore semSecondCall = new Semaphore(1);
     public String takeUserInput() {
 
         try {
-            if (readerLock == 1) {
-                semaphore.acquire();
-                semaphore.release();
+            if (semFirstCall.availablePermits() == 0) {
+                semSecondCall.acquire();
+                semFirstCall.acquire();
+                semFirstCall.release();
+                semSecondCall.release();
                 return userInput;
             }
 
-            readerLock = 1;
-            semaphore.acquire();
+            semFirstCall.acquire();
             userInput = input.readLine();
+            semFirstCall.release();
+
+            if (semSecondCall.availablePermits() == 0) {
+                return SECOND_CALLED_OCCURRED;
+            }
+            return userInput;
+
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        readerLock = 0;
-        if (semaphore.availablePermits() == 0) semaphore.release();
-        return userInput;
+    }
+
+    public Semaphore getSemSecondCall() {
+        return semSecondCall;
     }
 
     public boolean amIHost() {
@@ -240,4 +251,11 @@ public class Game {
         return 100 * (1 + players.size() - quiz.getAmountOfCorrectAnswers(index));
     }
 
+    public Thread getThreadAddPlayer() {
+        return threadAddPlayer;
+    }
+
+    public void setThreadAddPlayer(Thread threadAddPlayer) {
+        this.threadAddPlayer = threadAddPlayer;
+    }
 }
