@@ -7,6 +7,8 @@ import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.Space;
 
+import java.util.ArrayList;
+
 public class GameController {
     public Game game;
     private final Space space;
@@ -69,7 +71,6 @@ public class GameController {
                 //Tuple contains:
                 //'A', clientId, answer, question index
                 answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
-
                 space.put("V", answer[1].toString(), game.checkAnswer((Integer) answer[3], answer[2].toString(), answer[1].toString()));
             }
         } catch (InterruptedException e) {
@@ -133,14 +134,24 @@ public class GameController {
             log.println("Getting client ACKs");
             updateGameState(GameState.ACK);
             log.println("\t", "Listening for ACKs");
-            Thread ackHandler = new Thread(new ackHandler(game, () -> {
-                try {
-                    updateGameState(GameState.CONTINUE);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            ArrayList<Player> playerList = new ArrayList<>(game.getPlayers());
+            Thread ackHandler = new Thread(new ackHandler(game, playerList, player -> {
+                playerList.remove(player);
+                log.println("\t", "Player with ID" + player.getId() + " has been kicked");
+
             }));
             ackHandler.start();
+            log.println("Ack Thread started");
+            log.println("Main thread sleeping...");
+            Thread.sleep(15000);
+            log.println("Main thread waking...");
+            if (ackHandler.isAlive()) {
+                log.println("Interrupting Ack Thread");
+                ackHandler.interrupt();
+            }
+            for (Player player : playerList) {
+                game.removePlayer(player.getId());
+            }
 
 
         } catch (InterruptedException e) {
