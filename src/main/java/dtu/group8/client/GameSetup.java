@@ -135,7 +135,7 @@ public class GameSetup {
             System.out.println("Game host declined request" );
             return false;
         } else if (msg.equals(GAME_START)) {
-            System.out.println("Game is already in progress, choose another game to join" );
+            System.out.println("This game is currently in progress, please select a different game to join" );
             return false;
         }
 
