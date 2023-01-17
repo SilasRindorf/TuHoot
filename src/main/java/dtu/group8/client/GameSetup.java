@@ -87,17 +87,8 @@ public class GameSetup {
                 if (userInput.equalsIgnoreCase("1") || userInput.equalsIgnoreCase("start game")){
                     getAllPlayersFromSpace(game);
                     space.put(GAME_START);
-
                     game.getRemoteSpace().put(JOINT_REQ_FROM_SERVER, game.getMe().getId(), GAME_START, "");
-
-
-
-/*                    game.getThreadAddPlayer().interrupt();
-                    if (game.getThreadAddPlayer().isAlive()) {
-                        System.out.println("Thread add player is alive");
-                    }
-
- */
+                    game.getRemoteSpace().put(game.getId(), GAME_START);
                     break;
 
                 }
