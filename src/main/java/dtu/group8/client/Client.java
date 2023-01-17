@@ -180,7 +180,7 @@ public class Client {
                 if (str.equalsIgnoreCase("y")) {
                     start(setup(matchMake(game.getMe())));
                 } else {
-
+                    System.exit(0);
                 }
             }
         } catch (IOException e) {
