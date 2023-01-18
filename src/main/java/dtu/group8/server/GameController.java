@@ -74,7 +74,7 @@ public class GameController {
                     new FormalField(Integer.class));
             Integer questionNumber = (Integer) answer[3];
 
-            boolean isCorrectAnswer = game.checkAnswer(questionNumber, answer[2].toString(), answer[1].toString());
+            Boolean isCorrectAnswer = game.checkAnswer(questionNumber, answer[2].toString(), answer[1].toString());
             space.put("V", answer[1].toString(), isCorrectAnswer);
 
             time = System.currentTimeMillis();
