@@ -63,19 +63,41 @@ public class LobbyServer {
                 String gameName = createBoardObj[1].toString();
                 String hostId = createBoardObj[2].toString();
                 String hostName = createBoardObj[3].toString();
+                String receiverId = hostId; // just not to mix up.
+
 
                 spaceCounter++;
                 String gameId = "gameId" + spaceCounter;  // gameId = boardId = spaceId
                 GameLobby newGameLobby = new GameLobby(gameName, gameId, new PlayerLobby(hostName, hostId));
                 newGameLobby.addPlayer(hostName, hostId);
                 semaphore.acquire();
+                boolean gameNameFound = false;
+                // Checks if there already exists a game with the same name.
+                for (GameLobby currGame : gameList) {
+                    if (currGame.getName().equals(gameName)) {
+                        spaceLobby.put(GAME_NAME_AVAILABILITY, receiverId, NO);
+                        gameNameFound = true;
+                        break;
+                    }
+                }
+
+                if (gameNameFound){
+                    // A game with the same name is found
+                    semaphore.release();
+                    continue;
+                }
+                // There is no game with the same name
+                spaceLobby.put(GAME_NAME_AVAILABILITY, receiverId, OK);
+
+                // Adds the new game to the game list locally.
                 this.gameList.add(newGameLobby);
+                // Releases the semaphore
                 semaphore.release();
                 SequentialSpace newSpace = new SequentialSpace();
+                // Adds the new space to the repository
                 repository.add(gameId, newSpace);
                 // Currently, the getPlayerNames and getPlayerIds methods only contain the hostId and hostName.
                 newSpace.put(ALL_PLAYERS, newGameLobby.getPlayerNames(), newGameLobby.getPlayerIds());
-                String receiverId = hostId; // just not to mix up.
                 spaceLobby.put(MY_SPACE_ID, receiverId, gameName, gameId, hostName, hostId, OK);
                 System.out.println("LobbyServer: Game created");
                 System.out.println("\tGame name: " + gameName);
