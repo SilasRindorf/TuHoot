@@ -128,7 +128,6 @@ public class GameController {
     }
 
     // TODO: Kick players
-    // TODO: Break while after all clients ACK
     private void ackReq() {
         try {
             log.println("Getting client ACKs");

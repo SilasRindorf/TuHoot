@@ -81,7 +81,7 @@ public class Game {
     }
 
     public void removePlayer(String playerId) {
-
+        players.removeIf(player -> player.getId().equals(playerId));
     }
 
     public int quizSize(){
