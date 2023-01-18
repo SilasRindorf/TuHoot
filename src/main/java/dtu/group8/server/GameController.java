@@ -19,7 +19,7 @@ public class GameController {
 
     public GameController(Game game) {
         this.log = new Printer();
-        log.setLog(true);
+        log.setLog(false);
         log.setDefaultTAG("GameController");
         log.setDefaultPrintColor(Printer.PrintColor.CYAN);
         this.game = game;
