@@ -57,51 +57,47 @@ public class GameController {
 
     }
 
-    private void verifyingAnswers(int index) {
+    private void verifyAnswer(int index) throws InterruptedException {
         Object[] answer;
         int durationMillis = 15000;
         long time = System.currentTimeMillis();
         long end = System.currentTimeMillis() + durationMillis;
+        while (alive && !game.allAnsweredCorrect(index) && time < end) {
+            log.println("Time left " + (end - time));
+            log.println("Waiting for answers");
+            //Tuple contains:
+            //'A', clientId, answer, question index
+            answer = space.get(
+                    new ActualField("A"),
+                    new FormalField(String.class),
+                    new FormalField(String.class),
+                    new FormalField(Integer.class));
+            Integer questionNumber = (Integer) answer[3];
 
-        final long timer = time;
+            boolean isCorrectAnswer = game.checkAnswer(questionNumber, answer[2].toString(), answer[1].toString());
+            space.put("V", answer[1].toString(), isCorrectAnswer);
 
-
-        try {
-            Thread t = new Thread(() -> {
-                try {
-                    //Empty answer to stop get in while loop
-                    Thread.sleep(durationMillis);
-                        space.put("A", "00000000", "", 0);
-                        space.get(new ActualField("A"),new FormalField(String.class), new FormalField(Boolean.class));
-
-                }  catch(InterruptedException e){
-                    throw new RuntimeException(e);
-                }
-            });
-            t.start();
-
-
-            while (alive && !game.allAnsweredCorrect(index) && time < end) {
-                time = System.currentTimeMillis();
-                log.println("Time left " + (end - time));
-                log.println("Waiting for answers");
-                //Tuple contains:
-                //'A', clientId, answer, question index
-                answer = space.get(
-                        new ActualField("A"),
-                        new FormalField(String.class),
-                        new FormalField(String.class),
-                        new FormalField(Integer.class));
-                Integer questionNumber = (Integer) answer[3];
-
-                boolean isCorrectAnswer = game.checkAnswer(questionNumber, answer[2].toString(), answer[1].toString());
-                space.put("V", answer[1].toString(), isCorrectAnswer);
-            }
-            ackReq();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            time = System.currentTimeMillis();
         }
+    }
+
+    private void verifyingAnswers(int index) {
+        Thread t = new Thread(() -> {
+            try {
+                verifyAnswer(index);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
+        try {
+            Thread.sleep(15000);
+            if (t.isAlive()){
+                t.interrupt();
+            }
+        } catch (InterruptedException ignored) {
+        }
+        ackReq();
     }
 
 
