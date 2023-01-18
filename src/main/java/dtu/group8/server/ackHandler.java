@@ -27,21 +27,19 @@ public class ackHandler implements Runnable {
         Printer log = new Printer("ACK_HANDLER", Printer.PrintColor.PURPLE);
         Object[] ACK;
         try {
-            for (Player player : game.getPlayers()
-            ) {
+            for (Player player : game.getPlayers()){
                 log.println(player.getName() + " " + player.getId());
             }
             for (int i = 0; i < game.getPlayers().size(); i++) {
                 log.println("Amount of ACK received: " + i);
                 ACK = game.getSpace().get(new ActualField("ACK"), new FormalField(String.class), new FormalField(String.class));
                 if (ACK[2].toString().equalsIgnoreCase("ok")) {
-                    for (Player player : IDs) {
-                        log.println("\t", "Received ACK from: " + player.getId() + " " + player.getName());
-                        if (player.getId().equals(ACK[1])) {
-                            log.println("\t\t", "ACK was OK from " + player.getId());
-                            IDs.remove(player);
-                            if (IDs.size() == 0)
-                                return;
+                    for (int k = 0; k < IDs.size(); k++) {
+                        log.println("\t", "Received ACK from: " + IDs.get(k).getId() + " " + IDs.get(k).getName());
+                        if (IDs.get(k).getId().equals(ACK[1])) {
+                            log.println("\t\t", "ACK was OK from " + IDs.get(k).getId());
+                            IDs.remove(IDs.get(k));
+
                         }
                     }
                 }
@@ -50,7 +48,5 @@ public class ackHandler implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
     }
 }
