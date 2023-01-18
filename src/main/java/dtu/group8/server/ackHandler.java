@@ -25,6 +25,7 @@ public class ackHandler implements Runnable {
     @Override
     public void run() {
         Printer log = new Printer("ACK_HANDLER", Printer.PrintColor.PURPLE);
+        log.setLog(false);
         Object[] ACK;
         try {
             for (Player player : game.getPlayers()){
