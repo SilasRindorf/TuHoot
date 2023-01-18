@@ -14,6 +14,8 @@ public class Util {
     public final static String CREATE_GAME_REQ = "create game";
     public final static String MY_SPACE_ID = "mySpaceId";
     public final static String SECOND_CALLED_OCCURRED = "second_call_occurred";
+    public final static String GAME_NAME_AVAILABILITY = "game_name_availability";
+
 
     public static final String PORT = "9002";
     public static final String IP = "localhost";

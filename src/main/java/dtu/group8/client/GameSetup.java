@@ -49,15 +49,28 @@ public class GameSetup {
                 if (userInput.equalsIgnoreCase("create game") ||
                         userInput.equalsIgnoreCase("1")){
                     String gameName = "";
-                    while (gameName.isBlank()) {
-                        System.out.print("Enter game name: ");
-                        gameName = game.takeUserInput();
+                    while (true) {
+                        while (gameName.isBlank()) {
+                            System.out.print("Enter game name: ");
+                            gameName = game.takeUserInput();
+                        }
+
+                        /* Sends a request to the server to create a new game. */
+                        lobbySpace.put(CREATE_GAME_REQ,gameName, player.getId(), player.getName());
+
+                        /* Awaits a response from Lobby. 'no' means the given name is not available (already exists a game with the same name) */
+                        Object[] obj_game = lobbySpace.get(new ActualField(GAME_NAME_AVAILABILITY), new ActualField(player.getId()), new FormalField(String.class));
+                        if (obj_game[2].equals(NO)) {
+                            printerNoTag.println("Given game name is not available, pls choose another name");
+                            gameName = "";
+                            continue;
+                        }
+                        break;
                     }
+
+
                     game.setName(gameName);
                     game.setHostId(player.getId());
-                    /* Sends a request to the server to create a new game. */
-                    lobbySpace.put(CREATE_GAME_REQ,gameName, player.getId(), player.getName());
-
                     /* Gets the appropriate space from the server*/
                     //getSpace(game);
                     if (getSpace(game)) break;
