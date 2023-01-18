@@ -74,10 +74,10 @@ public class GameController {
                 Integer questionNumber = (Integer) answer[3];
 
                 boolean isCorrectAnswer = game.checkAnswer(questionNumber, answer[2].toString(), answer[1].toString());
+                space.put("V", answer[1].toString(), isCorrectAnswer);
                 if (isCorrectAnswer && game.amountOfUsersAnsweredCorrectly(questionNumber) == 0){
                     ackReq();
                 }
-                space.put("V", answer[1].toString(), isCorrectAnswer);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
