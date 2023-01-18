@@ -35,8 +35,13 @@ public class Game {
 
     public Game() {
         quiz = new Quiz();
-        quiz.questions.add(new QuizQuestion("2+2", "5"));
-        quiz.questions.add(new QuizQuestion("apples", "bananas"));
+        quiz.questions.add(new QuizQuestion("What is DTU short for?", "Technical University of Denmark"));
+        quiz.questions.add(new QuizQuestion("Who is the current Danish queen?", "Queen Margrethe"));
+        quiz.questions.add(new QuizQuestion("What does “www” stand for in a website browser?", "World Wide Web"));
+        quiz.questions.add(new QuizQuestion("What geometric shape is generally used for stop signs?", "Octagon"));
+        quiz.questions.add(new QuizQuestion("Who was the first woman to win a Nobel Prize (in 1903)?", "Marie Curie"));
+        quiz.questions.add(new QuizQuestion("Who was the first woman pilot to fly solo across the Atlantic?", "Amelia Earhart"));
+        quiz.questions.add(new QuizQuestion("Demolition of the Berlin wall separating East and West Germany began in what year?", "1989"));
         players = new ArrayList<>();
     }
 
