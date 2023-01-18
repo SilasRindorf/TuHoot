@@ -65,6 +65,7 @@ public class LobbyServer {
                 String hostName = createBoardObj[3].toString();
                 String receiverId = hostId; // just not to mix up.
 
+                updateGameList();
 
                 spaceCounter++;
                 String gameId = "gameId" + spaceCounter;  // gameId = boardId = spaceId
@@ -236,6 +237,23 @@ public class LobbyServer {
         }
     });
 
+    void updateGameList() {
+
+        try {
+            semaphore.acquire();
+            ArrayList<GameLobby> new_list = new ArrayList<>();
+            for (GameLobby gameLobby : gameList) {
+                Object gameState = spaceLobby.queryp(new ActualField(gameLobby.getId()), new ActualField(GAME_START));
+                if (gameState == null) {
+                    new_list.add(gameLobby);
+                }
+            }
+            gameList = new_list;
+            semaphore.release();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 
