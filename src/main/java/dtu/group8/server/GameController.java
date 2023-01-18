@@ -92,10 +92,9 @@ public class GameController {
         t.start();
         try {
             Thread.sleep(15000);
-            if (t.isAlive()){
-                t.interrupt();
-            }
-        } catch (InterruptedException ignored) {
+            space.put("A", "", "", "");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         ackReq();
     }
