@@ -45,21 +45,6 @@ public class Game {
         players = new ArrayList<>();
     }
 
-    public Game(Quiz quiz) {
-        this.quiz = quiz;
-    }
-
-    public Game(String id, String name, String hostId, Player me,
-                ArrayList<Player> players, RemoteSpace remoteSpace, Space space) {
-        this.id = id;
-        this.name = name;
-        this.hostId = hostId;
-        this.me = me;
-        this.players = players;
-        this.remoteSpace = remoteSpace;
-        this.space = space;
-        this.quiz = new Quiz();
-    }
 
     public void addPlayer(String name, String playerId) {
         boolean isFound = false;
@@ -245,9 +230,6 @@ public class Game {
         }
     }
 
-    public Semaphore getSemSecondCall() {
-        return semSecondCall;
-    }
     public void waitUntilSecondCallDone() {
         try {
             semSecondCall.acquire();
