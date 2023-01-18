@@ -46,7 +46,7 @@ public class ackHandler implements Runnable {
             }
 
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }
