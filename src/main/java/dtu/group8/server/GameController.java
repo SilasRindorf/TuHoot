@@ -72,7 +72,7 @@ public class GameController {
                     //Empty answer to stop get in while loop
                     Thread.sleep(durationMillis);
                         space.put("A", "00000000", "", 0);
-
+                        space.get(new ActualField("A"),new ActualField("00000000"), new FormalField(Boolean.class));
 
                 }  catch(InterruptedException e){
                     throw new RuntimeException(e);
