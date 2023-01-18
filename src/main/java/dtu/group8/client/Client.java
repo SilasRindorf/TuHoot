@@ -205,7 +205,7 @@ public class Client {
         Object[] answer;
         space.put("A", clientID, input.readLine(), i);
         log.println("Waiting for verification of answer");
-        answer = space.get(new ActualField("V"), new ActualField(String.class), new FormalField(Boolean.class));
+        answer = space.get(new ActualField("V"), new FormalField(String.class), new FormalField(Boolean.class));
         log.println("Received verification from Space");
         if ((boolean) answer[2]) {
             printer.println("You got the answer correct!");
