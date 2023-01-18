@@ -59,26 +59,46 @@ public class GameController {
 
     private void verifyingAnswers(int index) {
         Object[] answer;
+        int durationMillis = 15000;
         long time = System.currentTimeMillis();
-        long end = System.currentTimeMillis() + 15000;
+        long end = System.currentTimeMillis() + durationMillis;
+
+        final long timer = time;
 
 
         try {
+            Thread t = new Thread(() -> {
+                try {
+                    //Empty answer to stop get in while loop
+                    Thread.sleep(durationMillis);
+                        space.put("A", "00000000", "", 0);
+
+
+                }  catch(InterruptedException e){
+                    throw new RuntimeException(e);
+                }
+            });
+            t.start();
+
+
             while (alive && !game.allAnsweredCorrect(index) && time < end) {
                 time = System.currentTimeMillis();
                 log.println("Time left " + (end - time));
                 log.println("Waiting for answers");
                 //Tuple contains:
                 //'A', clientId, answer, question index
-                answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
+                answer = space.get(
+                        new ActualField("A"),
+                        new FormalField(String.class),
+                        new FormalField(String.class),
+                        new FormalField(Integer.class));
                 Integer questionNumber = (Integer) answer[3];
 
                 boolean isCorrectAnswer = game.checkAnswer(questionNumber, answer[2].toString(), answer[1].toString());
                 space.put("V", answer[1].toString(), isCorrectAnswer);
-                if (isCorrectAnswer && game.amountOfUsersAnsweredCorrectly(questionNumber) == 0){
-                    ackReq();
-                }
             }
+            ackReq();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -90,7 +110,7 @@ public class GameController {
 
         log.setDefaultTAG("startGame");
 
-        /**
+        /*
          * TODO: Fix at clients bliver softlocked hvis de ikke svarer på sidste spørgsmål
          * TODO: Hvis der løbes tør for tid og serveren går til næste spørgsmål, kan klienten svare på det gamle / Klienten skal have at vide den skal gå videre
          */
