@@ -14,12 +14,11 @@ public class GameController {
     private final Space space;
     private final Printer log;
     private boolean alive = true;
-    private Printer printer;
 
 
     public GameController(Game game) {
         this.log = new Printer();
-        log.setLog(true);
+        log.setLog(false);
         log.setDefaultTAG("GameController");
         log.setDefaultPrintColor(Printer.PrintColor.CYAN);
         this.game = game;
@@ -63,6 +62,7 @@ public class GameController {
         long time = System.currentTimeMillis();
         long end = System.currentTimeMillis() + 15000;
 
+
         try {
             while (alive && !game.allAnsweredCorrect(index) && time < end) {
                 time = System.currentTimeMillis();
@@ -71,7 +71,13 @@ public class GameController {
                 //Tuple contains:
                 //'A', clientId, answer, question index
                 answer = space.get(new ActualField("A"), new FormalField(String.class), new FormalField(String.class), new FormalField(Integer.class));
-                space.put("V", answer[1].toString(), game.checkAnswer((Integer) answer[3], answer[2].toString(), answer[1].toString()));
+                Integer questionNumber = (Integer) answer[3];
+
+                boolean isCorrectAnswer = game.checkAnswer(questionNumber, answer[2].toString(), answer[1].toString());
+                if (isCorrectAnswer && game.amountOfUsersAnsweredCorrectly(questionNumber) == 0){
+                    ackReq();
+                }
+                space.put("V", answer[1].toString(), isCorrectAnswer);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -99,7 +105,6 @@ public class GameController {
                 log.println("Round " + (i + 1) + " begins");
                 verifyingAnswers(i);
                 log.println("Game info: " + game.allAnsweredCorrect(i), Printer.PrintColor.GREEN);
-
                 log.println("Round " + (1 + i) + " ends");
                 handleHighScores();
             }
@@ -117,9 +122,8 @@ public class GameController {
         }
 
         try {
+            space.getp(new ActualField("Highscores"), new FormalField(String.class));
             space.put("Highscores", game.getScores());
-            ackReq();
-            space.get(new ActualField("Highscores"), new FormalField(String.class));
 
         } catch (InterruptedException e) {
             log.println("Error in handleHighScores", Printer.PrintColor.RED);

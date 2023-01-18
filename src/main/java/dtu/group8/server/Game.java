@@ -104,7 +104,9 @@ public class Game {
     public boolean allAnsweredCorrect(int index) {
         return quiz.getAmountOfCorrectAnswers(index) == players.size();
     }
-
+    public int amountOfUsersAnsweredCorrectly(int index) {
+        return quiz.getAmountOfCorrectAnswers(index);
+    }
     public void printOutPlayers() {
         for (Player player : players) {
 
