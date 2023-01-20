@@ -18,7 +18,7 @@ public class Util {
 
 
     public static final String PORT = "9002";
-    public static final String IP = "localhost";
+    public static final String IP = "10.209.93.208";
     public static final String TYPE = "?keep";
 
 }

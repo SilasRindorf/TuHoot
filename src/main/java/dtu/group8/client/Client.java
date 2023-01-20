@@ -74,7 +74,7 @@ public class Client {
     }
 
     public void initialize(Game game, Space space) throws InterruptedException {
-        log.setLog(false);
+        log.setLog(true);
 
         // Checks if this client is the host
         if (game.amIHost()) {
